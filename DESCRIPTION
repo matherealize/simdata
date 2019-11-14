@@ -1,0 +1,24 @@
+Package: SimulatoR
+Type: Package
+Title: Generate Simulated Datasets
+Version: 0.1.0
+Author: Michael Kammer [aut, cre]
+Authors@R: person("Michael", "Kammer", 
+    email = "michael.kammer@meduniwien.ac.at", 
+    role = c("aut", "cre"))
+Maintainer: Michael Kammer <michael.kammer@meduniwien.ac.at>
+Description: Generate simulated datasets from a multivariate gaussian
+    distribution using a simple way to specify their correlation structure
+    and apply transformations to obtain realistic data. Simple network
+    visualization tools are provided to facilitate communicating the setup.
+License: GPL-2
+LazyData: true
+Imports:
+    mvtnorm,
+    igraph (>= 1.2.1)
+Suggests: 
+    knitr, 
+    rmarkdown
+VignetteBuilder: 
+Encoding: UTF-8
+RoxygenNote: 6.1.1
