@@ -1,3 +1,52 @@
+# TODO Design templates for multivariate normal
+# TODO rename to Generator
+
+# TODO make sure everything works with data.frames to ensure different
+# types can be returned
+
+# TODO: Test if names work, ie finalnames == korrekt!
+
+# TODO: inherit params from simdesign in doc
+mvtnorm_design <- function(relations_initial,
+                           mean_initial = 0,
+                           sd_initial = 1,
+                           is_correlation = TRUE, 
+                           method = "svd",
+                           ...) {
+    
+    # TODO: assertions, i.e. square matrix, pos def matrix
+    
+    # prepare means and standard deviations
+    mean_initial = rep_len(mean_initial, nrow(relations_initial))
+    sd_initial = rep_len(sd_initial, nrow(relations_initial))
+    
+    # convert correlation to covariance
+    cor_initial = relations_initial
+    if (is_correlation) {
+        relations_initial = cor_to_cov(relations_initial, sd_initial)
+    } else {
+        # is covariance matrix
+        sd_initial = sqrt(diag(relations_initial))
+        cor_initial = cov2cor(cor_initial)
+    }
+    
+    # define generator
+    generator = function(n) mvtnorm::rmvnorm(n, 
+                                             mean = mean_initial, 
+                                             sigma = relations_initial, 
+                                             method = method)
+    
+    # setup simulation design
+    simdesign(
+        generator = generator, 
+        mean_initial = mean_initial, 
+        sd_initial = sd_initial, 
+        cor_initial = cor_initial,
+        ...
+    )
+}
+
+# TODO: Update doc!
 #' @title Design specification for simulating datasets
 #'
 #' @description
@@ -120,65 +169,75 @@
 #' \code{\link{simulate_data}}, \code{\link{conditional_simulate_data}}
 #'
 #' @export
-design <- function(relations,
-                   transform = NULL,
-                   transform_type = NULL,
-                   mean_initial = rep(0, nrow(relations)),
-                   sd_initial = rep(1, nrow(relations)),
-                   is_correlation = TRUE,
-                   truncate_final = NULL,
-                   names_final = NULL,
-                   prefix_final = "v",
-                   process_final = list()) {
+simdesign <- function(generator,
+                      transform_initial = NULL,
+                      n_var_final = -1,
+                      types_final = NULL,
+                      names_final = NULL,
+                      prefix_final = "v",
+                      process_final = list(), 
+                      name = "Simulation design",
+                      check_and_infer = TRUE, # TODO document
+                      ...) {
+    design = c(
+        list(
+            generator = generator,
+            name = name, 
+            transform_initial = transform_initial,
+            n_var_final = n_var_final,
+            types_final = types_final,
+            names_final = names_final,
+            process_final = process_final
+        ), 
+        list(...)
+    )
+    class(design) = "simdesign"
+    
+    if (n_var_final > 0 & !is.null(prefix_final))
+        design$names_final = paste0(prefix_final, 1:n_var_final)
 
-    design = list(cor_initial = relations,
-                  transform = transform,
-                  transform_type = transform_type,
-                  mean_initial = mean_initial,
-                  sd_initial = sd_initial,
-                  names_final = names_final,
-                  process_final = list())
-
-    if (!is_correlation) {
-        design$sd_initial = sqrt(diag(relations))
-        design$cor_initial = (1 / design$sd$initial) %*%
-            relations %*% (1 / design$sd$initial)
-    }
-
-    if (is.null(transform)) {
+    if (is.null(transform_initial)) {
         # default is no transformation at all
-        design$transform = sapply(1:nrow(relations),
-                           function(i) {
-                               return(list(function(x) x[, i]))
-                           })
+        design$transform_initial = base::identity
     }
 
-    # infer transform type by applying to test data
-    if (is.null(transform_type)) {
-        test_z = matrix(0, ncol = ncol(design$cor_initial))
-        design$transform_type = sapply(design$transform,
-                                       function(f) class(f(test_z)))
+    if (!check_and_infer)
+        return(design)
+    
+    # check if simulation design works by simulating 5 samples
+    res = tryCatch(
+        simulate_data(design, 5), 
+        error = function(err) {
+            warning("Unable to simulate from design, please double check arguments. Returning NULL.")
+            NULL
+        }
+    )
+    
+    if (is.null(res))
+        return(NULL)
+    
+    n_var_res = ncol(res)
+    
+    if (is.null(design$n_var_final) | n_var_final != n_var_res)
+        design$n_var_final = n_var_res
+    
+    # infer data types if necessary
+    if (is.null(design$types_final) | length(design$types_final) != n_var_res) {
+        design$types_final = apply(res, 2, class)
+    }
+    
+    # infer names if necessary
+    if (length(design$names_final) != n_var_res) {
+        if (!is.null(prefix_final)) {
+            design$names_final = paste0(prefix_final, 1:n_var_res)
+        } else {
+            # note that the colnames could be empty, therefore
+            # we need to modifyList
+            design = modifyList(design, 
+                                list(names_final = colnames(res)), 
+                                keep.null = TRUE)
+        }
     }
 
-    # if names is null, then give default names, if it is a char array
-    # use accordingly
-    if (is.null(names_final)) {
-        if (!is.null(names(transform))) {
-            design$names_final = names(transform)
-        } else design$names_final = paste0(prefix_final,
-                                           seq_along(design$transform))
-    }
-
-    # build post-processing calls, first pre-implemented options
-    # truncation
-    if (!is.null(truncate_final))
-        design$process_final = modifyList(design$process_final,
-                                         list("truncate" =
-                                                  list(truncate_multipliers = truncate_final)))
-    # further, user specified functions to be added
-    design$process_final = modifyList(design$process_final, process_final)
-
-    class(design) = "design"
-
-    return(design)
+    design
 }

@@ -1,7 +1,7 @@
-Package: SimulatoR
+Package: simulatoR
 Type: Package
 Title: Generate Simulated Datasets
-Version: 0.1.0
+Version: 0.1.0.9000
 Author: Michael Kammer [aut, cre]
 Authors@R: person("Michael", "Kammer", 
     email = "michael.kammer@meduniwien.ac.at", 

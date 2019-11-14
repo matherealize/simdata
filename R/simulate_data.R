@@ -1,3 +1,5 @@
+# TODO: Update doc
+
 # Data Simulation ###################################################
 #' @title Simulate design matrix
 #'
@@ -76,75 +78,61 @@
 #' \code{\link{process_data}}
 #'
 #' @export
-simulate_data <- function(relations, ...) {
-    UseMethod("simulate_data", relations)
+simulate_data <- function(generator, ...) {
+    UseMethod("simulate_data", generator)
 }
 
 #' @describeIn simulate_data Workhorse function to be used if no \code{design}
 #' S3 class is used.
 #'
 #' @export
-simulate_data.default <- function(relations, n_obs, transform = NULL,
-                                  mean_initial = rep(0, nrow(relations)),
-                                  sd_initial = rep(1, nrow(relations)),
-                                  is_correlation = TRUE,
+simulate_data.default <- function(generator, 
+                                  n_obs = 1, 
+                                  transform = base::identity,
                                   names_final = NULL,
-                                  prefix_final = "v",
+                                  prefix_final = NULL,
                                   process_final = list(),
-                                  seed = NULL) {
-
-    if (is.null(transform)) {
-        # default is no transformation at all
-        transform = sapply(1:nrow(relations),
-                           function(i) {
-                               return(list(function(x) x[, i, drop = FALSE]))
-                           })
-    }
+                                  seed = NULL, 
+                                  ...) {
 
     if (!is.null(seed))
         set.seed(seed)
 
-    # turn into covariance matrix
-    if (is_correlation)
-        relations = diag(sd_initial) %*% relations %*% diag(sd_initial)
-
-    # use method "svd" to avoid problems with singular matrices
-    x = mvtnorm::rmvnorm(n_obs, mean = mean_initial, sigma = relations,
-                         method = "svd")
-    # transform to final datamatrix
-    x = do.call(cbind, lapply(transform, function(f, x) f(x), x))
+    # generate initial data matrix
+    x = generator(n_obs, ...)
+    
+    # transform to final data matrix
+    x = transform(x)
 
     # apply post-processing functions
     x = process_data(x, process_final)
 
-    # if names_final is null, then give default names, if it is a char array
-    # rename accordingly
+    # rename columns
     if (!is.null(names_final)) {
         colnames(x) = names_final
-    } else if (!is.null(names(transform))) {
-        colnames(x) = names(transform)
-    } else colnames(x) = paste0(prefix_final, 1:ncol(x))
+    } else if (!is.null(prefix_final)) {
+        colnames(x) = paste0(prefix_final, 1:ncol(x))
+    }
 
-    return(as.data.frame(x))
+    x
 }
 
 #' @describeIn simulate_data Function to be used with \code{design} S3 class.
 #'
 #' @export
-simulate_data.design <- function(relations,
-                                 n_obs,
-                                 seed = NULL) {
-    return(simulate_data(relations = relations$cor_initial,
-                         n_obs = n_obs,
-                         transform = relations$transform,
-                         mean_initial = relations$mean_initial,
-                         sd_initial = relations$sd_initial,
-                         is_correlation = TRUE,
-                         names_final = relations$names_final,
-                         process_final = relations$process_final,
-                         seed = seed))
+simulate_data.simdesign <- function(design,
+                                    n_obs,
+                                    seed = NULL) {
+    simulate_data(generator = design$generator,
+                  n_obs = n_obs,
+                  transform = design$transform,
+                  names_final = design$names_final,
+                  process_final = design$process_final,
+                  seed = seed)
 }
 
+
+# TODO
 # Conditional Data Simulation #######################################
 #' @title Simulate data which satisfies certain conditions
 #'

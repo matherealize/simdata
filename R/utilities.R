@@ -1,4 +1,4 @@
-# Datamatrix Rejection Function Templates ###########################
+# Templates for datamatrix rejection functions ######################
 #' @title Check if matrix contains constant column(s)
 #'
 #' @param x
@@ -14,9 +14,11 @@
 contains_constant <- function(x) {
     x = as.matrix(x)
     val = any(apply(x, 2, sd) == 0)
+    
     if (val)
         warning("Matrix contains constant column.\n")
-    return(val)
+    
+    val
 }
 
 #' @title Check if matrix is collinear
@@ -33,12 +35,14 @@ contains_constant <- function(x) {
 #' @export
 is_collinear <- function(x) {
     val = qr(x)$rank < ncol(x)
+    
     if (val)
         warning("Matrix is not full rank.\n")
-    return(val)
+    
+    val
 }
 
-# Correlation Matrix Utilities ######################################
+# Correlation matrix utilities ######################################
 #' @title Build correlation matrix
 #'
 #' @description Use to specify correlation matrix in convenient way
@@ -77,7 +81,7 @@ cor_from_upper <- function(n_var, entries = NULL) {
     # symmetrize
     cor_mat[lower.tri(cor_mat)] = t(cor_mat)[lower.tri(cor_mat)]
 
-    return(cor_mat)
+    cor_mat
 }
 
 #' @title Convert correlation matrix to specification used by
@@ -96,13 +100,47 @@ cor_from_upper <- function(n_var, entries = NULL) {
 #'
 #' @export
 cor_to_upper <- function(m) {
-    res = matrix(data = c(unlist(lapply(1:(nrow(m) - 1),
-                                        function(x) rep(x, ncol(m) - x))),
-                          unlist(lapply(2:ncol(m),
-                                        function(x) x:ncol(m)))),
-                 nrow = nrow(m) * (nrow(m) - 1) / 2, ncol = 2)
-    res = cbind(res, m[res[, c(1,2), drop = FALSE]]) # to avoid warning with ncol = 3
-
+    res = matrix(
+        data = c(
+            unlist(lapply(1:(nrow(m) - 1), function(x) rep(x, ncol(m) - x))),
+            unlist(lapply(2:ncol(m), function(x) x:ncol(m)))
+        ),
+        nrow = nrow(m) * (nrow(m) - 1) / 2, ncol = 2
+    )
+    res = cbind(res, m[res[, c(1,2), drop = FALSE]]) 
     res = res[abs(res[,3]) > 0, , drop = FALSE]
-    return(res)
+    
+    res
+}
+
+# TODO: doc both
+cov_to_cor <- function(m) {
+    cov2cor(m)
+}
+
+cor_to_cov <- function(m, sds = NULL) {
+    if (is.null(sds))
+        sds = rep(1, nrow(m))
+    
+    diag(sds) %*% m %*% diag(sds)
+}
+
+# Functions to work with distributions ##############################
+# TODO: document assumption to look like r function for rng
+draw_from_distribution <- function(dist_fct, n, ...) {
+    do.call(dist_fct,
+            modifyList(list(n), list(...))
+    )
+}
+
+# Transformation functions ##########################################
+# TODO DOC 
+# make aware that its best to name the arguments
+# more general than just transforming column by column...
+function_list <- function(...) {
+    fct_list = list(...)
+    
+    function(m) {
+        do.call(data.frame, lapply(fct_list, function(f, x) f(x), m))
+    }
 }
