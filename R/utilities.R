@@ -113,11 +113,41 @@ cor_to_upper <- function(m) {
     res
 }
 
-# TODO: doc both
+#' @title Convert covariance matrix to correlation matrix
+#' 
+#' @description 
+#' Wrapper for \code{stats::cov2cor}.
+#' 
+#' @param m
+#' Symmetric covariance matrix.
+#' 
+#' @return 
+#' Symmetric correlation matrix.
+#' 
+#' @seealso 
+#' \code{\link{cor_to_cov}}
+#' 
+#' @export
 cov_to_cor <- function(m) {
     cov2cor(m)
 }
 
+#' @title Convert correlation matrix to covariance matrix
+#' 
+#' @description 
+#' Rescale correlation matrix by variable standard deviations to yield a
+#' covariance matrix.
+#' 
+#' @param m
+#' Symmetric correlation matrix.
+#' 
+#' @return 
+#' Symmetric covariance matrix.
+#' 
+#' @seealso 
+#' \code{\link{cov_to_cor}}
+#' 
+#' @export
 cor_to_cov <- function(m, sds = NULL) {
     if (is.null(sds))
         sds = rep(1, nrow(m))
@@ -125,18 +155,39 @@ cor_to_cov <- function(m, sds = NULL) {
     diag(sds) %*% m %*% diag(sds)
 }
 
-# Functions to work with distributions ##############################
-# TODO: document assumption to look like r function for rng
-draw_from_distribution <- function(dist_fct, n, ...) {
-    do.call(dist_fct,
-            modifyList(list(n), list(...))
-    )
-}
-
 # Transformation functions ##########################################
-# TODO DOC 
-# make aware that its best to name the arguments
-# more general than just transforming column by column...
+#' @title Apply list of functions to input
+#' 
+#' @param ...
+#' Named or unnamed arguments, each of which is a function taking exactly 
+#' one input. See details.
+#' 
+#' @details 
+#' This is a convenience function which takes a number of functions and returns
+#' another function which applies all of the user specified functions to a new 
+#' input, and collects the results as data.frame.
+#' 
+#' Each of the user specified functions is expected to take a single input. 
+#' This is useful to e.g. transform columns of a data.frame. See the example.
+#' 
+#' @note 
+#' This function works fine without naming the input arguments, but the 
+#' resulting data.frames have empty column names if that is the case. Thus, 
+#' it is recommended to only pass named function arguments. 
+#' 
+#' @examples 
+#' \dontrun{
+#' f = function_list(
+#'    v1 = function(x) x[,1] * 2, 
+#'    v2 = function(x) x[,2] + 10)
+#'    
+#' f(diag(2))
+#' } 
+#' 
+#' @return 
+#' Function with a single input.
+#' 
+#' @export
 function_list <- function(...) {
     fct_list = list(...)
     
