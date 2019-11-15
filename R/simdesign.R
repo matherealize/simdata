@@ -1,172 +1,61 @@
-# TODO Design templates for multivariate normal
-# TODO rename to Generator
-
-# TODO make sure everything works with data.frames to ensure different
-# types can be returned
-
 # TODO: Test if names work, ie finalnames == korrekt!
 
-# TODO: inherit params from simdesign in doc
-mvtnorm_design <- function(relations_initial,
-                           mean_initial = 0,
-                           sd_initial = 1,
-                           is_correlation = TRUE, 
-                           method = "svd",
-                           ...) {
-    
-    # TODO: assertions, i.e. square matrix, pos def matrix
-    
-    # prepare means and standard deviations
-    mean_initial = rep_len(mean_initial, nrow(relations_initial))
-    sd_initial = rep_len(sd_initial, nrow(relations_initial))
-    
-    # convert correlation to covariance
-    cor_initial = relations_initial
-    if (is_correlation) {
-        relations_initial = cor_to_cov(relations_initial, sd_initial)
-    } else {
-        # is covariance matrix
-        sd_initial = sqrt(diag(relations_initial))
-        cor_initial = cov2cor(cor_initial)
-    }
-    
-    # define generator
-    generator = function(n) mvtnorm::rmvnorm(n, 
-                                             mean = mean_initial, 
-                                             sigma = relations_initial, 
-                                             method = method)
-    
-    # setup simulation design
-    simdesign(
-        generator = generator, 
-        mean_initial = mean_initial, 
-        sd_initial = sd_initial, 
-        cor_initial = cor_initial,
-        ...
-    )
-}
-
-# TODO: Update doc!
 #' @title Design specification for simulating datasets
 #'
 #' @description
 #' Stores information necessary to simulate and visualize datasets based
-#' on multivariate normal distribution Z.
-#'
-#' @param relations
-#' Correlation / Covariance matrix of the initial multivariate
-#' gaussian distribution Z.
-#' @param transform
-#' List of functions. Specifies transformation of underlying
-#' datamatrix Z to final datamatrix X. If not specified, identity transforms
-#' are assumed. If named list, \code{names(transform)} will be used
-#' for columnnames of X by \code{\link{simulate_data}}.
-#' @param transform_type
-#' Optional vector of length equal to \code{transform} and hence number of
-#' columns of final datamatrix X. Allowed entries are "logical", "factor" and
-#' "numeric". Stores the intented output type of the transformation function
-#' corresponding to a specific column of X and hence the type of the column
-#' of X. Useful for plotting and proper data handling. If not specified by
-#' user, inferred by applying the functions to a test matrix (all 0s,
-#' columns as specified by \code{relations}).
-#' @param mean_initial
-#' Vector of mean values of the initial multivariate gaussian
-#' distribution Z. Dimension needs to correspond to dimension
-#' of \code{relations}.
-#' @param sd_initial
-#' Vector of standard deviations of the initial multivariate
-#' gaussian distribution Z. Dimension needs to correspond to dimension
-#' of \code{relations}. Overriden by suqare root of diagonal elements of
-#' \code{relations} if \code{is_correlation} is FALSE.
-#' @param is_correlation
-#' If TRUE, then \code{relations} specifies a correlation matrix (default,
-#' this type of specification is usually more natural than specifying
-#' a covariance matrix). Otherwise, \code{relations} specifies a
-#' covariance matrix whose square root diagonal elements override
-#' \code{sd_initial}.
-#' @param truncate_final
-#' Vector of truncation parameters. Either a single value which is
-#' replicated as necessaary or of same dimension as \code{ncol(x)}.
-#' If any vector entry is NA, the corresponding column will not be
-#' truncated. See \code{\link{truncate}}.
-#' @param names_final
-#' Variable names for final datamatrix X. Needs to have same
-#' dimension as \code{transform}. Overrides other naming options.
-#' @param prefix_final
-#' Prefix attached to variables in final datamatrix X. Overriden
-#' by \code{names} argument or using a named list for \code{transform}.
-#' @param process_final
-#' List of lists. Applies post-processing to final datamatrix X after
-#' pre-implemented post-processing (such as truncation). See
-#' \code{\link{process_data}} for details on the specification. Usually
-#' this argument is not necessary and should be used with caution.
+#' on underlying distribution *Z*.
+#' 
+#' @template simulate_data_template
+#' @template simdesign_template
+#' @param ...
+#' Further arguments are directly stored in the list object to be passed to 
+#' \code{\link{simulate_data}}.
 #'
 #' @details
-#' The \code{design} class should be used in the following workflow:
+#' The \code{simdesign} class should be used in the following workflow:
 #'
 #' \enumerate{
 #' \item Specify a design template which will be used in subsequent data
 #' generating / visualization steps.
 #' \item Sample / visualize datamatrix following template (possibly
-#'  multiple times).
-#' \item Use sampled datamatrix to obtain simulation results.
+#'  multiple times) using \code{\link{simulate_data}}.
+#' \item Use sampled datamatrix for simulation study.
 #' }
-#'
-#' @section Data Generation:
-#' In step 2) data is generated by \code{\link{simulate_data}} using the
-#' following procedure:
-#' \enumerate{
-#' \item The underlying data matrix Z is sampled from a
-#' multivariate gaussian distribution (number of dimensions specified by
-#' dimensions of \code{relations}).
-#' \item Z is then transformed into the final data matrix X by applying
-#' functions from \code{transform} to the columns of Z (final number of
-#' variables given by length of \code{transform}).
-#' \item X is post-processed if specified (truncation to avoid
-#' outliers).
-#' }
-#'
-#' Transformations are specified as a list of functions, which take
-#' the whole datamatrix Z as single argument. For example, to multiply
-#' column 2 of Z by 2, use function(Z) Z[,2] * 2.
-#'
-#' @section Truncation:
-#' Truncation is a pre-implemented, useful post-processing step to prevent
-#' outliers which may influence model results and give weird simulation
-#' output. It is conducted as described in \code{\link{truncate}}.
-#'
-#' @section Post-processing (\code{process_final}):
-#' Post-processing is applied to the final datamatrix X after pre-implemented
-#' post-processing (truncation). For details see \code{\link{process_data}}.
-#' Note that beside simple processing such as truncation, it is usually
-#' advisable to not do post-processing directly in the simulation process,
-#' but only once a dataset has been finalized and is ready for the subsequent
-#' steps. \code{\link{process_data}} can then be used to quickly
-#' implement several processing steps as well.
-#'
-#' @note
-#' Note that \code{relations} specifies the correlation / covariance
-#' of the underlying gaussian data Z and thus does not directly translate into
-#' correlations between the variables of the final datamatrix X.
+#' 
+#' For more details on generators and transformations, please see the 
+#' documentation of \code{\link{simulate_data}}.
+#' 
+#' For details on post-processing, please see the documentation of 
+#' \code{\link{process_data}}.
+#' 
+#' @section Simulation Templates:
+#' This class is intended to be used as a template for simulation designs 
+#' which are based on specific underlying distributions. All such a template
+#' needs to define is the \code{generator} function and its construction and 
+#' pass it to this function along with the other arguments. See 
+#' \code{\link{mvtnorm_simdesign}} for an example.
 #'
 #' @return
-#' List object with class attribute "design" (S3 class) containing
+#' List object with class attribute "simdesign" (S3 class) containing
 #' the following entries (if no further information given, entries are
 #' directly saved from user input):
 #'
 #' \describe{
-#' \item{\code{cor_initial}}{Correlation matrix of initial multivariate
-#' gaussian distribution Z.}
-#' \item{\code{transform}}{}
-#' \item{\code{transform_type}}{}
-#' \item{\code{mean_initial}}{}
-#' \item{\code{sd_initial}}{}
+#' \item{\code{generator}}{}
+#' \item{\code{name}}{}
+#' \item{\code{transform_initial}}{}
+#' \item{\code{n_var_final}}{}
+#' \item{\code{types_final}}{}
+#' \item{\code{names_final}}{}
 #' \item{\code{process_final}}{}
-#' \item{\code{names_final}}{Columnnames of final datamatrix X.}
+#' \item{\code{...}}{Further information as passed by the user.}
 #' }
 #'
 #' @seealso
-#' \code{\link{simulate_data}}, \code{\link{conditional_simulate_data}}
+#' \code{\link{mvtnorm_simdesign}},
+#' \code{\link{simulate_data}},
+#' \code{\link{conditional_simulate_data}}
 #'
 #' @export
 simdesign <- function(generator,
@@ -195,12 +84,12 @@ simdesign <- function(generator,
     
     if (n_var_final > 0 & !is.null(prefix_final))
         design$names_final = paste0(prefix_final, 1:n_var_final)
-
+    
     if (is.null(transform_initial)) {
         # default is no transformation at all
         design$transform_initial = base::identity
     }
-
+    
     if (!check_and_infer)
         return(design)
     
@@ -238,6 +127,107 @@ simdesign <- function(generator,
                                 keep.null = TRUE)
         }
     }
-
+    
     design
+}
+
+#' @title Design specification for simulating datasets
+#'
+#' @description
+#' Stores information necessary to simulate and visualize datasets based
+#' on underlying distribution multivariate normal distribution *Z*.
+#' 
+#' @param relations_initial
+#' Correlation / Covariance matrix of the initial multivariate
+#' gaussian distribution *Z*.
+#' @param mean_initial
+#' Vector of mean values of the initial multivariate gaussian
+#' distribution *Z*. Dimension needs to correspond to dimension
+#' of \code{relations}.
+#' @param sd_initial
+#' Vector of standard deviations of the initial multivariate
+#' gaussian distribution Z. Dimension needs to correspond to dimension
+#' of \code{relations}. Overriden by suqare root of diagonal elements of
+#' \code{relations} if \code{is_correlation} is FALSE.
+#' @param is_correlation
+#' If TRUE, then \code{relations} specifies a correlation matrix (default,
+#' this type of specification is usually more natural than specifying
+#' a covariance matrix). Otherwise, \code{relations} specifies a
+#' covariance matrix whose square root diagonal elements override
+#' \code{sd_initial}.
+#' @param method
+#' \code{method} argument of \code{\link{mvtnorm::rmvnorm}}.
+#' @template simulate_data_template
+#' @template simdesign_template
+#' @param ...
+#' Further arguments are directly stored in the list object to be passed to 
+#' \code{\link{simulate_data}}.
+#'
+#' @details
+#' This S3 class implements a simulation design based on an underlying
+#' multivariate normal distribution by creating a \code{generator} function 
+#' based on \code{\link{mvtnorm::rmvnorm}}.
+#' 
+#' @section Data Generation:
+#' Data will be generated by \code{\link{simulate_data}} using the
+#' following procedure:
+#' \enumerate{
+#' \item The underlying data matrix *Z* is sampled from a
+#' multivariate gaussian distribution (number of dimensions specified by
+#' dimensions of \code{relations}).
+#' \item *Z* is then transformed into the final dataset *X* by applying
+#' the \code{transform} function to *Z*.
+#' \item X is post-processed if specified.
+#' }
+#' 
+#' @note
+#' Note that \code{relations} specifies the correlation / covariance
+#' of the underlying gaussian data *Z* and thus does not directly translate into
+#' correlations between the variables of the final datamatrix *X*.
+#'
+#' @inherit simdesign return
+#'
+#' @seealso
+#' \code{\link{simdesign}},
+#' \code{\link{simulate_data}},
+#' \code{\link{conditional_simulate_data}}
+#'
+#' @export
+mvtnorm_simdesign <- function(relations_initial,
+                              mean_initial = 0,
+                              sd_initial = 1,
+                              is_correlation = TRUE, 
+                              method = "svd",
+                              ...) {
+    
+    # TODO: assertions, i.e. square matrix, pos def matrix
+    
+    # prepare means and standard deviations
+    mean_initial = rep_len(mean_initial, nrow(relations_initial))
+    sd_initial = rep_len(sd_initial, nrow(relations_initial))
+    
+    # convert correlation to covariance
+    cor_initial = relations_initial
+    if (is_correlation) {
+        relations_initial = cor_to_cov(relations_initial, sd_initial)
+    } else {
+        # is covariance matrix
+        sd_initial = sqrt(diag(relations_initial))
+        cor_initial = cov2cor(cor_initial)
+    }
+    
+    # define generator
+    generator = function(n) mvtnorm::rmvnorm(n, 
+                                             mean = mean_initial, 
+                                             sigma = relations_initial, 
+                                             method = method)
+    
+    # setup simulation design
+    simdesign(
+        generator = generator, 
+        mean_initial = mean_initial, 
+        sd_initial = sd_initial, 
+        cor_initial = cor_initial,
+        ...
+    )
 }

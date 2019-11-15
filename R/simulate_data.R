@@ -1,80 +1,60 @@
-# TODO: Update doc
-
 # Data Simulation ###################################################
 #' @title Simulate design matrix
 #'
 #' @description
 #' Generate simulated dataset based on transformation of
-#' multivariate gaussian distribution.
-#'
-#' @param relations
-#' Correlation / Covariance matrix of the initial multivariate
-#' gaussian distribution Z or object of class \code{\link{design}}.
+#' an underlying base distribution.
+#' 
+#' @template simulate_data_template
 #' @param n_obs
 #' Number of simulated observations.
-#' @param transform
-#' List of functions. Specifies transformation of underlying
-#' datamatrix Z to final datamatrix X. If not specified, initial
-#' data Z is returned. If named list, \code{names(transform)} will be used
-#' for columnnames of X. See details for more information.
-#' @param mean_initial
-#' Vector of mean values of the initial multivariate gaussian
-#' distribution Z. Dimension needs to correspond to dimension
-#' of \code{relations}.
-#' @param sd_initial
-#' Vector of standard deviations of the initial multivariate
-#' gaussian distribution Z. Dimension needs to correspond to dimension
-#' of \code{relations}.
-#' @param is_correlation
-#' If TRUE, then \code{relations} specifies a correlation matrix (default,
-#' this type of specification is usually more natural than specifying
-#' a covariance matrix). Otherwise, \code{relations} specifies a
-#' covariance matrix.
-#' @param names_final
-#' Variable names for final datamatrix X. Needs to have same
-#' dimension as \code{transform}. Overrides other naming options.
-#' @param prefix_final
-#' Prefix attached to variables in final datamatrix X. Overriden
-#' by \code{names} argument or using a named list for \code{transform}.
-#' @param process_final
-#' List of lists specifying post-processing functions applied to final
-#' datamatrix X before returning it. See \code{\link{process_data}}.
 #' @param seed
 #' Set random seed to ensure reproducibility of results.
-#'
+#' @param ...
+#' Further arguments passed to \code{generator} function.
+#' 
 #' @return
-#' Data.frame with simulated datamatrix X.
+#' Data.frame or matrix with \code{n_obs} rows for simulated dataset *X*.
 #'
 #' @details
 #' Data is generated using the following procedure:
 #' \enumerate{
-#' \item The underlying data matrix Z is sampled from a
-#' multivariate gaussian distribution (number of dimensions specified by
-#' dimensions of \code{relations}).
-#' \item Z is then transformed into the final data matrix X by applying
-#' functions from \code{transform} to the columns of Z (final number of
-#' variables given by length of \code{transform}).
-#' \item X is post-processed if specified (truncation to avoid
+#' \item An underlying dataset *Z* is sampled from some distribution. This is 
+#' done by a call to the \code{generator} function. 
+#' \item *Z* is then transformed into the final dataset *X* by applying the
+#' \code{transform} function to *Z*.
+#' \item *X* is post-processed if specified (e.g. truncation to avoid
 #' outliers).
 #' }
+#' 
+#' @section Generators:
+#' The \code{generator} function is assumend to provide the same interface
+#' as the random generation functions in the R \pkg{stats} and \pkg{extraDistr}
+#' packages. Specifically, that means it takes the number of observations as
+#' first argument. All further arguments can be set via passing them as
+#' named argument to this function.
 #'
-#' Transformations are specified as a list of functions, which take
-#' the whole datamatrix Z as single argument. For example, to multiply
-#' column 2 of Z by 2, use function(Z) Z[,2] * 2.
-#'
+#' @section Transformations:
+#' Transformations should be applicable to the output of the \code{generator}
+#' function (i.e. take a data.frame or matrix as input) and output another
+#' data.frame or matrix. A convenience function \code{\link{function_list}} is 
+#' provided by this package to specify transformations as a list of functions,
+#'  which take the whole datamatrix *Z* as single argument and can be used to
+#'  apply specific transformations to the columns of that matrix. See the 
+#'  documentation for \code{\link{function_list}} for details.
+#'  
+#' @section Post-processing:
 #' Post-processing the datamatrix is based on \code{\link{process_data}}.
 #'
 #' @note
-#' Note that \code{relations} specifies the correlation / covariance
-#' of the underlying gaussian data Z and thus does not directly translate into
-#' correlations between the variables of the final datamatrix X.
-#'
-#' This function is best used in conjunction with the \code{design} S3 class,
-#' which facilitates further data visualization and conveniently stores
-#' information as a template for simulation tasks.
+#' This function is best used in conjunction with the \code{\link{simdesign}}
+#' S3 class or any template based upon it, which facilitates further data 
+#' visualization and conveniently stores information as a template for simulation tasks.
 #'
 #' @seealso
-#' \code{\link{design}}, \code{\link{conditional_simulate_data}},
+#' \code{\link{simdesign}}, 
+#' \code{\link{mvtnorm_simdesign}}, 
+#' \code{\link{conditional_simulate_data}},
 #' \code{\link{process_data}}
 #'
 #' @export
@@ -82,13 +62,13 @@ simulate_data <- function(generator, ...) {
     UseMethod("simulate_data", generator)
 }
 
-#' @describeIn simulate_data Workhorse function to be used if no \code{design}
+#' @describeIn simulate_data Function to be used if no \code{\link{simdesign}}
 #' S3 class is used.
 #'
 #' @export
 simulate_data.default <- function(generator, 
                                   n_obs = 1, 
-                                  transform = base::identity,
+                                  transform_initial = base::identity,
                                   names_final = NULL,
                                   prefix_final = NULL,
                                   process_final = list(),
@@ -102,7 +82,7 @@ simulate_data.default <- function(generator,
     x = generator(n_obs, ...)
     
     # transform to final data matrix
-    x = transform(x)
+    x = transform_initial(x)
 
     # apply post-processing functions
     x = process_data(x, process_final)
@@ -117,7 +97,7 @@ simulate_data.default <- function(generator,
     x
 }
 
-#' @describeIn simulate_data Function to be used with \code{design} S3 class.
+#' @describeIn simulate_data Function to be used with \code{\link{simdesign}} S3 class.
 #'
 #' @export
 simulate_data.simdesign <- function(design,

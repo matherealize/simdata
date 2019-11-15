@@ -38,7 +38,9 @@ to take care of everything themselves! Furthermore, output of the
 functions is not checked either.
 }
 \examples{
+\dontrun{
 process_data(diag(5), functions = list(scale = list(center = TRUE,
 scale = FALSE)))
+}
 
 }
