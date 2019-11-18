@@ -19,7 +19,7 @@ until the conditions in \code{reject} are met?}
 \item{on_reject}{If "stop", an error is returned if after \code{reject_max_iter} times no
 suitable datamatrix X could be found. If "current", the current datamatrix
 is returned, regardless of the conditions in \code{reject}.
-Otherwise, \code{NULL} is returned. In each case a warning is reported.}
+Otherwise, NULL is returned. In each case a warning is reported.}
 
 \item{...}{All further parameters are passed to \code{\link{simulate_data}}.}
 }
@@ -56,7 +56,7 @@ to extreme transformations of the initial gaussian distribution Z), ensuring
 a sufficient number of observations in a given class (e.g. certain
 binary variables should have at least x\% events) or preventing
 multicollinearity (e.g. X must have full column rank). If one of the
-functions in \code{reject} evaluates to \code{FALSE}, the current datamatrix
+functions in \code{reject} evaluates to FALSE, the current datamatrix
 X is rejected.
 In case of rejection, new datasets can be simulated until the conditions
 are met or a given maximum iteration limit is hit (\code{reject_max_iter}),
@@ -70,6 +70,8 @@ Rejection function templates are found in \code{\link{is_collinear}} and
 }
 
 \seealso{
-\code{\link{design}}, \code{\link{simulate_data}},
-\code{\link{is_collinear}}, \code{\link{contains_constant}}
+\code{\link{design}},
+\code{\link{simulate_data}},
+\code{\link{is_collinear}},
+\code{\link{contains_constant}}
 }

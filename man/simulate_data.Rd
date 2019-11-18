@@ -3,7 +3,6 @@
 \name{simulate_data}
 \alias{simulate_data}
 \alias{simulate_data.default}
-\alias{simulate_data.simdesign}
 \title{Simulate design matrix}
 \usage{
 simulate_data(generator, ...)
@@ -11,36 +10,34 @@ simulate_data(generator, ...)
 \method{simulate_data}{default}(generator, n_obs = 1,
   transform_initial = base::identity, names_final = NULL,
   prefix_final = NULL, process_final = list(), seed = NULL, ...)
-
-\method{simulate_data}{simdesign}(design, n_obs, seed = NULL)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
 assumend it takes the number of simulated observations \code{n_obs} as first
- argument, as all random generation functions in the \pkg{stats} and 
+argument, as all random generation functions in the \pkg{stats} and
 \pkg{extraDistr} do. See details.}
 
-\item{...}{Further arguments passed to \code{generator} function.}
+\item{...}{Further arguments passed to `generator`` function.}
 
 \item{n_obs}{Number of simulated observations.}
 
 \item{transform_initial}{Function which specifies the transformation of the underlying
-dataset *Z* to final dataset *X*. See details.}
+dataset \code{Z} to final dataset \code{X}. See details.}
 
-\item{names_final}{NULL or character vector with variable names for final dataset *X*. 
-Length needs to equal the number of columns of *X*. Overrides other naming options.}
+\item{names_final}{NULL or character vector with variable names for final dataset \code{X}.
+Length needs to equal the number of columns of \code{X}. Overrides other naming options.}
 
-\item{prefix_final}{NULL or prefix attached to variables in final dataset *X*. Overriden
-by \code{names_final} argument. Set to NULL if no prefixes should 
+\item{prefix_final}{NULL or prefix attached to variables in final dataset \code{X}. Overriden
+by \code{names_final} argument. Set to NULL if no prefixes should
 be added.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix *X* before returning it. See \code{\link{process_data}}.}
+datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
 
 \item{seed}{Set random seed to ensure reproducibility of results.}
 }
 \value{
-Data.frame or matrix with \code{n_obs} rows for simulated dataset _X_.
+Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X}.
 }
 \description{
 Generate simulated dataset based on transformation of
@@ -49,11 +46,11 @@ an underlying base distribution.
 \details{
 Data is generated using the following procedure:
 \enumerate{
-\item An underlying dataset _Z_ is sampled from some distribution. This is 
-done by a call to the \code{generator} function. 
-\item _Z_ is then transformed into the final dataset _X_ by applying the
-\code{transform} function to _Z_.
-\item _X_ is post-processed if specified (e.g. truncation to avoid
+\item An underlying dataset \code{Z} is sampled from some distribution. This is
+done by a call to the \code{generator} function.
+\item \code{Z} is then transformed into the final dataset \code{X} by applying the
+\code{transform} function to \code{Z}.
+\item \code{X} is post-processed if specified (e.g. truncation to avoid
 outliers).
 }
 }
@@ -61,13 +58,11 @@ outliers).
 \itemize{
 \item \code{default}: Function to be used if no \code{\link{simdesign}}
 S3 class is used.
-
-\item \code{simdesign}: Function to be used with \code{\link{simdesign}} S3 class.
 }}
 
 \note{
 This function is best used in conjunction with the \code{\link{simdesign}}
-S3 class or any template based upon it, which facilitates further data 
+S3 class or any template based upon it, which facilitates further data
 visualization and conveniently stores information as a template for simulation tasks.
 }
 \section{Generators}{
@@ -83,11 +78,11 @@ named argument to this function.
 
 Transformations should be applicable to the output of the \code{generator}
 function (i.e. take a data.frame or matrix as input) and output another
-data.frame or matrix. A convenience function \code{\link{function_list}} is 
+data.frame or matrix. A convenience function \code{\link{function_list}} is
 provided by this package to specify transformations as a list of functions,
- which take the whole datamatrix _Z_ as single argument and can be used to
- apply specific transformations to the columns of that matrix. See the 
- documentation for \code{\link{function_list}} for details.
+which take the whole datamatrix \code{Z} as single argument and can be used to
+apply specific transformations to the columns of that matrix. See the
+documentation for \code{\link{function_list}} for details.
 }
 
 \section{Post-processing}{
@@ -96,8 +91,8 @@ Post-processing the datamatrix is based on \code{\link{process_data}}.
 }
 
 \seealso{
-\code{\link{simdesign}}, 
-\code{\link{mvtnorm_simdesign}}, 
+\code{\link{simdesign}},
+\code{\link{mvtnorm_simdesign}},
 \code{\link{conditional_simulate_data}},
 \code{\link{process_data}}
 }

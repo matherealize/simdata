@@ -60,10 +60,12 @@ is_collinear <- function(x) {
 #' Matrix with user supplied entries.
 #'
 #' @seealso
-#' \code{\link{cor_to_upper}}
+#' `\link{cor_to_upper}`
 #'
 #' @examples
+#' \dontrun{
 #' cor_from_upper(2, rbind(c(1,2,0.8)))
+#' }
 #'
 #' @export
 cor_from_upper <- function(n_var, entries = NULL) {
@@ -85,7 +87,7 @@ cor_from_upper <- function(n_var, entries = NULL) {
 }
 
 #' @title Convert correlation matrix to specification used by
-#' \code{cor_from_upper}
+#' `cor_from_upper`
 #'
 #' @param m
 #' Symmetric correlation matrix.
@@ -96,7 +98,7 @@ cor_from_upper <- function(n_var, entries = NULL) {
 #' input correlation matrix.
 #'
 #' @seealso
-#' \code{\link{cor_from_upper}}
+#' `\link{cor_from_upper}`
 #'
 #' @export
 cor_to_upper <- function(m) {
@@ -116,7 +118,7 @@ cor_to_upper <- function(m) {
 #' @title Convert covariance matrix to correlation matrix
 #' 
 #' @description 
-#' Wrapper for \code{stats::cov2cor}.
+#' Wrapper for `\link[stats:cov2cor]{stats::cov2cor}`.
 #' 
 #' @param m
 #' Symmetric covariance matrix.
@@ -125,7 +127,7 @@ cor_to_upper <- function(m) {
 #' Symmetric correlation matrix.
 #' 
 #' @seealso 
-#' \code{\link{cor_to_cov}}
+#' `\link{cor_to_cov}`
 #' 
 #' @export
 cov_to_cor <- function(m) {
@@ -145,7 +147,7 @@ cov_to_cor <- function(m) {
 #' Symmetric covariance matrix.
 #' 
 #' @seealso 
-#' \code{\link{cov_to_cor}}
+#' `\link{cov_to_cor}`
 #' 
 #' @export
 cor_to_cov <- function(m, sds = NULL) {

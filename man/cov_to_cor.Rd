@@ -13,7 +13,7 @@ cov_to_cor(m)
 Symmetric correlation matrix.
 }
 \description{
-Wrapper for \code{stats::cov2cor}.
+Wrapper for \code{\link[stats:cov2cor]{stats::cov2cor}}.
 }
 \seealso{
 \code{\link{cor_to_cov}}

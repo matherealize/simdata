@@ -12,16 +12,16 @@
 #'
 #' @details
 #' Functions are passed into the post-processor as a named list. The name
-#' \code{f} of the list entry is the function to be applied via \code{\link{do.call}}.
+#' `f` of the list entry is the function to be applied via `\link{do.call}`.
 #' The list entry itself is another named list, specifying the arguments
-#' to the function \code{f} as named arguments.
+#' to the function `f` as named arguments.
 #'
 #' The functions must take a matrix or data.frame as first argument and
 #' return another matrix or data.frame of the same dimensions as
 #' single output.
 #'
-#' Examples of post-processing steps are truncation (\code{\link{process_truncate}})
-#' or centering / standardizing data (via \code{\link{scale}}, see example section
+#' Examples of post-processing steps are truncation (`\link{process_truncate}`)
+#' or centering / standardizing data (via `\link{scale}`, see example section
 #' below).
 #'
 #' Can be useful to apply on simulated datasets, even outside of the
@@ -40,7 +40,7 @@
 #' }
 #' 
 #' @seealso 
-#' \code{\link{process_truncate}}
+#' `\link{process_truncate}`
 #'
 #' @export
 process_data <- function(X, functions = list()) {
@@ -60,17 +60,17 @@ process_data <- function(X, functions = list()) {
 #' Matrix or Data.frame.
 #' @param truncate_multipliers
 #' Vector of truncation parameters. Either a single value which is
-#' replicated as necessaary or of same dimension as \code{ncol(X)}.
+#' replicated as necessaary or of same dimension as `ncol(X)`.
 #' If any vector entry is NA, the corresponding column will not be
 #' truncated. See details.
 #'
 #' @details
 #' Truncation is processed as follows:
 #' \enumerate{
-#' \item Compute the 1st and 3rd quartile q1 / q3 of variables in _X_.
-#' \item Multiply these quantities by values in \code{truncate_final} to obtain
-#' L and U. If a value is NA, the corresponding variable is not truncated.
-#' \item Set any value smaller / larger than L / U to L / U.
+#' \item Compute the 1st and 3rd quartile q1 / q3 of variables in `X`.
+#' \item Multiply these quantities by values in `truncate_final` to obtain
+#' _L_ and _U_. If a value is NA, the corresponding variable is not truncated.
+#' \item Set any value smaller / larger than _L_ / _U_ to _L_ / _U_.
 #' }
 #'
 #' @return

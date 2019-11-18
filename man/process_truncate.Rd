@@ -23,9 +23,9 @@ Truncate columns of datamatrix
 \details{
 Truncation is processed as follows:
 \enumerate{
-\item Compute the 1st and 3rd quartile q1 / q3 of variables in _X_.
+\item Compute the 1st and 3rd quartile q1 / q3 of variables in \code{X}.
 \item Multiply these quantities by values in \code{truncate_final} to obtain
-L and U. If a value is NA, the corresponding variable is not truncated.
-\item Set any value smaller / larger than L / U to L / U.
+\emph{L} and \emph{U}. If a value is NA, the corresponding variable is not truncated.
+\item Set any value smaller / larger than \emph{L} / \emph{U} to \emph{L} / \emph{U}.
 }
 }

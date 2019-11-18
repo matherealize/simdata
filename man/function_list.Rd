@@ -7,7 +7,7 @@
 function_list(...)
 }
 \arguments{
-\item{...}{Named or unnamed arguments, each of which is a function taking exactly 
+\item{...}{Named or unnamed arguments, each of which is a function taking exactly
 one input. See details.}
 }
 \value{
@@ -18,15 +18,15 @@ Apply list of functions to input
 }
 \details{
 This is a convenience function which takes a number of functions and returns
-another function which applies all of the user specified functions to a new 
+another function which applies all of the user specified functions to a new
 input, and collects the results as data.frame.
 
-Each of the user specified functions is expected to take a single input. 
+Each of the user specified functions is expected to take a single input.
 This is useful to e.g. transform columns of a data.frame. See the example.
 }
 \note{
-This function works fine without naming the input arguments, but the 
-resulting data.frames have empty column names if that is the case. Thus, 
+This function works fine without naming the input arguments, but the
+resulting data.frames have empty column names if that is the case. Thus,
 it is recommended to only pass named function arguments.
 }
 \examples{
