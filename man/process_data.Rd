@@ -4,10 +4,10 @@
 \alias{process_data}
 \title{Post-processing of datamatrix}
 \usage{
-process_data(x, functions = list())
+process_data(X, functions = list())
 }
 \arguments{
-\item{x}{Matrix or Data.frame.}
+\item{X}{Matrix or Data.frame.}
 
 \item{functions}{List of lists, specifying functions to be applied as well as their
 arguments. See details.}
@@ -17,7 +17,7 @@ Applies functions to a matrix or data.frame.
 }
 \details{
 Functions are passed into the post-processor as a named list. The name
-\code{f} of the list entry is the function to be applied via do.call.
+\code{f} of the list entry is the function to be applied via \code{\link{do.call}}.
 The list entry itself is another named list, specifying the arguments
 to the function \code{f} as named arguments.
 
@@ -25,10 +25,11 @@ The functions must take a matrix or data.frame as first argument and
 return another matrix or data.frame of the same dimensions as
 single output.
 
-Examples of post-processing steps are truncation (\code{\link{truncate}})
-or centering / standardizing data.
+Examples of post-processing steps are truncation (\code{\link{process_truncate}})
+or centering / standardizing data (via \code{\link{scale}}, see example section
+below).
 
-Can be useful to apply on simulated datasets outside of the
+Can be useful to apply on simulated datasets, even outside of the
 simulation function (e.g. when standardization is only required at the
 modeling step).
 }
@@ -39,8 +40,11 @@ functions is not checked either.
 }
 \examples{
 \dontrun{
-process_data(diag(5), functions = list(scale = list(center = TRUE,
-scale = FALSE)))
+process_data(diag(5), 
+  functions = list(scale = list(center = TRUE, scale = FALSE)))
 }
 
+}
+\seealso{
+\code{\link{process_truncate}}
 }

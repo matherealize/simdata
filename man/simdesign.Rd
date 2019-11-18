@@ -65,7 +65,7 @@ directly saved from user input):
 }
 \description{
 Stores information necessary to simulate and visualize datasets based
-on underlying distribution *Z*.
+on underlying distribution _Z_.
 }
 \details{
 The \code{simdesign} class should be used in the following workflow:

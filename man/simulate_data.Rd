@@ -40,7 +40,7 @@ datamatrix *X* before returning it. See \code{\link{process_data}}.}
 \item{seed}{Set random seed to ensure reproducibility of results.}
 }
 \value{
-Data.frame or matrix with \code{n_obs} rows for simulated dataset *X*.
+Data.frame or matrix with \code{n_obs} rows for simulated dataset _X_.
 }
 \description{
 Generate simulated dataset based on transformation of
@@ -49,11 +49,11 @@ an underlying base distribution.
 \details{
 Data is generated using the following procedure:
 \enumerate{
-\item An underlying dataset *Z* is sampled from some distribution. This is 
+\item An underlying dataset _Z_ is sampled from some distribution. This is 
 done by a call to the \code{generator} function. 
-\item *Z* is then transformed into the final dataset *X* by applying the
-\code{transform} function to *Z*.
-\item *X* is post-processed if specified (e.g. truncation to avoid
+\item _Z_ is then transformed into the final dataset _X_ by applying the
+\code{transform} function to _Z_.
+\item _X_ is post-processed if specified (e.g. truncation to avoid
 outliers).
 }
 }
@@ -85,7 +85,7 @@ Transformations should be applicable to the output of the \code{generator}
 function (i.e. take a data.frame or matrix as input) and output another
 data.frame or matrix. A convenience function \code{\link{function_list}} is 
 provided by this package to specify transformations as a list of functions,
- which take the whole datamatrix *Z* as single argument and can be used to
+ which take the whole datamatrix _Z_ as single argument and can be used to
  apply specific transformations to the columns of that matrix. See the 
  documentation for \code{\link{function_list}} for details.
 }
