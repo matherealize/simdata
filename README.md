@@ -10,3 +10,8 @@ devtools::install_github("matherealize/simulator")
 # to also build vignettes locally use
 # devtools::install_github("matherealize/simulator", build_vignettes = TRUE)
 ```
+
+## Useage
+Please take a look at the package vignette:
+
+- [Introduction to simulatoR package and basic workflow](https://matherealize.github.io/Demo_simulation.html)
