@@ -3,20 +3,22 @@
 #'
 #' @param x
 #' Matrix or Data.frame.
+#' @param eps
+#' Threshold for standard deviation below which a column is considered to be constant. 
 #'
 #' @return
-#' TRUE if one of the columns has standard deviation of 0, else FALSE.
+#' TRUE if one of the columns has standard deviation of below `eps``, else FALSE.
 #'
 #' @note
 #' Prints a warning if constant is found.
 #'
 #' @export
-contains_constant <- function(x) {
+contains_constant <- function(x, eps = .Machine$double.eps) {
     x = as.matrix(x)
-    val = any(apply(x, 2, sd) == 0)
+    val = any(apply(x, 2, sd) < eps)
     
     if (val)
-        warning("Matrix contains constant column.\n")
+        warning("contains_constant: Matrix contains constant column.\n")
     
     val
 }
@@ -37,7 +39,7 @@ is_collinear <- function(x) {
     val = qr(x)$rank < ncol(x)
     
     if (val)
-        warning("Matrix is not full rank.\n")
+        warning("is_collinear: Matrix is not full rank.\n")
     
     val
 }
@@ -157,7 +159,7 @@ cor_to_cov <- function(m, sds = NULL) {
     diag(sds) %*% m %*% diag(sds)
 }
 
-# Transformation functions ##########################################
+# Function helper ###################################################
 #' @title Apply list of functions to input
 #' 
 #' @param ...
@@ -167,10 +169,19 @@ cor_to_cov <- function(m, sds = NULL) {
 #' @details 
 #' This is a convenience function which takes a number of functions and returns
 #' another function which applies all of the user specified functions to a new 
-#' input, and collects the results as data.frame.
+#' input, and collects the results as list or data.frame.
+#' This is useful to e.g. transform columns of a data.frame or check 
+#' the validity of a matrix during simulations. See the example here and 
+#' in `\link{simulate_data_conditional}`.
 #' 
-#' Each of the user specified functions is expected to take a single input. 
-#' This is useful to e.g. transform columns of a data.frame. See the example.
+#' The assumptions for the individual functions are: 
+#' 
+#' \itemize{
+#' \item Each function is expected to take a single input. 
+#' \item Each function is expected to output a result consistent with the 
+#' other functions (i.e. same output length) to ensure that the results can be
+#' summarized as a data.frame.
+#' } 
 #' 
 #' @note 
 #' This function works fine without naming the input arguments, but the 

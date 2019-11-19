@@ -11,7 +11,7 @@
 #' @param seed
 #' Set random seed to ensure reproducibility of results.
 #' @param ...
-#' Further arguments passed to `generator`` function.
+#' Further arguments passed to `generator` function.
 #' 
 #' @return
 #' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
@@ -54,7 +54,7 @@
 #' @seealso
 #' `\link{simdesign}`, 
 #' `\link{mvtnorm_simdesign}`, 
-#' `\link{conditional_simulate_data}`,
+#' `\link{simulate_data_conditional}`,
 #' `\link{process_data}`
 #'
 #' @export
@@ -111,24 +111,26 @@ simulate_data.simdesign <- function(design,
                   seed = seed)
 }
 
-
-# TODO
+# TODO test where design is used to transform data to contain constant column
+# or collinear!!
 # Conditional Data Simulation #######################################
 #' @title Simulate data which satisfies certain conditions
 #'
 #' @description
 #' Generate simulated dataset based on transformation of
-#' multivariate gaussian distribution while checking certain
+#' an underlying base distribution while checking that certain
 #' conditions are met.
 #'
+#' @template simulate_data_template
 #' @param reject
-#' List of functions. Specifies when a simulated final datamatrix X should
-#' be rejected. Functions must take X as single input and output TRUE if
-#' condition IS NOT met / FALSE if condition IS met and matrix can be
-#' accepted. See details.
+#' Function which takes a matrix or data.frame `X` as single input and outputs 
+#' TRUE or FALSE. Specifies when a simulated final datamatrix `X` should
+#' be rejected. Functions must output TRUE if condition IS NOT met / FALSE if 
+#' condition IS met and matrix can be accepted. Intended to be used with 
+#' `\link{function_list}`. See details.
 #' @param reject_max_iter
-#' In case of rejection, how many times should a new datamatrix be simulated
-#' until the conditions in `reject` are met?
+#' Intger > 0. In case of rejection, how many times should a new datamatrix be
+#' simulated until the conditions in `reject` are met?
 #' @param on_reject
 #' If "stop", an error is returned if after `reject_max_iter` times no
 #' suitable datamatrix X could be found. If "current", the current datamatrix
@@ -138,66 +140,68 @@ simulate_data.simdesign <- function(design,
 #' All further parameters are passed to `\link{simulate_data}`.
 #'
 #' @return
-#' Data.frame with simulated datamatrix X if a suitable dataset can be found
-#' or the iteration limit is hit.
+#' Data.frame or matrix with `n_obs` rows for simulated dataset `X` if all
+#' conditions are met within the iteration limit. Otherwise NULL.
 #'
 #' @details
-#' For details on generating and post-processing datasets, see
+#' For details on generating, transforming and post-processing datasets, see
 #' `\link{simulate_data}`. This function simulates data conditional
-#' on certain requirements that must be met by the final datamatrix X.
+#' on certain requirements that must be met by the final datamatrix `X`.
 #' This checking is conducted on the output of `simulate_data` (i.e.
 #' also includes possible post-processing steps).
 #'
 #' @section Rejecting Datasets:
 #' Examples for restrictions include
 #' variance restrictions (e.g. no constant columns which could happen due
-#' to extreme transformations of the initial gaussian distribution Z), ensuring
+#' to extreme transformations of the initial gaussian distribution `Z`), ensuring
 #' a sufficient number of observations in a given class (e.g. certain
 #' binary variables should have at least x\% events) or preventing
-#' multicollinearity (e.g. X must have full column rank). If one of the
-#' functions in `reject` evaluates to FALSE, the current datamatrix
-#' X is rejected.
+#' multicollinearity (e.g. `X` must have full column rank). If `reject` 
+#' evaluates to FALSE, the current datamatrix `X` is rejected.
 #' In case of rejection, new datasets can be simulated until the conditions
 #' are met or a given maximum iteration limit is hit (`reject_max_iter`),
-#' after which the last datamatrix is returned or an error is reported.
+#' after which the latest datamatrix is returned or an error is reported.
 #'
-#' @section Rejection Functions:
-#' Rejection function templates are found in `\link{is_collinear}` and
-#' `\link{contains_constant}`.
-#'
-#' @note
-#' Note that `relations` specifies the correlation / covariance
-#' of the underlying gaussian data Z and thus does not directly translate into
-#' correlations between the variables of the final datamatrix X.
-#'
-#' This function is best used in conjunction with the `design` S3 class,
-#' which facilitates further data visualization and conveniently stores
-#' information as a template for simulation tasks.
+#' @section Rejection Function:
+#' The `reject` function should take a single input (a data.frame or matrix) and
+#' output TRUE if the dataset is to be rejected or FALSE if it is to be accepted.
+#' This package provides the `\link{function_list}` convenience function which
+#' allows to easily create a rejection function which assesses several 
+#' conditions on the input dataset by simply passing individual test functions
+#' to `function_list`. Such test function templates are found in 
+#' `\link{is_collinear}` and `\link{contains_constant}`. See the example
+#' below.
 #'
 #' @seealso
-#' `\link{design}`, 
+#' `\link{simdesign}`, 
 #' `\link{simulate_data}`,
+#' `\link{function_list}`,
 #' `\link{is_collinear}`, 
 #' `\link{contains_constant}`
+#' 
+#' @examples
+#' \dontrun{
+#' dsgn = mvtnorm_simdesign(diag(5))
+#' simulate_data_conditional(dsgn, 100, 
+#'    reject = function_list(is_collinear, contains_constant))
+#' }
 #'
 #' @export
-conditional_simulate_data <- function(relations, n_obs,
-                                      reject = NULL,
+simulate_data_conditional <- function(generator, 
+                                      n_obs = 1,
+                                      reject = function(x) TRUE,
                                       reject_max_iter = 10,
-                                      on_reject = "ignore", ...) {
+                                      on_reject = "ignore", 
+                                      ...) {
     simulation_success = FALSE
 
     while (!simulation_success) {
-        x = simulate_data(relations, n_obs, ...)
-
-        # check rejections
-        if (is.null(reject)) {
-            simulation_success = TRUE
-        } else {
-            simulation_success = all(!sapply(reject, function(f, x) f(x), x))
-        }
-
         reject_max_iter = reject_max_iter - 1
+        
+        x = simulate_data(generator, n_obs, ...)
+        
+        # check rejections
+        simulation_success = !any(unlist(reject(x)))
 
         if (reject_max_iter == 0) {
             if (!simulation_success) {
@@ -215,5 +219,5 @@ conditional_simulate_data <- function(relations, n_obs,
         }
     }
 
-    return(x)
+    x
 }
