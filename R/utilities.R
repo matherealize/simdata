@@ -165,6 +165,8 @@ cor_to_cov <- function(m, sds = NULL) {
 #' @param ...
 #' Named or unnamed arguments, each of which is a function taking exactly 
 #' one input. See details.
+#' @param stringsAsFactors,check.names
+#' Arguments of `\link[base:data.frame]{data.frame}`.
 #' 
 #' @details 
 #' This is a convenience function which takes a number of functions and returns
@@ -198,13 +200,46 @@ cor_to_cov <- function(m, sds = NULL) {
 #' } 
 #' 
 #' @return 
-#' Function with a single input.
+#' Function with a single input which outputs a data.frame.
+#' 
+#' @seealso 
+#' `\link[base:data.frame]{data.frame}`
 #' 
 #' @export
-function_list <- function(...) {
+function_list <- function(..., 
+                          stringsAsFactors = default.stringsAsFactors(), 
+                          check.names = TRUE) {
     fct_list = list(...)
     
     function(m) {
-        do.call(data.frame, lapply(fct_list, function(f, x) f(x), m))
+        do.call(data.frame, 
+                append(
+                    lapply(fct_list, function(f, x) f(x), m), 
+                    list(
+                        stringsAsFactors = stringsAsFactors, 
+                        check.names = check.names
+                        )
+                    )
+        )
     }
+}
+
+#' @title Helper to apply functions
+#' 
+#' @description 
+#' Used to make use of apply-like operations, regardless of wether the input 
+#' is a matrix or a data.frame
+apply_array <- function(obj, dim, fun) {
+    if (is.matrix(obj)) {
+        return(apply(obj, dim, fun))
+    }
+    if (is.data.frame(obj)) {
+        if (dim == 2) {
+            return(sapply(obj, fun))            
+        } else {
+            return(apply(obj, dim, fun))
+        }
+    }
+    
+    NULL
 }
