@@ -224,7 +224,7 @@ mvtnorm_simdesign <- function(relations_initial,
                                              method = method)
     
     # setup simulation design
-    simdesign(
+    dsgn = simdesign(
         generator = generator, 
         mean_initial = mean_initial, 
         sd_initial = sd_initial, 
@@ -232,4 +232,8 @@ mvtnorm_simdesign <- function(relations_initial,
         name = name,
         ...
     )
+    
+    class(dsgn) = c("mvtnorm_simdesign", class(dsgn))
+    
+    dsgn
 }
