@@ -3,6 +3,7 @@
 \name{simulate_data}
 \alias{simulate_data}
 \alias{simulate_data.default}
+\alias{simulate_data.simdesign}
 \title{Simulate design matrix}
 \usage{
 simulate_data(generator, ...)
@@ -10,6 +11,8 @@ simulate_data(generator, ...)
 \method{simulate_data}{default}(generator, n_obs = 1,
   transform_initial = base::identity, names_final = NULL,
   prefix_final = NULL, process_final = list(), seed = NULL, ...)
+
+\method{simulate_data}{simdesign}(design, n_obs, seed = NULL)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
@@ -17,7 +20,7 @@ assumend it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
 \pkg{extraDistr} do. See details.}
 
-\item{...}{Further arguments passed to `generator`` function.}
+\item{...}{Further arguments passed to \code{generator} function.}
 
 \item{n_obs}{Number of simulated observations.}
 
@@ -58,6 +61,8 @@ outliers).
 \itemize{
 \item \code{default}: Function to be used if no \code{\link{simdesign}}
 S3 class is used.
+
+\item \code{simdesign}: Function to be used with \code{\link{simdesign}} S3 class.
 }}
 
 \note{
@@ -93,6 +98,6 @@ Post-processing the datamatrix is based on \code{\link{process_data}}.
 \seealso{
 \code{\link{simdesign}},
 \code{\link{mvtnorm_simdesign}},
-\code{\link{conditional_simulate_data}},
+\code{\link{simulate_data_conditional}},
 \code{\link{process_data}}
 }

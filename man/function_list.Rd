@@ -19,10 +19,19 @@ Apply list of functions to input
 \details{
 This is a convenience function which takes a number of functions and returns
 another function which applies all of the user specified functions to a new
-input, and collects the results as data.frame.
+input, and collects the results as list or data.frame.
+This is useful to e.g. transform columns of a data.frame or check
+the validity of a matrix during simulations. See the example here and
+in \code{\link{simulate_data_conditional}}.
 
-Each of the user specified functions is expected to take a single input.
-This is useful to e.g. transform columns of a data.frame. See the example.
+The assumptions for the individual functions are:
+
+\itemize{
+\item Each function is expected to take a single input.
+\item Each function is expected to output a result consistent with the
+other functions (i.e. same output length) to ensure that the results can be
+summarized as a data.frame.
+}
 }
 \note{
 This function works fine without naming the input arguments, but the

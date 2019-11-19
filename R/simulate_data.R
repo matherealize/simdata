@@ -97,7 +97,7 @@ simulate_data.default <- function(generator,
     x
 }
 
-#' @describeIn `simulate_data` Function to be used with `\link{simdesign}` S3 class.
+#' @describeIn simulate_data Function to be used with `\link{simdesign}` S3 class.
 #'
 #' @export
 simulate_data.simdesign <- function(design,

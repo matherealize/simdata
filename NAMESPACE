@@ -2,7 +2,6 @@
 
 S3method(simulate_data,default)
 S3method(simulate_data,simdesign)
-export(conditional_simulate_data)
 export(contains_constant)
 export(cor_from_upper)
 export(cor_to_cov)
@@ -18,3 +17,4 @@ export(process_data)
 export(process_truncate)
 export(simdesign)
 export(simulate_data)
+export(simulate_data_conditional)
