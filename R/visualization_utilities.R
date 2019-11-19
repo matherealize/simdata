@@ -4,11 +4,10 @@
 #'
 #' @description
 #' Useful to visualize e.g. the associations of the initial multivariate
-#' gaussian distribution used by \code{\link{design}} and
-#' \code{\link{simulate_data}}.
+#' gaussian distribution used by `\link{mvtnorm_simdesign}`.
 #'
 #' @param obj
-#' Correlation matrix.
+#' Correlation matrix or S3 class object which has a class method available (see below).
 #' @param categorical_indices
 #' Vector of indices of variables which should be drawn as rectangles
 #' (i.e. represent categorical data).
@@ -17,7 +16,10 @@
 #' @param cor_cutoff
 #' Threshold of absolute correlation below which nodes are not considered
 #' as connected. Useful to control complexity of drawn network.
-#' Set to \code{NULL} to disable.
+#' Set to NULL to disable.
+#' @param vertex_labels
+#' Character vector of length `nrow(obj)` of labels for vertices. If not NULL, 
+#' overrides the `vertex_label_prefix` argument.
 #' @param vertex_label_prefix
 #' String which is added as prefix to node labels.
 #' @param edge_width_function
@@ -27,29 +29,53 @@
 #' Set random seed to ensure reproducibility of results. Can be fixed to
 #' obtain same layout but vary edge widths, correlation functions etc. Can
 #' also be used to obtain nicer looking graph layouts.
-#'
-#' @details
-#' For plotting arguments see \code{igraph::plot}. Arguments via ... are
-#' passed directly to \code{igraph::plot}.
+#' @param return_network
+#' If TRUE, the `igraph` network object is returned and can be plotted by 
+#' the user using e.g. the interactive `\link[igraph:tkplot]{igraph::tkplot}` 
+#' function.
+#' @param mar
+#' `mar` argument to the `\link[graphics:par]{par}` function to set 
+#' margins of the plot (often required when the axes should be drawn). 
+#' A numerical vector of the form c(bottom, left, top, right) which gives the 
+#' number of lines of margin to be specified on the four sides of the plot. 
+#' The default is c(5, 4, 4, 2) + 0.1 
+#' @param ...
+#' Passed to `\link[igraph:plot.igraph]{igraph::plot}`.
+#' 
+#' @details 
+#' For an explanation of all parameters not listed here, please refer to
+#' `\link[igraph:plot.igraph]{igraph::plot}`.
 #'
 #' @seealso
-#' \code{\link{plot_initial_cor_network}},
-#' \code{\link{plot_transformed_cor_network}}
+#' `\link{plot_cor_network.mvtnorm_simdesign}`,
+#' `\link{plot_estimated_cor_network}`
 #'
 #' @export
-plot_cor_network <- function(obj, categorical_indices = NULL,
-                             decimals = 2,
-                             cor_cutoff = 0.1,
-                             vertex_label_prefix = "z",
-                             edge_width_function = function(x) x * 10,
-                             vertex.size = 12, margin = 0, asp = 0,
-                             vertex.color = "#fff7bc",
-                             vertex.frame.color = "#d95f0e",
-                             vertex.label.color = "black",
-                             edge.color = "#fec44f",
-                             edge.label.color = "black",
-                             seed = NULL, ...) {
-    nodes = data.frame(id = 1:nrow(obj))
+plot_cor_network <- function(obj, ...) {
+    UseMethod("plot_cor_network", obj)
+}
+
+#' @describeIn plot_cor_network Function to be used for correlation matrix.
+#'
+#' @export
+#' @method plot_cor_network default
+plot_cor_network.default <- function(obj, categorical_indices = NULL,
+                                     decimals = 2,
+                                     cor_cutoff = 0.1,
+                                     vertex_labels = NULL,
+                                     vertex_label_prefix = "z",
+                                     edge_width_function = function(x) x * 10,
+                                     seed = NULL,
+                                     return_network = FALSE, 
+                                     mar = c(0, 0, 0, 0),
+                                     vertex.size = 12, margin = 0, asp = 0,
+                                     vertex.color = "#fff7bc",
+                                     vertex.frame.color = "#d95f0e",
+                                     vertex.label.color = "black",
+                                     edge.color = "#fec44f",
+                                     edge.label.color = "black",
+                                     ...) {
+    nodes = data.frame(id = 1:ncol(obj))
     associations = cor_to_upper(obj)
 
     if (!is.null(cor_cutoff))
@@ -61,58 +87,57 @@ plot_cor_network <- function(obj, categorical_indices = NULL,
     net = igraph::graph_from_data_frame(d = edges, vertices = nodes,
                                         directed = FALSE)
 
-    igraph::V(net)$label = paste0(vertex_label_prefix, nodes$id)
+    if (is.null(vertex_labels)) {
+        igraph::V(net)$label = paste0(vertex_label_prefix, nodes$id)    
+    } else igraph::V(net)$label = vertex_labels
+    
     igraph::V(net)$shape = "circle"
     if (!is.null(categorical_indices))
         igraph::V(net)$shape[categorical_indices] = "rectangle"
 
     igraph::E(net)$width = edge_width_function(abs(obj[cbind(edges$from, edges$to)]))
     igraph::E(net)$label = round(obj[cbind(edges$from, edges$to)], decimals)
+    
+    if (return_network)
+        return(net)
 
     if (!is.null(seed))
         set.seed(seed)
 
     layout = igraph::layout_with_fr(net, start.temp = igraph::vcount(net))
 
-    op = par(mar = c(0, 0, 0, 0))
-    plot(net,
-         vertex.size = vertex.size,
-         margin = margin,
-         layout = layout, rescale = TRUE,
-         asp = asp,
-         vertex.color = vertex.color,
-         vertex.frame.color = vertex.frame.color,
-         vertex.label.color = vertex.label.color,
-         edge.color = edge.color,
-         edge.label.color = edge.label.color, ...)
-    par(op)
+    op = par(mar = mar)
+    invisible(on.exit(par(op)))
+    igraph::plot.igraph(
+        net,
+        vertex.size = vertex.size,
+        margin = margin,
+        layout = layout, rescale = TRUE,
+        asp = asp,
+        vertex.color = vertex.color,
+        vertex.frame.color = vertex.frame.color,
+        vertex.label.color = vertex.label.color,
+        edge.color = edge.color,
+        edge.label.color = edge.label.color, ...)
 }
 
-#' @title Visualize correlation of initial
-#' multivariate gaussian distribution of simulation design
-#'
-#' @param obj
-#' \code{design} S3 class object.
-#'
-#' @details
-#' For explanation of further parameters, see \code{\link{plot_cor_network}}.
-#'
-#' @seealso
-#' \code{\link{plot_cor_network}}
+#' @describeIn plot_cor_network Function to be used with `\link{mvtnorm_simdesign}` 
+#' S3 class object to visualize initial correlation network of the underlying
+#' multivariate normal distribution.
 #'
 #' @export
-plot_initial_cor_network <- function(obj, ...) {
+#' @method plot_cor_network mvtnorm_simdesign
+plot_cor_network.mvtnorm_simdesign <- function(obj, ...) {
     plot_cor_network(obj$cor_initial, ...)
 }
 
-#' @title Visualize estimated correlation of final simulated datamatrix
+#' @title Visualize estimated correlation matrix as a network
 #'
 #' @description
-#' Based on approximation via simulation of the final datamatrix specified by
-#' given simulation design.
+#' Based on approximation via simulation specified by given simulation design.
 #'
 #' @param obj
-#' \code{design} S3 class object.
+#' S3 class object of type `simdesign` (or inheriting from it).
 #' @param n_obs
 #' Number of simulated observations.
 #' @param cor_type
@@ -120,28 +145,33 @@ plot_initial_cor_network <- function(obj, ...) {
 #' correlation) or a user specified function, taking one input (a data.frame)
 #' and returning a matrix.
 #' @param show_categorical
-#' If TRUE, plots categorical variables specially. Determined by
-#' \code{transform_type} slot of \code{design} object.
+#' If TRUE, marks categorical variables differently from numeric ones.
+#' Determined by the `types_final` slot of the `obj` argument.
+#' @param ...
+#' Passed to `\link{plot_cor_network}`.
 #'
-#' @details
-#' For explanation of further parameters, see \code{\link{plot_cor_network}}.
+#' @details 
+#' This function is useful to estimate the correlation network of a simulation
+#' setup after the initial underlying distribution `Z` has been transformed to 
+#' the final dataset `X`.
 #'
 #' @seealso
-#' \code{\link{plot_cor_network}}
+#' `\link{plot_cor_network}`
 #'
 #' @export
-plot_final_cor_network <- function(obj, n_obs = 100000,
-                                   cor_type = "p",
-                                   seed = NULL,
-                                   show_categorical = TRUE, ...) {
+plot_estimated_cor_network <- function(obj, n_obs = 100000,
+                                       cor_type = "p",
+                                       seed = NULL,
+                                       show_categorical = TRUE, 
+                                       ...) {
     if (!is.null(seed))
         set.seed(seed)
 
     sim_data = simulate_data(obj, n_obs = n_obs)
 
     if (show_categorical) {
-        categorical_indices = which(obj$transform_type == "logical" |
-                                        obj$transform_type == "factor")
+        categorical_indices = which(obj$types_final == "logical" |
+                                        obj$types_final == "factor")
     } else categorical_indices = NULL
 
     f_cor = function(x) cor(x, method = "p")
@@ -152,7 +182,8 @@ plot_final_cor_network <- function(obj, n_obs = 100000,
         f_cor = cor_type
 
     relations = f_cor(sim_data)
-    plot_cor_network(relations, seed = seed,
-                     vertex_label_prefix = "x",
-                     categorical_indices = categorical_indices, ...)
+    plot_cor_network(relations, 
+                     seed = seed,
+                     categorical_indices = categorical_indices, 
+                     vertex_labels = obj$names_final, ...)
 }
