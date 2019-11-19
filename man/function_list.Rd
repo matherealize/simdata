@@ -4,14 +4,17 @@
 \alias{function_list}
 \title{Apply list of functions to input}
 \usage{
-function_list(...)
+function_list(..., stringsAsFactors = default.stringsAsFactors(),
+  check.names = TRUE)
 }
 \arguments{
 \item{...}{Named or unnamed arguments, each of which is a function taking exactly
 one input. See details.}
+
+\item{stringsAsFactors, check.names}{Arguments of \code{\link[base:data.frame]{data.frame}}.}
 }
 \value{
-Function with a single input.
+Function with a single input which outputs a data.frame.
 }
 \description{
 Apply list of functions to input
@@ -47,4 +50,7 @@ f = function_list(
 f(diag(2))
 } 
 
+}
+\seealso{
+\code{\link[base:data.frame]{data.frame}}
 }

@@ -60,7 +60,7 @@ directly saved from user input):
 \item{\code{types_final}}{}
 \item{\code{names_final}}{}
 \item{\code{process_final}}{}
-\item{\code{...}}{Further information as passed by the user.}
+\item{\code{entries for further information as passed by the user}}{}
 }
 }
 \description{
@@ -96,5 +96,5 @@ pass it to this function along with the other arguments. See
 \seealso{
 \code{\link{mvtnorm_simdesign}},
 \code{\link{simulate_data}},
-\code{\link{conditional_simulate_data}}
+\code{\link{simulate_data_conditional}}
 }

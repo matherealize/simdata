@@ -12,12 +12,15 @@ process_data(X, functions = list())
 \item{functions}{List of lists, specifying functions to be applied as well as their
 arguments. See details.}
 }
+\value{
+Matrix or data.frame with post-processing applied.
+}
 \description{
 Applies functions to a matrix or data.frame.
 }
 \details{
 Functions are passed into the post-processor as a named list. The name
-\code{f} of the list entry is the function to be applied via \code{\link{do.call}}.
+\code{f} of the list entry is the function to be applied via \code{\link[base:do.call]{base::do.call}}.
 The list entry itself is another named list, specifying the arguments
 to the function \code{f} as named arguments.
 

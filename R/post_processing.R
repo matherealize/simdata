@@ -12,7 +12,7 @@
 #'
 #' @details
 #' Functions are passed into the post-processor as a named list. The name
-#' `f` of the list entry is the function to be applied via `\link{do.call}`.
+#' `f` of the list entry is the function to be applied via `\link[base:do.call]{base::do.call}`.
 #' The list entry itself is another named list, specifying the arguments
 #' to the function `f` as named arguments.
 #'
@@ -32,6 +32,9 @@
 #' Use with caution - no error checking is done for now so the user has
 #' to take care of everything themselves! Furthermore, output of the
 #' functions is not checked either.
+#' 
+#' @return 
+#' Matrix or data.frame with post-processing applied.
 #'
 #' @examples
 #' \dontrun{

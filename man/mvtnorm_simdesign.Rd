@@ -67,19 +67,14 @@ the variables \code{n_var_final} and \code{types_final} will be inferred
 from the results if not already set correctly by the user.}
 }
 \value{
-List object with class attribute "simdesign" (S3 class) containing
-the following entries (if no further information given, entries are
-directly saved from user input):
+List object with class attribute "mvtnorm_simdesign" (S3 class), inheriting
+from "simdesign". It contains the same entries as a \code{\link{simdesign}} object
+but in addition the following entries:
 
 \describe{
-\item{\code{generator}}{}
-\item{\code{name}}{}
-\item{\code{transform_initial}}{}
-\item{\code{n_var_final}}{}
-\item{\code{types_final}}{}
-\item{\code{names_final}}{}
-\item{\code{process_final}}{}
-\item{\code{...}}{Further information as passed by the user.}
+\item{\code{mean_initial}}{}
+\item{\code{sd_initial}}{}
+\item{\code{cor_initial}}{Initial correlation matrix of multivariate normal distribution}
 }
 }
 \description{
@@ -113,5 +108,6 @@ the \code{transform} function to \code{Z}.
 \seealso{
 \code{\link{simdesign}},
 \code{\link{simulate_data}},
-\code{\link{conditional_simulate_data}}
+\code{\link{simulate_data_conditional}},
+\code{\link{plot_cor_network.mvtnorm_simdesign}}
 }

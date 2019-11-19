@@ -12,9 +12,6 @@
 #' Set random seed to ensure reproducibility of results.
 #' @param ...
 #' Further arguments passed to `generator` function.
-#' 
-#' @return
-#' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
 #'
 #' @details
 #' Data is generated using the following procedure:
@@ -50,6 +47,9 @@
 #' This function is best used in conjunction with the `\link{simdesign}`
 #' S3 class or any template based upon it, which facilitates further data 
 #' visualization and conveniently stores information as a template for simulation tasks.
+#' 
+#' @return
+#' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
 #'
 #' @seealso
 #' `\link{simdesign}`, 
@@ -66,6 +66,7 @@ simulate_data <- function(generator, ...) {
 #' S3 class is used.
 #'
 #' @export
+#' @method simulate_data default
 simulate_data.default <- function(generator, 
                                   n_obs = 1, 
                                   transform_initial = base::identity,
@@ -78,10 +79,10 @@ simulate_data.default <- function(generator,
     if (!is.null(seed))
         set.seed(seed)
 
-    # generate initial data matrix
+    # generate initial dataset
     x = generator(n_obs, ...)
     
-    # transform to final data matrix
+    # transform to final dataset
     x = transform_initial(x)
 
     # apply post-processing functions
@@ -100,6 +101,7 @@ simulate_data.default <- function(generator,
 #' @describeIn simulate_data Function to be used with `\link{simdesign}` S3 class.
 #'
 #' @export
+#' @method simulate_data simdesign
 simulate_data.simdesign <- function(design,
                                     n_obs,
                                     seed = NULL) {
@@ -122,6 +124,8 @@ simulate_data.simdesign <- function(design,
 #' conditions are met.
 #'
 #' @template simulate_data_template
+#' @param n_obs
+#' Number of simulated observations.
 #' @param reject
 #' Function which takes a matrix or data.frame `X` as single input and outputs 
 #' TRUE or FALSE. Specifies when a simulated final datamatrix `X` should
@@ -138,10 +142,6 @@ simulate_data.simdesign <- function(design,
 #' Otherwise, NULL is returned. In each case a warning is reported.
 #' @param ...
 #' All further parameters are passed to `\link{simulate_data}`.
-#'
-#' @return
-#' Data.frame or matrix with `n_obs` rows for simulated dataset `X` if all
-#' conditions are met within the iteration limit. Otherwise NULL.
 #'
 #' @details
 #' For details on generating, transforming and post-processing datasets, see
@@ -171,6 +171,10 @@ simulate_data.simdesign <- function(design,
 #' to `function_list`. Such test function templates are found in 
 #' `\link{is_collinear}` and `\link{contains_constant}`. See the example
 #' below.
+#' 
+#' @return
+#' Data.frame or matrix with `n_obs` rows for simulated dataset `X` if all
+#' conditions are met within the iteration limit. Otherwise NULL.
 #'
 #' @seealso
 #' `\link{simdesign}`, 

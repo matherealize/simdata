@@ -13,6 +13,8 @@ assumend it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
 \pkg{extraDistr} do. See details.}
 
+\item{n_obs}{Number of simulated observations.}
+
 \item{reject}{Function which takes a matrix or data.frame \code{X} as single input and outputs
 TRUE or FALSE. Specifies when a simulated final datamatrix \code{X} should
 be rejected. Functions must output TRUE if condition IS NOT met / FALSE if

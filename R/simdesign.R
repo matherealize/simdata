@@ -49,13 +49,13 @@
 #' \item{`types_final`}{}
 #' \item{`names_final`}{}
 #' \item{`process_final`}{}
-#' \item{`...`}{Further information as passed by the user.}
+#' \item{`entries for further information as passed by the user`}{}
 #' }
 #'
 #' @seealso
 #' `\link{mvtnorm_simdesign}`,
 #' `\link{simulate_data}`,
-#' `\link{conditional_simulate_data}`
+#' `\link{simulate_data_conditional}`
 #'
 #' @export
 simdesign <- function(generator,
@@ -112,7 +112,7 @@ simdesign <- function(generator,
     
     # infer data types if necessary
     if (is.null(design$types_final) | length(design$types_final) != n_var_res) {
-        design$types_final = apply(res, 2, class)
+        design$types_final = apply_array(res, 2, class)
     }
     
     # infer names if necessary
@@ -185,12 +185,22 @@ simdesign <- function(generator,
 #' of the underlying gaussian data `Z` and thus does not directly translate into
 #' correlations between the variables of the final datamatrix `X`.
 #'
-#' @inherit simdesign return
+#' @return
+#' List object with class attribute "mvtnorm_simdesign" (S3 class), inheriting
+#' from "simdesign". It contains the same entries as a `\link{simdesign}` object
+#' but in addition the following entries:
+#' 
+#' \describe{
+#' \item{`mean_initial`}{}
+#' \item{`sd_initial`}{}
+#' \item{`cor_initial`}{Initial correlation matrix of multivariate normal distribution}
+#' }
 #'
 #' @seealso
 #' `\link{simdesign}`,
 #' `\link{simulate_data}`,
-#' `\link{conditional_simulate_data}`
+#' `\link{simulate_data_conditional}`, 
+#' `\link{plot_cor_network.mvtnorm_simdesign}`
 #'
 #' @export
 mvtnorm_simdesign <- function(relations_initial,

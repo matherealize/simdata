@@ -2,18 +2,26 @@
 % Please edit documentation in R/visualization_utilities.R
 \name{plot_cor_network}
 \alias{plot_cor_network}
+\alias{plot_cor_network.default}
+\alias{plot_cor_network.mvtnorm_simdesign}
 \title{Visualize fixed correlation structure as a network}
 \usage{
-plot_cor_network(obj, categorical_indices = NULL, decimals = 2,
-  cor_cutoff = 0.1, vertex_label_prefix = "z",
-  edge_width_function = function(x) x * 10, vertex.size = 12,
-  margin = 0, asp = 0, vertex.color = "#fff7bc",
+plot_cor_network(obj, ...)
+
+\method{plot_cor_network}{default}(obj, categorical_indices = NULL,
+  decimals = 2, cor_cutoff = 0.1, vertex_labels = NULL,
+  vertex_label_prefix = "z", edge_width_function = function(x) x * 10,
+  seed = NULL, return_network = FALSE, mar = c(0, 0, 0, 0),
+  vertex.size = 12, margin = 0, asp = 0, vertex.color = "#fff7bc",
   vertex.frame.color = "#d95f0e", vertex.label.color = "black",
-  edge.color = "#fec44f", edge.label.color = "black", seed = NULL,
-  ...)
+  edge.color = "#fec44f", edge.label.color = "black", ...)
+
+\method{plot_cor_network}{mvtnorm_simdesign}(obj, ...)
 }
 \arguments{
-\item{obj}{Correlation matrix.}
+\item{obj}{Correlation matrix or S3 class object which has a class method available (see below).}
+
+\item{...}{Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}.}
 
 \item{categorical_indices}{Vector of indices of variables which should be drawn as rectangles
 (i.e. represent categorical data).}
@@ -22,7 +30,10 @@ plot_cor_network(obj, categorical_indices = NULL, decimals = 2,
 
 \item{cor_cutoff}{Threshold of absolute correlation below which nodes are not considered
 as connected. Useful to control complexity of drawn network.
-Set to \code{NULL} to disable.}
+Set to NULL to disable.}
+
+\item{vertex_labels}{Character vector of length \code{nrow(obj)} of labels for vertices. If not NULL,
+overrides the \code{vertex_label_prefix} argument.}
 
 \item{vertex_label_prefix}{String which is added as prefix to node labels.}
 
@@ -32,17 +43,35 @@ outputs transformation of this vector (must be >= 0). Defines edge widths.}
 \item{seed}{Set random seed to ensure reproducibility of results. Can be fixed to
 obtain same layout but vary edge widths, correlation functions etc. Can
 also be used to obtain nicer looking graph layouts.}
+
+\item{return_network}{If TRUE, the \code{igraph} network object is returned and can be plotted by
+the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}}
+function.}
+
+\item{mar}{\code{mar} argument to the \code{\link[graphics:par]{par}} function to set
+margins of the plot (often required when the axes should be drawn).
+A numerical vector of the form c(bottom, left, top, right) which gives the
+number of lines of margin to be specified on the four sides of the plot.
+The default is c(5, 4, 4, 2) + 0.1}
 }
 \description{
 Useful to visualize e.g. the associations of the initial multivariate
-gaussian distribution used by \code{\link{design}} and
-\code{\link{simulate_data}}.
+gaussian distribution used by \code{\link{mvtnorm_simdesign}}.
 }
 \details{
-For plotting arguments see \code{igraph::plot}. Arguments via ... are
-passed directly to \code{igraph::plot}.
+For an explanation of all parameters not listed here, please refer to
+\code{\link[igraph:plot.igraph]{igraph::plot}}.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{default}: Function to be used for correlation matrix.
+
+\item \code{mvtnorm_simdesign}: Function to be used with \code{\link{mvtnorm_simdesign}}
+S3 class object to visualize initial correlation network of the underlying
+multivariate normal distribution.
+}}
+
 \seealso{
-\code{\link{plot_initial_cor_network}},
-\code{\link{plot_transformed_cor_network}}
+\code{\link{plot_cor_network.mvtnorm_simdesign}},
+\code{\link{plot_estimated_cor_network}}
 }
