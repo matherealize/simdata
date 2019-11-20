@@ -12,7 +12,8 @@ simulate_data(generator, ...)
   transform_initial = base::identity, names_final = NULL,
   prefix_final = NULL, process_final = list(), seed = NULL, ...)
 
-\method{simulate_data}{simdesign}(design, n_obs, seed = NULL)
+\method{simulate_data}{simdesign}(generator, n_obs, seed = NULL,
+  apply_transformation = TRUE, apply_processing = TRUE)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
@@ -38,6 +39,16 @@ be added.}
 datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
 
 \item{seed}{Set random seed to ensure reproducibility of results.}
+
+\item{apply_transformation}{If \code{generator} is a \code{simdesign} object, then this argument can be set to
+FALSE to override the stored information and not transform and process data.
+Thus, the raw data from the design generator is returned. This can be useful
+for debugging purposes, but is usually unnecessary to be changed.}
+
+\item{apply_processing}{If \code{generator} is a \code{simdesign} object, then this argument can be set to
+FALSE to override the stored information and not process the data after
+the initial data is transformed. This can be useful for debugging purposes,
+but is usually unnecessary to be changed.}
 }
 \value{
 Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X}.

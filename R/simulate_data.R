@@ -99,17 +99,44 @@ simulate_data.default <- function(generator,
 }
 
 #' @describeIn simulate_data Function to be used with `\link{simdesign}` S3 class.
+#' 
+#' @param apply_transformation
+#' If `generator` is a `simdesign` object, then this argument can be set to 
+#' FALSE to override the stored information and not transform and process data. 
+#' Thus, the raw data from the design generator is returned. This can be useful
+#' for debugging purposes, but is usually unnecessary to be changed.
+#' @param apply_processing
+#' If `generator` is a `simdesign` object, then this argument can be set to 
+#' FALSE to override the stored information and not process the data after
+#' the initial data is transformed. This can be useful for debugging purposes, 
+#' but is usually unnecessary to be changed.
 #'
 #' @export
 #' @method simulate_data simdesign
-simulate_data.simdesign <- function(design,
+simulate_data.simdesign <- function(generator,
                                     n_obs,
-                                    seed = NULL) {
+                                    seed = NULL,
+                                    apply_transformation = TRUE, 
+                                    apply_processing = TRUE) {
+    
+    transform_initial = design$transform_initial
+    names_final = design$names_final
+    process_final = design$process_final
+    
+    if (!apply_transformation) {
+        transform_initial = base::identity
+    }
+    
+    if (!all(apply_processing, apply_transformation)) {
+        names_final = NULL
+        process_final = list()
+    }
+    
     simulate_data(generator = design$generator,
                   n_obs = n_obs,
-                  transform = design$transform,
-                  names_final = design$names_final,
-                  process_final = design$process_final,
+                  transform_initial = transform_initial,
+                  names_final = names_final,
+                  process_final = process_final,
                   seed = seed)
 }
 
