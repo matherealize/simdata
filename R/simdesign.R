@@ -59,7 +59,7 @@
 #'
 #' @export
 simdesign <- function(generator,
-                      transform_initial = NULL,
+                      transform_initial = base::identity,
                       n_var_final = -1,
                       types_final = NULL,
                       names_final = NULL,
@@ -84,11 +84,6 @@ simdesign <- function(generator,
     
     if (n_var_final > 0 & !is.null(prefix_final))
         design$names_final = paste0(prefix_final, 1:n_var_final)
-    
-    if (is.null(transform_initial)) {
-        # default is no transformation at all
-        design$transform_initial = base::identity
-    }
     
     if (!check_and_infer)
         return(design)

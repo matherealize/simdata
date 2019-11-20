@@ -4,10 +4,10 @@
 \alias{simdesign}
 \title{Design specification for simulating datasets}
 \usage{
-simdesign(generator, transform_initial = NULL, n_var_final = -1,
-  types_final = NULL, names_final = NULL, prefix_final = "v",
-  process_final = list(), name = "Simulation design",
-  check_and_infer = TRUE, ...)
+simdesign(generator, transform_initial = base::identity,
+  n_var_final = -1, types_final = NULL, names_final = NULL,
+  prefix_final = "v", process_final = list(),
+  name = "Simulation design", check_and_infer = TRUE, ...)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
