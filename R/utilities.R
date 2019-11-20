@@ -224,6 +224,38 @@ function_list <- function(...,
     }
 }
 
+#' @title Extract individual functions from `function_list`
+#' 
+#' @description 
+#' Extract individual function objects from environment of a `function_list` 
+#' object.
+#' 
+#' @param flist
+#' `function_list` object.
+#' 
+#' @return 
+#' List with named or unnamed entries corresponding to individual function
+#' objects that were passed to the `function_list` object.
+get_from_function_list <- function(flist) {
+    get("fct_list", envir = environment(flist))
+}
+
+#' @title Create `function_list` object from list of functions
+#' 
+#' @description 
+#' Create a `function_list` object from a list of functions. This is useful
+#' if such a list is created programmatically.
+#' 
+#' @param flist
+#' List in which each entry is a function object. Can be named or unnamed.
+#' @param ...
+#' Passed to `\link{function_list}`.
+#' 
+#' @inherit function_list return
+as_function_list <- function(flist, ...) {
+    do.call(function_list, append(flist, list(...)))
+}
+
 #' @title Helper to apply functions
 #' 
 #' @description 
