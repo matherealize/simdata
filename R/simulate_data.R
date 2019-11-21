@@ -119,9 +119,9 @@ simulate_data.simdesign <- function(generator,
                                     apply_transformation = TRUE, 
                                     apply_processing = TRUE) {
     
-    transform_initial = design$transform_initial
-    names_final = design$names_final
-    process_final = design$process_final
+    transform_initial = generator$transform_initial
+    names_final = generator$names_final
+    process_final = generator$process_final
     
     if (!apply_transformation) {
         transform_initial = base::identity
@@ -132,7 +132,7 @@ simulate_data.simdesign <- function(generator,
         process_final = list()
     }
     
-    simulate_data(generator = design$generator,
+    simulate_data(generator = generator$generator,
                   n_obs = n_obs,
                   transform_initial = transform_initial,
                   names_final = names_final,
