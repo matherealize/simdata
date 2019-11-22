@@ -11,6 +11,7 @@ plot_cor_network(obj, ...)
 \method{plot_cor_network}{default}(obj, categorical_indices = NULL,
   decimals = 2, cor_cutoff = 0.1, vertex_labels = NULL,
   vertex_label_prefix = "z", edge_width_function = function(x) x * 10,
+  use_edge_weights = FALSE, edge_weight_function = base::identity,
   seed = NULL, return_network = FALSE, mar = c(0, 0, 0, 0),
   vertex.size = 12, margin = 0, asp = 0, vertex.color = "#fff7bc",
   vertex.frame.color = "#d95f0e", vertex.label.color = "black",
@@ -40,6 +41,15 @@ overrides the \code{vertex_label_prefix} argument.}
 \item{edge_width_function}{Function which takes one vector input (absolute correlation values) and
 outputs transformation of this vector (must be >= 0). Defines edge widths.}
 
+\item{use_edge_weights}{Logical, if TRUE then the layout will be influenced by the absolute
+correlations (i.e. edge weights) such that highly correlated variables will
+be put closer together.
+If FALSE, then the layout is independent of the correlation structure.}
+
+\item{edge_weight_function}{Function which takes one vector input (absolute correlation values) and
+outputs transformation of this vector (must be >= 0). Defines edge weights.
+Only relevant if \code{use_edge_weights} is TRUE.}
+
 \item{seed}{Set random seed to ensure reproducibility of results. Can be fixed to
 obtain same layout but vary edge widths, correlation functions etc. Can
 also be used to obtain nicer looking graph layouts.}
@@ -52,7 +62,8 @@ function.}
 margins of the plot (often required when the axes should be drawn).
 A numerical vector of the form c(bottom, left, top, right) which gives the
 number of lines of margin to be specified on the four sides of the plot.
-The default is c(5, 4, 4, 2) + 0.1}
+The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
+as the \code{margin} argument for the \code{igraph::plot.igraph} function.}
 }
 \description{
 Useful to visualize e.g. the associations of the initial multivariate

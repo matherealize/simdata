@@ -25,6 +25,15 @@
 #' @param edge_width_function
 #' Function which takes one vector input (absolute correlation values) and
 #' outputs transformation of this vector (must be >= 0). Defines edge widths.
+#' @param use_edge_weights
+#' Logical, if TRUE then the layout will be influenced by the absolute 
+#' correlations (i.e. edge weights) such that highly correlated variables will
+#' be put closer together.
+#' If FALSE, then the layout is independent of the correlation structure.
+#' @param edge_weight_function
+#' Function which takes one vector input (absolute correlation values) and
+#' outputs transformation of this vector (must be >= 0). Defines edge weights.
+#' Only relevant if `use_edge_weights` is TRUE.
 #' @param seed
 #' Set random seed to ensure reproducibility of results. Can be fixed to
 #' obtain same layout but vary edge widths, correlation functions etc. Can
@@ -38,7 +47,8 @@
 #' margins of the plot (often required when the axes should be drawn). 
 #' A numerical vector of the form c(bottom, left, top, right) which gives the 
 #' number of lines of margin to be specified on the four sides of the plot. 
-#' The default is c(5, 4, 4, 2) + 0.1 
+#' The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
+#' as the `margin` argument for the `igraph::plot.igraph` function.
 #' @param ...
 #' Passed to `\link[igraph:plot.igraph]{igraph::plot}`.
 #' 
@@ -65,6 +75,8 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
                                      vertex_labels = NULL,
                                      vertex_label_prefix = "z",
                                      edge_width_function = function(x) x * 10,
+                                     use_edge_weights = FALSE,
+                                     edge_weight_function = base::identity,
                                      seed = NULL,
                                      return_network = FALSE, 
                                      mar = c(0, 0, 0, 0),
@@ -84,7 +96,8 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
 
     edges = data.frame(from = associations[, 1], to = associations[, 2])
 
-    net = igraph::graph_from_data_frame(d = edges, vertices = nodes,
+    net = igraph::graph_from_data_frame(d = edges, 
+                                        vertices = nodes,
                                         directed = FALSE)
 
     if (is.null(vertex_labels)) {
@@ -95,8 +108,15 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
     if (!is.null(categorical_indices))
         igraph::V(net)$shape[categorical_indices] = "rectangle"
 
-    igraph::E(net)$width = edge_width_function(abs(obj[cbind(edges$from, edges$to)]))
-    igraph::E(net)$label = round(obj[cbind(edges$from, edges$to)], decimals)
+    connection_indices = cbind(edges$from, edges$to)
+    igraph::E(net)$width = edge_width_function(abs(obj[connection_indices]))
+    igraph::E(net)$label = round(obj[connection_indices], decimals)
+    
+    weights = NULL
+    if (use_edge_weights) {
+        weights = edge_weight_function(abs(obj[connection_indices]))
+        igraph::E(net)$weight = weights   
+    }
     
     if (return_network)
         return(net)
