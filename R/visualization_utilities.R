@@ -155,15 +155,10 @@ plot_cor_network.mvtnorm_simdesign <- function(obj, ...) {
 #'
 #' @description
 #' Based on approximation via simulation specified by given simulation design.
+#' Convenience wrapper for combining `\link{estimate_final_correlation}` and
+#' `\link{plot_cor_network}`.
 #'
-#' @param obj
-#' S3 class object of type `simdesign` (or inheriting from it).
-#' @param n_obs
-#' Number of simulated observations.
-#' @param cor_type
-#' Either a character ("p" for Pearson correlation, "s" for Spearman
-#' correlation) or a user specified function, taking one input (a data.frame)
-#' and returning a matrix.
+#' @inheritParams estimate_final_correlation
 #' @param show_categorical
 #' If TRUE, marks categorical variables differently from numeric ones.
 #' Determined by the `types_final` slot of the `obj` argument.
@@ -176,32 +171,26 @@ plot_cor_network.mvtnorm_simdesign <- function(obj, ...) {
 #' the final dataset `X`.
 #'
 #' @seealso
-#' `\link{plot_cor_network}`
+#' `\link{plot_cor_network}`,
+#' `\link{estimate_final_correlation}`
 #'
 #' @export
 plot_estimated_cor_network <- function(obj, n_obs = 100000,
-                                       cor_type = "p",
+                                       cor_type = "pearson",
                                        seed = NULL,
                                        show_categorical = TRUE, 
                                        ...) {
-    if (!is.null(seed))
-        set.seed(seed)
-
-    sim_data = simulate_data(obj, n_obs = n_obs)
-
+    
     if (show_categorical) {
         categorical_indices = which(obj$types_final == "logical" |
                                         obj$types_final == "factor")
     } else categorical_indices = NULL
 
-    f_cor = function(x) cor(x, method = "p")
-    if (is.character(cor_type) & cor_type == "s") {
-        f_cor = function(x) cor(x, method = "s")
-    }
-    if (class(cor_type) == "function")
-        f_cor = cor_type
-
-    relations = f_cor(sim_data)
+    relations = estimate_final_correlation(obj, 
+                                           n_obs = n_obs, 
+                                           cor_type = cor_type, 
+                                           seed = seed)
+    
     plot_cor_network(relations, 
                      seed = seed,
                      categorical_indices = categorical_indices, 

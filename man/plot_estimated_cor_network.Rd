@@ -4,17 +4,21 @@
 \alias{plot_estimated_cor_network}
 \title{Visualize estimated correlation matrix as a network}
 \usage{
-plot_estimated_cor_network(obj, n_obs = 1e+05, cor_type = "p",
+plot_estimated_cor_network(obj, n_obs = 1e+05, cor_type = "pearson",
   seed = NULL, show_categorical = TRUE, ...)
 }
 \arguments{
 \item{obj}{S3 class object of type \code{simdesign} (or inheriting from it).}
 
-\item{n_obs}{Number of simulated observations.}
+\item{n_obs}{Number of observations to simulate.}
 
-\item{cor_type}{Either a character ("p" for Pearson correlation, "s" for Spearman
-correlation) or a user specified function, taking one input (a data.frame)
-and returning a matrix.}
+\item{cor_type}{Can be either a character (\code{pearson}, \code{spearman}, \code{kendall}) which is
+passed to \code{\link[stats:cor]{stats::cor}} or a function, which is directly
+used to compute the correlation matrix on the simulated data. Such a
+function is expected to take a single input matrix (and possibly other
+arguments which can be set via \code{...}) and output a single matrix.}
+
+\item{seed}{Random number seed. NULL does not change the current seed.}
 
 \item{show_categorical}{If TRUE, marks categorical variables differently from numeric ones.
 Determined by the \code{types_final} slot of the \code{obj} argument.}
@@ -23,6 +27,8 @@ Determined by the \code{types_final} slot of the \code{obj} argument.}
 }
 \description{
 Based on approximation via simulation specified by given simulation design.
+Convenience wrapper for combining \code{\link{estimate_final_correlation}} and
+\code{\link{plot_cor_network}}.
 }
 \details{
 This function is useful to estimate the correlation network of a simulation
@@ -30,5 +36,6 @@ setup after the initial underlying distribution \code{Z} has been transformed to
 the final dataset \code{X}.
 }
 \seealso{
-\code{\link{plot_cor_network}}
+\code{\link{plot_cor_network}},
+\code{\link{estimate_final_correlation}}
 }

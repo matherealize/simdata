@@ -252,3 +252,55 @@ simulate_data_conditional <- function(generator,
 
     x
 }
+
+# Simulation based data #############################################
+#' @title Estimate correlation matrix via simulation
+#' 
+#' @description 
+#' Used to obtain an estimate of the correlation matrix after transforming
+#' the initial data. 
+#' 
+#' @param obj
+#' S3 class object of type `simdesign` (or inheriting from it).
+#' @param n_obs
+#' Number of observations to simulate.
+#' @param cor_type
+#' Can be either a character (`pearson`, `spearman`, `kendall`) which is 
+#' passed to `\link[stats:cor]{stats::cor}` or a function, which is directly
+#' used to compute the correlation matrix on the simulated data. Such a 
+#' function is expected to take a single input matrix (and possibly other
+#' arguments which can be set via `...`) and output a single matrix. 
+#' @param seed
+#' Random number seed. NULL does not change the current seed.
+#' @param ...
+#' Further arguments are passed to the function that computes the correlation
+#' matrix (either `\link[stats:cor]{stats::cor}` or the user provided function).
+#' 
+#' @details 
+#' This function is useful to estimate the final correlation of the data after
+#' transformation of the initial data. To provide a robust estimate it is 
+#' advised to use a very large number of observations to compute the correlation
+#' matrix. 
+#' 
+#' @seealso 
+#' `\link{simulate_data}`,
+#' `\link{simdesign}`
+estimate_final_correlation <- function(obj, 
+                                       n_obs = 100000,
+                                       cor_type = "pearson",
+                                       seed = NULL, 
+                                       ...) {
+    if (!is.null(seed))
+        set.seed(seed)
+    
+    sim_data = simulate_data(obj, n_obs = n_obs)
+    
+    if (is.character(cor_type)) {
+        f_cor = function(x, ...) cor(x, method = cor_type, ...)
+    } else if (class(cor_type) == "function") {
+        f_cor = cor_type
+    } else f_cor = function(x, ...) cor(x, method = "pearson", ...)
+        
+    
+    f_cor(sim_data, ...)
+}
