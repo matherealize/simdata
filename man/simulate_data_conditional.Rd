@@ -5,7 +5,8 @@
 \title{Simulate data which satisfies certain conditions}
 \usage{
 simulate_data_conditional(generator, n_obs = 1, reject = function(x)
-  TRUE, reject_max_iter = 10, on_reject = "ignore", ...)
+  TRUE, reject_max_iter = 10, on_reject = "ignore",
+  return_tries = FALSE, seed = NULL, ...)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
@@ -29,6 +30,12 @@ suitable datamatrix X could be found. If "current", the current datamatrix
 is returned, regardless of the conditions in \code{reject}.
 Otherwise, NULL is returned. In each case a warning is reported.}
 
+\item{return_tries}{If TRUE, then the function also outputs the number of tries necessary to
+find a dataset fulfilling the condition. Useful to record to assess
+the possible bias of the simulated datasets. See Value.}
+
+\item{seed}{Set random seed to ensure reproducibility of results. See Note below.}
+
 \item{...}{All further parameters are passed to \code{\link{simulate_data}}.}
 
 \item{transform_initial}{Function which specifies the transformation of the underlying
@@ -47,6 +54,11 @@ datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
 \value{
 Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X} if all
 conditions are met within the iteration limit. Otherwise NULL.
+
+If \code{return_tries} is TRUE, then the output is a list with the first entry
+being the data.frame or matrix as described above, and the second entry
+(\code{n_tries}) giving a numeric with the number of tries necessary to
+find the returned dataset.
 }
 \description{
 Generate simulated dataset based on transformation of
@@ -59,6 +71,13 @@ For details on generating, transforming and post-processing datasets, see
 on certain requirements that must be met by the final datamatrix \code{X}.
 This checking is conducted on the output of \code{simulate_data} (i.e.
 also includes possible post-processing steps).
+}
+\note{
+Seeding the random number generator is tricky in this case. The seed can not
+be passed to \code{simulate_data} but is set before calling it, otherwise
+the random number generation is the same for each of the tries.
+This means that the seed used to call this function might not be the seed
+corresponding to the returned dataset.
 }
 \section{Rejecting Datasets}{
 

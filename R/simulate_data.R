@@ -167,6 +167,12 @@ simulate_data.simdesign <- function(generator,
 #' suitable datamatrix X could be found. If "current", the current datamatrix
 #' is returned, regardless of the conditions in `reject`.
 #' Otherwise, NULL is returned. In each case a warning is reported.
+#' @param return_tries
+#' If TRUE, then the function also outputs the number of tries necessary to 
+#' find a dataset fulfilling the condition. Useful to record to assess 
+#' the possible bias of the simulated datasets. See Value. 
+#' @param seed
+#' Set random seed to ensure reproducibility of results. See Note below.
 #' @param ...
 #' All further parameters are passed to `\link{simulate_data}`.
 #'
@@ -199,9 +205,21 @@ simulate_data.simdesign <- function(generator,
 #' `\link{is_collinear}` and `\link{contains_constant}`. See the example
 #' below.
 #' 
+#' @note 
+#' Seeding the random number generator is tricky in this case. The seed can not
+#' be passed to `simulate_data` but is set before calling it, otherwise 
+#' the random number generation is the same for each of the tries. 
+#' This means that the seed used to call this function might not be the seed 
+#' corresponding to the returned dataset.
+#' 
 #' @return
 #' Data.frame or matrix with `n_obs` rows for simulated dataset `X` if all
 #' conditions are met within the iteration limit. Otherwise NULL.
+#' 
+#' If `return_tries` is TRUE, then the output is a list with the first entry
+#' being the data.frame or matrix as described above, and the second entry
+#' (`n_tries`) giving a numeric with the number of tries necessary to 
+#' find the returned dataset.
 #'
 #' @seealso
 #' `\link{simdesign}`, 
@@ -223,10 +241,18 @@ simulate_data_conditional <- function(generator,
                                       reject = function(x) TRUE,
                                       reject_max_iter = 10,
                                       on_reject = "ignore", 
+                                      return_tries = FALSE,
+                                      seed = NULL,
                                       ...) {
+    
+    if (!is.null(seed))
+        set.seed(seed)
+    
     simulation_success = FALSE
 
+    n_tries = 0
     while (!simulation_success) {
+        n_tries = n_tries + 1
         reject_max_iter = reject_max_iter - 1
         
         x = simulate_data(generator, n_obs, ...)
@@ -250,6 +276,9 @@ simulate_data_conditional <- function(generator,
         }
     }
 
+    if (return_tries)
+        return(list(x = x, n_tries = n_tries))
+    
     x
 }
 
