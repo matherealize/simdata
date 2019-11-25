@@ -11,6 +11,7 @@ plot_cor_network(obj, ...)
 \method{plot_cor_network}{default}(obj, categorical_indices = NULL,
   decimals = 2, cor_cutoff = 0.1, vertex_labels = NULL,
   vertex_label_prefix = "z", edge_width_function = function(x) x * 10,
+  edge_label_function = function(x) round(x, decimals),
   use_edge_weights = FALSE, edge_weight_function = base::identity,
   seed = NULL, return_network = FALSE, mar = c(0, 0, 0, 0),
   vertex.size = 12, margin = 0, asp = 0, vertex.color = "#fff7bc",
@@ -27,7 +28,7 @@ plot_cor_network(obj, ...)
 \item{categorical_indices}{Vector of indices of variables which should be drawn as rectangles
 (i.e. represent categorical data).}
 
-\item{decimals}{Number of decimals.}
+\item{decimals}{Number of decimals, used for default labeling of the network edges.}
 
 \item{cor_cutoff}{Threshold of absolute correlation below which nodes are not considered
 as connected. Useful to control complexity of drawn network.
@@ -40,6 +41,10 @@ overrides the \code{vertex_label_prefix} argument.}
 
 \item{edge_width_function}{Function which takes one vector input (absolute correlation values) and
 outputs transformation of this vector (must be >= 0). Defines edge widths.}
+
+\item{edge_label_function}{Function which takes on vector input (absolute correlation values) and
+outputs labels for these values as character vector. Defines edges labels.
+If set to NULL, then no edge labels will be displayed.}
 
 \item{use_edge_weights}{Logical, if TRUE then the layout will be influenced by the absolute
 correlations (i.e. edge weights) such that highly correlated variables will

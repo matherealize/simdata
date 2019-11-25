@@ -12,7 +12,7 @@
 #' Vector of indices of variables which should be drawn as rectangles
 #' (i.e. represent categorical data).
 #' @param decimals
-#' Number of decimals.
+#' Number of decimals, used for default labeling of the network edges.
 #' @param cor_cutoff
 #' Threshold of absolute correlation below which nodes are not considered
 #' as connected. Useful to control complexity of drawn network.
@@ -25,6 +25,10 @@
 #' @param edge_width_function
 #' Function which takes one vector input (absolute correlation values) and
 #' outputs transformation of this vector (must be >= 0). Defines edge widths.
+#' @param edge_label_function
+#' Function which takes on vector input (absolute correlation values) and
+#' outputs labels for these values as character vector. Defines edges labels.
+#' If set to NULL, then no edge labels will be displayed.
 #' @param use_edge_weights
 #' Logical, if TRUE then the layout will be influenced by the absolute 
 #' correlations (i.e. edge weights) such that highly correlated variables will
@@ -75,6 +79,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
                                      vertex_labels = NULL,
                                      vertex_label_prefix = "z",
                                      edge_width_function = function(x) x * 10,
+                                     edge_label_function = function(x) round(x, decimals),
                                      use_edge_weights = FALSE,
                                      edge_weight_function = base::identity,
                                      seed = NULL,
@@ -110,7 +115,8 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
 
     connection_indices = cbind(edges$from, edges$to)
     igraph::E(net)$width = edge_width_function(abs(obj[connection_indices]))
-    igraph::E(net)$label = round(obj[connection_indices], decimals)
+    if (!is.null(edge_label_function))
+        igraph::E(net)$label = edge_label_function(obj[connection_indices])
     
     weights = NULL
     if (use_edge_weights) {
