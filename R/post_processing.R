@@ -58,6 +58,9 @@ process_data <- function(X, functions = list()) {
 
 # Post-processing Functions #########################################
 #' @title Truncate columns of datamatrix
+#' 
+#' @description 
+#' Truncation based on statistical measures to be applied to a dataset.
 #'
 #' @param X
 #' Matrix or Data.frame.
@@ -65,28 +68,65 @@ process_data <- function(X, functions = list()) {
 #' Vector of truncation parameters. Either a single value which is
 #' replicated as necessaary or of same dimension as `ncol(X)`.
 #' If any vector entry is NA, the corresponding column will not be
-#' truncated. See details.
+#' truncated. If named, then the names must correspond to columnnames in `X`, 
+#' and only specified columns will be processed. See details.
+#' @param only_numeric
+#' If TRUE and if `X` is a data.frame, then only columns of type `numeric` will
+#' be processed. Otherwise all columns will be processed (e.g. also in the 
+#' case that `X` is a matrix).
 #'
 #' @details
 #' Truncation is processed as follows:
 #' \enumerate{
 #' \item Compute the 1st and 3rd quartile q1 / q3 of variables in `X`.
-#' \item Multiply these quantities by values in `truncate_final` to obtain
+#' \item Multiply these quantities by values in `truncate_multipliers` to obtain
 #' _L_ and _U_. If a value is NA, the corresponding variable is not truncated.
 #' \item Set any value smaller / larger than _L_ / _U_ to _L_ / _U_.
 #' }
+#' 
+#' Truncation multipliers can be specified in three ways (note that whenever
+#' `only_numeric` is set to TRUE, then only numeric columns are affected): 
+#' 
+#' \itemize{
+#' \item A single numeric - then all columns will be processed in the same way
+#' \item A numeric vector without names - it is assumed that the length can be
+#' replicated to the number of columns in `X`, each column is processed by the 
+#' corresponding value in the vector
+#' \item A numeric vector with names - length can differ from the columns in 
+#' `X` and only the columns for which the names occur in the vector are 
+#' processed
+#' }
 #'
 #' @return
-#' Matrix or Data.frame of same dimensions as input.
+#' Matrix or data.frame of same dimensions as input.
 #'
 #' @export
-process_truncate <- function(X, truncate_multipliers = NA) {
+process_truncate <- function(X, 
+                             truncate_multipliers = NA,
+                             only_numeric = TRUE) {
+    
+    # if input vector has names -> remember them
+    truncate_names = NULL
+    if (!is.null(names(truncate_multipliers)) & !is.null(names(X)))
+        truncate_names = names(truncate_multipliers)
 
-    # if single input -> replicate to fit X
-    truncate_multipliers = rep_len(truncate_multipliers, ncol(X))
+    # truncation vector
+    truncate_vector = rep_len(NA, ncol(X))
+    names(truncate_vector) = names(X)
+    
+    # set values in vector if available
+    if (!is.null(truncate_names)) {
+        truncate_vector[truncate_names] = truncate_multipliers
+    } else truncate_vector = rep_len(truncate_multipliers, ncol(X))
+    
+    # TODO: test this
+    if (is.data.frame(X) & only_numeric) {
+        ind_numeric = sapply(X, class) == "numeric"
+        truncate_vector[!ind_numeric] = NA
+    }
 
     # which columns should be truncated
-    do_trunc = which(!sapply(truncate_multipliers, is.na))
+    do_trunc = which(!sapply(truncate_vector, is.na))
 
     if (length(do_trunc) > 0) {
         # determine thresholds to truncate at
@@ -94,9 +134,9 @@ process_truncate <- function(X, truncate_multipliers = NA) {
                           quantile, c(0.25, 0.75))
         iqr = apply(quantiles, 2, diff)
         truncate_upper = quantiles[2, ] +
-            truncate_multipliers[do_trunc] * iqr
+            truncate_vector[do_trunc] * iqr
         truncate_lower = quantiles[1, ] -
-            truncate_multipliers[do_trunc] * iqr
+            truncate_vector[do_trunc] * iqr
 
         # do truncation
         for (i in seq_along(do_trunc)) {

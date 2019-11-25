@@ -4,7 +4,7 @@
 \alias{process_truncate}
 \title{Truncate columns of datamatrix}
 \usage{
-process_truncate(X, truncate_multipliers = NA)
+process_truncate(X, truncate_multipliers = NA, only_numeric = TRUE)
 }
 \arguments{
 \item{X}{Matrix or Data.frame.}
@@ -12,20 +12,38 @@ process_truncate(X, truncate_multipliers = NA)
 \item{truncate_multipliers}{Vector of truncation parameters. Either a single value which is
 replicated as necessaary or of same dimension as \code{ncol(X)}.
 If any vector entry is NA, the corresponding column will not be
-truncated. See details.}
+truncated. If named, then the names must correspond to columnnames in \code{X},
+and only specified columns will be processed. See details.}
+
+\item{only_numeric}{If TRUE and if \code{X} is a data.frame, then only columns of type \code{numeric} will
+be processed. Otherwise all columns will be processed (e.g. also in the
+case that \code{X} is a matrix).}
 }
 \value{
-Matrix or Data.frame of same dimensions as input.
+Matrix or data.frame of same dimensions as input.
 }
 \description{
-Truncate columns of datamatrix
+Truncation based on statistical measures to be applied to a dataset.
 }
 \details{
 Truncation is processed as follows:
 \enumerate{
 \item Compute the 1st and 3rd quartile q1 / q3 of variables in \code{X}.
-\item Multiply these quantities by values in \code{truncate_final} to obtain
+\item Multiply these quantities by values in \code{truncate_multipliers} to obtain
 \emph{L} and \emph{U}. If a value is NA, the corresponding variable is not truncated.
 \item Set any value smaller / larger than \emph{L} / \emph{U} to \emph{L} / \emph{U}.
+}
+
+Truncation multipliers can be specified in three ways (note that whenever
+\code{only_numeric} is set to TRUE, then only numeric columns are affected):
+
+\itemize{
+\item A single numeric - then all columns will be processed in the same way
+\item A numeric vector without names - it is assumed that the length can be
+replicated to the number of columns in \code{X}, each column is processed by the
+corresponding value in the vector
+\item A numeric vector with names - length can differ from the columns in
+\code{X} and only the columns for which the names occur in the vector are
+processed
 }
 }
