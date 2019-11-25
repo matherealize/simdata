@@ -12,7 +12,8 @@ simulate_data_conditional(generator, n_obs = 1, reject = function(x)
 \item{generator}{Function which generates data from the underlying base distribution. It is
 assumend it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
-\pkg{extraDistr} do. See details.}
+\pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
+array as output (matrix or data.frame). See details.}
 
 \item{n_obs}{Number of simulated observations.}
 

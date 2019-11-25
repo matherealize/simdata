@@ -19,7 +19,8 @@ simulate_data(generator, ...)
 \item{generator}{Function which generates data from the underlying base distribution. It is
 assumend it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
-\pkg{extraDistr} do. See details.}
+\pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
+array as output (matrix or data.frame). See details.}
 
 \item{...}{Further arguments passed to \code{generator} function.}
 
@@ -87,7 +88,9 @@ The \code{generator} function is assumend to provide the same interface
 as the random generation functions in the R \pkg{stats} and \pkg{extraDistr}
 packages. Specifically, that means it takes the number of observations as
 first argument. All further arguments can be set via passing them as
-named argument to this function.
+named argument to this function. It is expected to return a two-dimensional
+array (matrix or data.frame) for which the number of columns can be determined.
+Otherwise the \code{check_and_infer} step will fail.
 }
 
 \section{Transformations}{
