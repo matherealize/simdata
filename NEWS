@@ -1,5 +1,8 @@
 # simulatoR v0.2.0 (build date 2019-11-26)
-Numerous fixes and enhancments. 
+Numerous fixes and enhancments. If you have worked with previous versions of 
+the package it is likely that you will have to adapt your code to the new
+interfaces implemented in this version. However, the necessary changes should be 
+minimal.
 
 - Reworked simdesign class
 - Reworked simulate_data and simulate_data_conditional function
