@@ -1,0 +1,634 @@
+---
+title: "simulatoR: A package for creating simulated datasets"
+author: "Michael Kammer"
+date: "`r Sys.Date()`"
+output: 
+    rmarkdown::html_vignette:
+        fig_width: 8
+        fig_height: 6
+        toc: true
+        toc_depth: 2
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{simulatoR: A package for creating simulated datasets}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+bibliography: "Demo_references.bib"
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(forcats)
+library(dplyr)
+library(ggplot2)
+library(GGally)
+library(reshape2)
+library(simulatoR)
+```
+
+# Introduction
+
+## Workflow with this package
+Make clear
+
+- initial data from underlying distributions
+- transformed to final data
+- i.e. correlation structure of 1 not necessarily the same as for 2
+- describe class structure
+- describe use in sim study within a for loop (foreach loop)
+
+# Example 1: Independent data, no transformation
+This vignette makes use of the [`tidyverse`](https://www.tidyverse.org/) 
+environment of packages and specifically requires the `dplyr`, 
+`ggplot2`, `forcats` and `GGally` packages to be available, as well as the 
+`reshape2` package for data transformation. Please refer to
+[the R environment used to create this vignette](#rsession) for 
+detailed information.
+
+We demonstrate a very basic example here: 
+
+- Setup a design to sample from 5 independent Normal variables
+    - Ensure that the data is returned as a data.frame by passing the `data.frame`
+    constructor to `transform_initial`. (Otherwise the data would be returned
+     as a matrix.)
+- Simulate from the design to obtain 100 observations (`n_obs`) with a given
+random seed (`seed`).
+- Inspect the simulated data.
+```{r message=FALSE, warning=FALSE}
+sim_design = mvtnorm_simdesign(relations = diag(1, nrow = 5), 
+                               transform_initial = data.frame,
+                               prefix_final = "variable")
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+
+knitr::kable(head(sim_data))
+
+p = GGally::ggpairs(sim_data, 
+                    upper = list(continuous = "points"), 
+                    progress = FALSE) +
+    theme_bw()
+print(p)
+```
+
+# Example 2: Independent data, with transformation
+In this example we transform the initial data to obtain a more 
+interesting dataset.
+
+- Create a transformation function using `function_list`
+    - Pass functions that transform the columns of the simulated, initial
+    dataset as named arguments 
+    - The number of columns in the final dataset is given by the number of 
+    transformations passed here
+    - To let the names of the arguments determine the final columnnames, 
+    set `prefix_final` to NULL in the `simdesign` constructor
+- Pass the created transformation function as `transform_initial` argument
+to the `simdesign` constructor.
+```{r message=TRUE, warning=TRUE}
+trafo = function_list(
+    "v1" = function(x) x[, 1],
+    "v2*2" = function(x) x[, 2] * 2, 
+    "v3^2" = function(x) x[, 3]^2,
+    "v4+v5" = function(x) x[, 4] + x[, 5], 
+    check.names = FALSE # pass columnnames exactly as specified here
+)
+sim_design = mvtnorm_simdesign(relations = diag(1, nrow = 5),
+                               transform = trafo, 
+                               prefix_final = NULL)
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+
+knitr::kable(head(sim_data))
+
+p = GGally::ggpairs(sim_data, upper = list(continuous = "points"), 
+                    progress = FALSE) +
+    theme_bw()
+print(p)
+```
+
+# Example 3: Realistic, complex data {#ex3}
+In this example we implement a design following @BinderSetup. The simulated
+data resembles data obtained from a biomedical study with a complex correlation 
+pattern and different variable distributions. 
+
+- Create a complex initial correlation matrix comfortably using `cor_from_upper`
+    - Hence, we draw from a multivariate Normal distribution `Z` with 15 dimensions
+    to obtain the initial dataset
+- Use a variety of transformations to create numeric, binary and ordinal variables
+    - Hence, we end up with a final dataset `X` of 17 columns
+```{r}
+sim_design = mvtnorm_simdesign(
+    relations = cor_from_upper(15, 
+                               rbind(c(1,2,0.8), c(1,9,0.3), 
+                                     c(3,5,0.3), c(3,9,-0.5), 
+                                     c(4,6,-0.5), c(4,7,-0.3),
+                                     c(5,6,-0.3), c(5,12,0.5),
+                                     c(6,7,0.5), c(6,11,0.5), c(6,14,0.3),
+                                     c(7,11,0.3), c(7,14,0.3),
+                                     c(8,9,-0.3), c(8,11,0.3),
+                                     c(11,14,0.5))),
+    transform_initial = function_list(
+        v1 = function(z) floor(10 * z[,1] + 55), 
+        v2 = function(z) z[,2] < 0.6, 
+        v3 = function(z) exp(0.4 * z[,3] + 3),
+        v4 = function(z) z[,4] >= -1.2,
+        v5 = function(z) z[,4] >= 0.75,
+        v6 = function(z) exp(0.5 * z[,5] + 1.5),
+        v7 = function(z) floor(pmax(0, 100 * exp(z[,6]) - 20)),
+        v8 = function(z) floor(pmax(0, 80 * exp(z[,7]) - 20)),
+        v9 = function(z) z[,8] < -0.35,
+        v10 = function(z) (z[,9] >= 0.5) & (z[,9] < 1.5),
+        v11 = function(z) z[,9] >= 1.5,
+        v12 = function(z) 0.01*floor(100 * (z[,10] + 4)^2),
+        v13 = function(z) floor(10 * z[,11] + 55),
+        v14 = function(z) floor(10 * z[,12] + 55),
+        v15 = function(z) floor(10 * z[,13] + 55),
+        v16 = function(z) z[,14] < 0,
+        v17 = function(z) z[,15] < 0),
+    prefix_final = NULL
+)
+```
+
+## Visualisation of initial correlation matrix
+We can display the correlation matrix of the initial underlying distribution
+using `ggplot2`. Or we can use the graph plotting tools from this package to 
+display a basic correlation network. 
+
+```{r echo=FALSE}
+p = ggplot(sim_design$cor_initial %>% 
+               melt() %>% 
+               mutate(
+                   Var1 = factor(Var1), 
+                   Var2 = factor(Var2)
+               ), 
+           aes(x = Var1, 
+               y = forcats::fct_rev(Var2), 
+               fill = value)) + 
+    geom_tile() + 
+    geom_text(aes(label = value)) + 
+    scale_x_discrete(position = "top") +
+    xlab(expr(paste("Initial variable ", z[i]))) + 
+    ylab(expr(paste("Initial variable ", z[i]))) +
+    coord_equal() +
+    scale_fill_gradient2(
+        "Correlation",
+        limits = c(-1, 1),
+        low = "#377eb8", mid = "white", high = "#e41a1c") +
+    theme_bw()
+print(p)
+```
+
+Or we can use the simple graph visualisation provided by this package. To keep
+this graph simple, correlations below a certain threshold are removed. The
+`plot_cor_network` function provides several options to improve display of 
+the graph, some of which are explained in more detail [below](#plotestcor). 
+Here we just point out that the layout of the network is based on the 
+Fruchterman-Reingold algorithm as implemented in the `igraph` package and 
+therefore comprises random parts. Therefore, using a seed for the random number 
+generation is advised.
+```{r}
+plot_cor_network(sim_design, seed = 3876)
+```
+
+## Simulation and visualisation of final data {#simfinal}
+
+We simulate from the design and visualise numeric variables via violinplots and
+discrete variables via barplots using `ggplot2`.
+```{r}
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
+p = ggplot(sim_data %>% 
+               select(one_of(numeric_vars)) %>%
+               melt(measure.vars = colnames(.)), 
+           aes(x = "", y = value)) +
+    geom_violin() +
+    geom_dotplot(binaxis = "y", stackdir = "center") + 
+    facet_wrap(~ variable, scales = "free", nrow = 3) +
+    theme_bw() + 
+    ylab("Value") +
+    theme(axis.title.x = element_blank())
+print(p)
+
+discrete_vars = names(sim_design$types_final)[sim_design$types_final != "numeric"]
+p = ggplot(sim_data %>% 
+               select(one_of(discrete_vars)) %>% 
+               melt(measure.vars = colnames(.)), 
+               aes(x = variable, fill = value, color = value)) +
+    geom_bar(alpha = 0.5, size = 1) +
+    scale_fill_brewer(palette = "Set1") +
+    scale_color_brewer(palette = "Set1") +
+    ylab("Proportion of total samplesize (%)") +
+    theme_bw() +
+    theme(axis.title.x = element_blank())
+print(p)
+```
+
+We can also plot the correlation structure of the single, final dataset via the
+correlation matrix and visualise it using `ggplot2` or as a network using the
+functions provided by this package.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p = sim_data %>% 
+    cor(method = "s", use = "p") %>% 
+    melt() %>%
+    arrange(Var1, Var2) %>%
+    ggplot(aes(x = Var1, y = fct_rev(Var2), fill = value)) +
+    geom_tile() + 
+    geom_text(aes(label = round(value, 2)), size = 2) +
+    scale_fill_gradient2(
+        "Correlation",
+        limits = c(-1, 1),
+        low = "#377eb8", mid = "white", high = "#e41a1c") +
+    coord_equal() +
+    scale_x_discrete(position = "top") +
+    xlab(expr(paste("Final variable ", v[i]))) + 
+    ylab(expr(paste("Final variable ", v[i]))) +
+    theme_bw() + 
+    theme(text = element_text(size = 10))
+print(p)
+```
+
+## Visualisation of estimated correlation network {#plotestcor}
+Note that the above correlation matrix is based on a single simulated dataset
+of a fixed size. To provide a robust and stable estimate of the correlation 
+after transforming the initial dataset, one can employ 
+approximation by simulation, as the initial correlation structure is affected
+by the data transformation and can not be analytically expressed in all cases.
+This can conveniently be achieved using `estimate_final_correlation`. The 
+resulting correlation network can be visualized via `plot_cor_network`
+or by `plot_estimated_cor_network` which combines 
+the estimation of the correlation matrix and the network plotting into one 
+wrapper function.
+
+Note that the layout algorithm of `igraph` computes a similar layout for
+initial and final correlation structure, given some manual tweaking of the random 
+seed.
+This probably does not hold for all setups, but if the initial and final 
+layout are somewhat similar (i.e. after proper pruning via cutting of low
+correlations), the resulting graphs may reflect that. 
+
+We demonstrate some basic plotting functionality (the arguments are identical
+for `plot_cor_network`): 
+
+- Draw all edges in the graph by setting `cor_cutoff` to NULL
+- Turn off edge labeling by setting `edge_label_function` to NULL
+- Controling edge width using `edge_width_function` 
+- Using edge weights (i.e. correlation between two variables) to influence the 
+graph layout via `use_edge_weights` - higher edge weight brings vertices 
+closer together
+```{r message=FALSE, warning=FALSE}
+# draw full network
+plot_estimated_cor_network(sim_design, 
+                           cor_cutoff = NULL, 
+                           edge_label_function = NULL,
+                           edge_width_function = function(x) x*25,
+                           use_edge_weights = TRUE, 
+                           seed = 2321673)
+```
+
+The following graphs all use the default correlation cutoff of 0.1.
+
+- Switching correlation type to Spearman using `cor_type`
+    - Note that when edge weights are used, then the networks for different 
+    correlation types can not be compared directly, as the vertex layout may 
+    change
+- Setting various other parameters 
+    - Note the usage of `mar` to set the image margins to make the axes visisble
+    - Note that distinction between categorical and numeric data is turned off
+    (`show_categorical`)
+```{r message=FALSE, warning=FALSE}
+# simplify by using cor_cutoff
+plot_estimated_cor_network(sim_design, 
+                           seed = 2321673)
+
+# set correlation type
+plot_estimated_cor_network(sim_design, 
+                           cor_type = "spearman", 
+                           seed = 2321673)
+
+# set various parameters
+plot_estimated_cor_network(sim_design, seed = 2321673, 
+                           edge.color = "red", 
+                           axes = TRUE, cor_type = "s", 
+                           edge_width_function = function(x) var(x)*200,
+                           show_categorical = FALSE, 
+                           mar = c(2, 2, 0, 0))
+```
+
+In all of these plots it is evident that the dataset contains a tight cluster
+of highly correlated variables (especially `v4, v5, v7, v8, v13, v16`) but also
+quite independent variables (`v12, v15, v17`). Some are also only connected to 
+the network via one other variable (`v2, v14`). Thanks to the network layout of
+the plot, which is often more intelligible than a plain correlation matrix, 
+this quite clearly shows the rich variety of correlation patterns 
+within the simulated data.
+
+## Post-processing
+Post-processing can be used to apply a number of functions to the 
+dataset before it is returned by `simulate_data`. This is useful to e.g. 
+standardize and truncate data, as shown below. 
+
+To add post-processing functions to the `simdesign` object, simply pass a 
+list to the constructor or add it directly to the class object. Each entry has 
+a name (name of a function) and is a list with named arguments passed to the 
+function (if default parameters should be used simply pass an empty list). 
+See the `process_data` help for further details.
+The simulation of the data does not need to be changed in any way.
+
+- Add truncation to the post-processing via `process_truncate`
+    - Truncation is only added for specific numeric variables by passing a 
+    named vector
+
+```{r}
+sim_design$process_final = list(
+    process_truncate = list(
+        truncate_multipliers = c(v6 = 2, v7 = 2, v8 = 2)
+    )
+)
+
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+```
+
+Compare the results with the [results before](#simfinal) and note the 
+truncation in the specified variables (`v6, v7, v8`).
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
+p = ggplot(sim_data %>% 
+               select(one_of(numeric_vars)) %>%
+               melt(measure.vars = colnames(.)), 
+           aes(x = "", y = value)) +
+    geom_violin() +
+    geom_dotplot(binaxis = "y", stackdir = "center") + 
+    facet_wrap(~ variable, scales = "free", nrow = 3) +
+    theme_bw() + 
+    ylab("Value") +
+    theme(axis.title.x = element_blank())
+print(p)
+```
+
+Similarly, standardization can be applied using the standard `scale` function, 
+changing the scale on the y-axis of the following plots. 
+Note that the order of functions passed via `process_final` is important.
+
+```{r}
+sim_design$process_final = list(
+    process_truncate = list(
+        truncate_multipliers = c(v6 = 2, v7 = 2, v8 = 2)
+    ), 
+    scale = list()
+)
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
+p = ggplot(sim_data %>% 
+               as.data.frame() %>% 
+               select(one_of(numeric_vars)) %>%
+               melt(measure.vars = colnames(.)), 
+           aes(x = "", y = value)) +
+    geom_violin() +
+    geom_dotplot(binaxis = "y", stackdir = "center") + 
+    facet_wrap(~ variable, scales = "free", nrow = 3) +
+    theme_bw() + 
+    ylab("Value") +
+    theme(axis.title.x = element_blank())
+print(p)
+```
+
+# Advanced simulation setup
+In the following we briefly present some more advanced functionality of 
+the package.
+
+## Rejection sampling
+A very simple form of rejection sampling is implemented in the 
+`simulate_data_conditional` function, which only accepts a final dataset if 
+it fulfills some specified conditions. This can be useful to prevent issues
+during simulation runs when the simulated data is e.g. likely to produce
+collinear matrices due to high dependencies between the variables or if some
+of them produce low variance variables. 
+
+Note that such an approach can lead to serious bias in the simulations if the
+rejection rate is very high. Thus, it might be necessary to revise such a 
+setup or at least record the number of rejections for reporting purposes 
+(as facilitated by the `return_tries` option of the function). 
+
+Usually rejections should occur very rarely. In this case the 
+`simulate_data_conditional` function can be used to let the simulation run 
+smoothly or let the calling function decide on how to handle rejections.
+
+To show an example, we set up a very simple simulation with two variables and 
+make them collinear on purpose via a transformation.
+
+- The `is_collinear` function from this package is used to check for collinearity
+- After at most three runs with rejected datasets the function returns
+(`reject_max_iter`)
+- The number of tries is returned in a list (`return_tries`)
+```{r}
+sim_design = mvtnorm_simdesign(
+    relations = diag(1, nrow = 2),        
+    transform_initial = function_list("v1" = function(x) x[, 1],
+                                      "v1*2" = function(x) x[, 1] * 2, 
+                                      check.names = FALSE), 
+    prefix_final = NULL
+    )
+
+# ignoring the collinearity
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 2)
+knitr::kable(cor(sim_data))
+
+# rejecting collinear matrices
+sim_data = simulate_data_conditional(sim_design,
+                                     n_obs = 100, seed = 2,
+                                     reject = is_collinear,
+                                     reject_max_iter = 3,
+                                     return_tries = TRUE)
+
+print(sim_data)
+```
+
+Note that multiple conditions can be checked by passing a `function_list` as
+rejection function. All of them must be fulfilled or the matrix is rejected.
+
+In our example below we randomly transform the columns to be collinear or 
+constant. However, in the end we obtain a result which passes both checks.
+```{r}
+sim_design = mvtnorm_simdesign(
+    relations = diag(1, nrow = 3),        
+    transform_initial = function_list(
+        "v1" = function(x) x[, 1],
+        "might_be_collinear" = function(x) {
+            if (rbinom(1, 1, 0.5)) {
+                return(x[, 1] * 2)
+            } else return(x[, 2])
+        }, 
+        "might_be_constant" = function(x) {
+            if (rbinom(1, 1, 0.5)) {
+                return(0)
+            } else return(x[, 3])
+        },
+        check.names = FALSE),
+    prefix_final = NULL
+)
+
+sim_data = simulate_data_conditional(sim_design,
+                                     n_obs = 100, seed = 3,
+                                     reject = function_list(is_collinear, 
+                                                            contains_constant),
+                                     reject_max_iter = 3, 
+                                     return_tries = TRUE)
+
+sprintf("Number of tries: %d", sim_data[[2]])
+knitr::kable(head(sim_data[[1]], 10))
+```
+
+## Other initial distributions
+In this package, simulating initial data from a multivariate Normal distribution
+is already implemented in the `mvtnorm_simdesign` S3 class. However, it is easy
+to implement other distributions and extend the underlying interface of the
+`simdesign` class. To do this, all that needs to be implemented is the 
+`generator` object of the new simulation class. Below we show how to code
+a toy wrapper to simulate binary data using the `stats::rbinom` function.
+
+- A new class must implement a `generator` function which takes one argument
+(number of observations to simulate) and outputs a two-dimensional array 
+(matrix or data.frame) 
+- A new class should always use `...` to pass further arguments to `simdesign`
+- A new class should extend the class attribute to facilitate writing 
+S3 methods which recognize the newly implemented class
+```{r}
+binomial_simdesign <- function(size = 1, prob = 0.5, ...) {
+    
+    # define generator function
+    # make sure it returns a two-dimensional array
+    generator = function(n) matrix(rbinom(n, size = size, prob = prob), ncol = 1)
+    
+    # setup simdesign object
+    # make sure to pass generator function and ...
+    # all other information passed is optional
+    dsgn = simdesign(
+        generator = generator, 
+        size = size, 
+        prob = prob,
+        ...
+    )
+    
+    # extend the class attribute 
+    class(dsgn) = c("binomial_simdesign", class(dsgn))
+    
+    # return the object
+    dsgn
+}
+```
+
+Finally, we can use the newly created class as in the examples before.
+```{r}
+sim_design = binomial_simdesign(size = 1, prob = 0.7)
+sim_data = simulate_data(sim_design, 100, seed = 1)
+knitr::kable(table(sim_data))
+```
+
+
+
+## Aspects of high-dimensional setups
+In high-dimensional simulation studies the number of simulated variables is large.
+We briefly demonstrate how to simulate 100 variables from a multivariate 
+Normal distribution with block correlation matrix. This shows how to use 
+the package functionality programmatically. 
+
+- Create a block diagonal matrix easily using `base::expand.grid` and 
+`cor_from_upper`
+    - Note that for 1000s of variables drawing from a single multivariate Normal
+    distribution using `mvtnorm::rmvnorm` is highly inefficient and could be
+    replaced by drawing from individual blocks of multivariate Normal
+    distributions of smaller dimension
+- Transform the variables blockwise by creating a `function_list` from a list
+of functions via `as_function_list`
+    - Note the use of `base::substitute` to construct functions programmatically
+    (`substitute` actually substitutes the passed value for `i` instead of the 
+    symbol `i` in the function definition)
+    - Note that the final transformation is applied to a whole submatrix at once
+    (this is possible as long as the resulting outputs have equal number of 
+    rows)
+```{r}
+# create list of transformation functions programmatically
+# For the first 60 variables: 
+# odd varibles will be translated
+# even variables will be scaled
+transformations = list()
+for (i in 1:60) {
+    if (i %% 2) {
+        transformations[[i]] = substitute(function(x) x[, i] * 5, list(i = i))
+    } else transformations[[i]] = substitute(function(x) x[, i] - 10, list(i = i))
+}
+# the remaining are returned as they are
+transformations[[61]] = function(x) x[, 61:100]
+
+# create simulation design
+sim_design = mvtnorm_simdesign(
+    relations = cor_from_upper(100,
+                               entries = rbind(
+                                   expand.grid(1:30, 1:30, 0.5), 
+                                   expand.grid(31:50, 31:50, 0.2))
+    ), 
+    transform_initial = as_function_list(transformations)
+)
+```
+
+We can visualise the correlation matrix as before using `ggplot2`.
+```{r echo=FALSE}
+p = ggplot(sim_design$cor_initial %>% 
+               melt() %>% 
+               mutate(
+                   Var1 = factor(Var1), 
+                   Var2 = factor(Var2)
+               ), 
+           aes(x = Var1, 
+               y = forcats::fct_rev(Var2), 
+               fill = value)) + 
+    geom_tile() + 
+    scale_x_discrete(position = "top") +
+    xlab(expr(paste("Initial variable ", z[i]))) + 
+    ylab(expr(paste("Initial variable ", z[i]))) +
+    coord_equal() +
+    scale_fill_gradient2(
+        "Correlation",
+        limits = c(-1, 1),
+        low = "#377eb8", mid = "white", high = "#e41a1c") +
+    theme_bw() + 
+    theme(axis.text = element_blank())
+print(p)
+```
+A correlation network can often be used to clearly display such large correlation
+structures. To keep the network simple, we remove vertex and edge labels and 
+adjust vertex and edge sizes. 
+```{r}
+plot_cor_network(sim_design, seed = 2,  
+                 vertex_labels = NA,
+                 edge_label_function = NULL,
+                 edge_width_function = function(x) 0.01,
+                 vertex.size = 3)
+```
+
+The simulated data is subsequently obtained by applying the specified 
+transformations to the initial multivariate Normal data. It is visualised
+below by means of density curves for each variable (for brevity the legend
+is not displayed and variables are indicated by different colors).
+```{r}
+sim_data = simulate_data(sim_design, n_obs = 50, seed = 5)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+p = ggplot(melt(sim_data), aes(x = value, color = variable)) + 
+    geom_density() + 
+    scale_color_viridis_d(option = "plasma") +
+    guides(color = "none") +
+    xlab("Value") + ylab("Density") +
+    theme_bw()
+print(p)
+```
+
+# R session information {#rsession}
+```{r echo=FALSE}
+sessionInfo()
+```
+
+# References
