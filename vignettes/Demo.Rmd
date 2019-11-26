@@ -538,7 +538,7 @@ sim_data = simulate_data_conditional(sim_design,
                                      return_tries = TRUE)
 
 sprintf("Number of tries: %d", sim_data[[2]])
-knitr::kable(head(sim_data[[1]], 10))
+knitr::kable(head(sim_data[[1]]))
 ```
 
 ## Other initial distributions {#other}
@@ -627,7 +627,7 @@ function. It can be retrieved via
 Finally, we can use the newly created class as in the examples before.
 ```{r}
 data(iris)
-sim_design = realdata_simdesign(iris)
+sim_design = realdata_simdesign(iris, prefix_final = NULL)
 sim_data = simulate_data(sim_design, 100, seed = 1)
 knitr::kable(head(sim_data))
 ```
