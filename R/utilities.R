@@ -36,6 +36,7 @@ contains_constant <- function(x, eps = .Machine$double.eps) {
 #'
 #' @export
 is_collinear <- function(x) {
+    x = as.matrix(x)
     val = qr(x)$rank < ncol(x)
     
     if (val)
@@ -76,15 +77,16 @@ cor_from_upper <- function(n_var, entries = NULL) {
 
     if (!is.null(entries)) {
         # set correlation entries
-        entries = matrix(entries, ncol = 3)
-        entries[, c(1,2)] = t(apply(matrix(entries[, c(1,2), drop = FALSE], ncol = 2),
-                                   1, sort))
-        cor_mat[matrix(entries[, c(1,2)], ncol = 2)] = entries[, 3]
+        entries = as.matrix(entries, ncol = 3)
+        cor_mat[entries[, 1:2]] = entries[, 3]
+        
+        # symmetrize
+        cor_mat[lower.tri(cor_mat)] = t(cor_mat)[lower.tri(cor_mat)]
     }
-
-    # symmetrize
-    cor_mat[lower.tri(cor_mat)] = t(cor_mat)[lower.tri(cor_mat)]
-
+    
+    # make sure diagonal elements are 1
+    diag(cor_mat) = 1
+    
     cor_mat
 }
 
@@ -236,6 +238,8 @@ function_list <- function(...,
 #' @return 
 #' List with named or unnamed entries corresponding to individual function
 #' objects that were passed to the `function_list` object.
+#' 
+#' @export
 get_from_function_list <- function(flist) {
     get("fct_list", envir = environment(flist))
 }
@@ -252,6 +256,8 @@ get_from_function_list <- function(flist) {
 #' Passed to `\link{function_list}`.
 #' 
 #' @inherit function_list return
+#' 
+#' @export
 as_function_list <- function(flist, ...) {
     do.call(function_list, append(flist, list(...)))
 }

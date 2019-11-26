@@ -1,5 +1,3 @@
-# TODO
-
 #' @title Visualize fixed correlation structure as a network
 #'
 #' @description
@@ -19,7 +17,8 @@
 #' Set to NULL to disable.
 #' @param vertex_labels
 #' Character vector of length `nrow(obj)` of labels for vertices. If not NULL, 
-#' overrides the `vertex_label_prefix` argument.
+#' overrides the `vertex_label_prefix` argument. If set to NA omits all
+#' or some vertex labels. 
 #' @param vertex_label_prefix
 #' String which is added as prefix to node labels.
 #' @param edge_width_function
@@ -54,7 +53,8 @@
 #' The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 #' as the `margin` argument for the `igraph::plot.igraph` function.
 #' @param ...
-#' Passed to `\link[igraph:plot.igraph]{igraph::plot}`.
+#' Passed to `\link[igraph:plot.igraph]{igraph::plot}`, with a complete list
+#' of arguments and details given in `\link[igraph:igraph.plotting]{igraph.plotting}`.
 #' 
 #' @details 
 #' For an explanation of all parameters not listed here, please refer to
@@ -108,15 +108,16 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
     if (is.null(vertex_labels)) {
         igraph::V(net)$label = paste0(vertex_label_prefix, nodes$id)    
     } else igraph::V(net)$label = vertex_labels
-    
+
     igraph::V(net)$shape = "circle"
     if (!is.null(categorical_indices))
         igraph::V(net)$shape[categorical_indices] = "rectangle"
 
     connection_indices = cbind(edges$from, edges$to)
     igraph::E(net)$width = edge_width_function(abs(obj[connection_indices]))
-    if (!is.null(edge_label_function))
+    if (!is.null(edge_label_function)) {
         igraph::E(net)$label = edge_label_function(obj[connection_indices])
+    }
     
     weights = NULL
     if (use_edge_weights) {

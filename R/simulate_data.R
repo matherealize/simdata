@@ -316,6 +316,8 @@ simulate_data_conditional <- function(generator,
 #' @seealso 
 #' `\link{simulate_data}`,
 #' `\link{simdesign}`
+#' 
+#' @export
 estimate_final_correlation <- function(obj, 
                                        n_obs = 100000,
                                        cor_type = "pearson",

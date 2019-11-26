@@ -23,7 +23,8 @@ plot_cor_network(obj, ...)
 \arguments{
 \item{obj}{Correlation matrix or S3 class object which has a class method available (see below).}
 
-\item{...}{Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}.}
+\item{...}{Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}, with a complete list
+of arguments and details given in \code{\link[igraph:igraph.plotting]{igraph.plotting}}.}
 
 \item{categorical_indices}{Vector of indices of variables which should be drawn as rectangles
 (i.e. represent categorical data).}
@@ -35,7 +36,8 @@ as connected. Useful to control complexity of drawn network.
 Set to NULL to disable.}
 
 \item{vertex_labels}{Character vector of length \code{nrow(obj)} of labels for vertices. If not NULL,
-overrides the \code{vertex_label_prefix} argument.}
+overrides the \code{vertex_label_prefix} argument. If set to NA omits all
+or some vertex labels.}
 
 \item{vertex_label_prefix}{String which is added as prefix to node labels.}
 
