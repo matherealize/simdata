@@ -1,2 +1,10 @@
+# simulatoR v0.2.0 (build date 2019-11-26)
+Numerous fixes and enhancments. 
+
+- Reworked simdesign class
+- Reworked simulate_data and simulate_data_conditional function
+- Reworked network visualization
+- Added package vignette
+
 # simulatoR v0.1.0 (build date 2019-11-14)
 Initial release.
