@@ -54,7 +54,7 @@
 #' as the `margin` argument for the `igraph::plot.igraph` function.
 #' @param ...
 #' Passed to `\link[igraph:plot.igraph]{igraph::plot}`, with a complete list
-#' of arguments and details given in `\link[igraph:igraph.plotting]{igraph.plotting}`.
+#' of arguments and details given in `\link[igraph:plot.common]{igraph.plotting}`.
 #' 
 #' @details 
 #' For an explanation of all parameters not listed here, please refer to

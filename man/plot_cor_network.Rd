@@ -24,7 +24,7 @@ plot_cor_network(obj, ...)
 \item{obj}{Correlation matrix or S3 class object which has a class method available (see below).}
 
 \item{...}{Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}, with a complete list
-of arguments and details given in \code{\link[igraph:igraph.plotting]{igraph.plotting}}.}
+of arguments and details given in \code{\link[igraph:plot.common]{igraph.plotting}}.}
 
 \item{categorical_indices}{Vector of indices of variables which should be drawn as rectangles
 (i.e. represent categorical data).}

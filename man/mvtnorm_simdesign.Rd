@@ -27,7 +27,7 @@ a covariance matrix). Otherwise, \code{relations} specifies a
 covariance matrix whose square root diagonal elements override
 \code{sd_initial}.}
 
-\item{method}{\code{method} argument of \code{\link[mvtnorm:rmvnorm]{mvtnorm::rmvnorm}}.}
+\item{method}{\code{method} argument of \code{\link[mvtnorm:Mvnorm]{mvtnorm::rmvnorm}}.}
 
 \item{name}{Character, optional name of the simulation design.}
 
@@ -85,7 +85,7 @@ on underlying distribution multivariate normal distribution \code{Z}.
 \details{
 This S3 class implements a simulation design based on an underlying
 multivariate normal distribution by creating a \code{generator} function
-based on \code{\link[mvtnorm:rmvnorm]{mvtnorm::rmvnorm}}.
+based on \code{\link[mvtnorm:Mvnorm]{mvtnorm::rmvnorm}}.
 }
 \note{
 Note that \code{relations} specifies the correlation / covariance

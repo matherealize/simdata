@@ -122,7 +122,7 @@ cor_to_upper <- function(m) {
 #' @title Convert covariance matrix to correlation matrix
 #' 
 #' @description 
-#' Wrapper for `\link[stats:cov2cor]{stats::cov2cor}`.
+#' Wrapper for `\link[stats:cor]{stats::cov2cor}`.
 #' 
 #' @param m
 #' Symmetric covariance matrix.
