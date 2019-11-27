@@ -100,26 +100,26 @@ cor_from_upper <- function(n_var, entries = NULL) {
 #'
 #' @param m
 #' Symmetric correlation matrix.
+#' @param remove_below
+#' Threshold for absolute correlation values below which they are removed from 
+#' the returned matrix. If NULL then no filtering is applied.
 #'
 #' @return
 #' Matrix with 3 columns (variable_1, variable_2, correlation), where
 #' correlation gives the entry at position (variable_1, variable_2) of the
-#' input correlation matrix.
+#' input correlation matrix. Note that variable_1 < variable_2 holds for all 
+#' entries.
 #'
 #' @seealso
 #' `\link{cor_from_upper}`
 #'
 #' @export
-cor_to_upper <- function(m) {
-    res = matrix(
-        data = c(
-            unlist(lapply(1:(nrow(m) - 1), function(x) rep(x, ncol(m) - x))),
-            unlist(lapply(2:ncol(m), function(x) x:ncol(m)))
-        ),
-        nrow = nrow(m) * (nrow(m) - 1) / 2, ncol = 2
-    )
-    res = cbind(res, m[res[, c(1,2), drop = FALSE]]) 
-    res = res[abs(res[,3]) > 0, , drop = FALSE]
+cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
+    ind = which(upper.tri(m), arr.ind = TRUE)
+    res = cbind(ind, m[ind])
+    
+    if (!is.null(remove_below))
+        res = res[abs(res[, 3]) >= remove_below, , drop = FALSE]
     
     res
 }

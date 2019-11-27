@@ -5,15 +5,19 @@
 \title{Convert correlation matrix to specification used by
 \code{cor_from_upper}}
 \usage{
-cor_to_upper(m)
+cor_to_upper(m, remove_below = .Machine$double.eps)
 }
 \arguments{
 \item{m}{Symmetric correlation matrix.}
+
+\item{remove_below}{Threshold for absolute correlation values below which they are removed from
+the returned matrix. If NULL then no filtering is applied.}
 }
 \value{
 Matrix with 3 columns (variable_1, variable_2, correlation), where
 correlation gives the entry at position (variable_1, variable_2) of the
-input correlation matrix.
+input correlation matrix. Note that variable_1 < variable_2 holds for all
+entries.
 }
 \description{
 Convert correlation matrix to specification used by
