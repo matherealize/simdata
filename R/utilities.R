@@ -77,13 +77,13 @@ cor_from_upper <- function(n_var, entries = NULL) {
 
     if (!is.null(entries)) {
         # set correlation entries
-        entries = as.matrix(entries, ncol = 3)
+        entries = matrix(entries, ncol = 3)
         # ensure that entries are in upper triangular part
         entries[, 1:2] = cbind(
             pmin.int(entries[, 1], entries[, 2]),
             pmax.int(entries[, 1], entries[, 2])
         )
-        cor_mat[entries[, 1:2]] = entries[, 3]
+        cor_mat[entries[, 1:2, drop = FALSE]] = entries[, 3]
         
         # symmetrize
         cor_mat[lower.tri(cor_mat)] = t(cor_mat)[lower.tri(cor_mat)]
