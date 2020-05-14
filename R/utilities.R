@@ -79,6 +79,7 @@ cor_from_upper <- function(n_var, entries = NULL) {
         # set correlation entries
         # ensure the conversion to a matrix works for vectors and data.frames
         entries = matrix(as.matrix(entries), ncol = 3)
+
         # ensure that entries are in upper triangular part
         entries[, 1:2] = cbind(
             pmin.int(entries[, 1], entries[, 2]),
