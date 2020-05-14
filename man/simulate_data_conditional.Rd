@@ -4,9 +4,16 @@
 \alias{simulate_data_conditional}
 \title{Simulate data which satisfies certain conditions}
 \usage{
-simulate_data_conditional(generator, n_obs = 1, reject = function(x)
-  TRUE, reject_max_iter = 10, on_reject = "ignore",
-  return_tries = FALSE, seed = NULL, ...)
+simulate_data_conditional(
+  generator,
+  n_obs = 1,
+  reject = function(x) TRUE,
+  reject_max_iter = 10,
+  on_reject = "ignore",
+  return_tries = FALSE,
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
@@ -21,7 +28,7 @@ array as output (matrix or data.frame). See details.}
 TRUE or FALSE. Specifies when a simulated final datamatrix \code{X} should
 be rejected. Functions must output TRUE if condition IS NOT met / FALSE if
 condition IS met and matrix can be accepted. Intended to be used with
-\code{\link{function_list}}. See details.}
+\verb{\link{function_list}}. See details.}
 
 \item{reject_max_iter}{Intger > 0. In case of rejection, how many times should a new datamatrix be
 simulated until the conditions in \code{reject} are met?}
@@ -37,7 +44,7 @@ the possible bias of the simulated datasets. See Value.}
 
 \item{seed}{Set random seed to ensure reproducibility of results. See Note below.}
 
-\item{...}{All further parameters are passed to \code{\link{simulate_data}}.}
+\item{...}{All further parameters are passed to \verb{\link{simulate_data}}.}
 
 \item{transform_initial}{Function which specifies the transformation of the underlying
 dataset \code{Z} to final dataset \code{X}. See details.}
@@ -50,7 +57,7 @@ by \code{names_final} argument. Set to NULL if no prefixes should
 be added.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
+datamatrix \code{X} before returning it. See \verb{\link{process_data}}.}
 }
 \value{
 Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X} if all
@@ -68,7 +75,7 @@ conditions are met.
 }
 \details{
 For details on generating, transforming and post-processing datasets, see
-\code{\link{simulate_data}}. This function simulates data conditional
+\verb{\link{simulate_data}}. This function simulates data conditional
 on certain requirements that must be met by the final datamatrix \code{X}.
 This checking is conducted on the output of \code{simulate_data} (i.e.
 also includes possible post-processing steps).
@@ -86,7 +93,7 @@ Examples for restrictions include
 variance restrictions (e.g. no constant columns which could happen due
 to extreme transformations of the initial gaussian distribution \code{Z}), ensuring
 a sufficient number of observations in a given class (e.g. certain
-binary variables should have at least x\% events) or preventing
+binary variables should have at least x\\% events) or preventing
 multicollinearity (e.g. \code{X} must have full column rank). If \code{reject}
 evaluates to FALSE, the current datamatrix \code{X} is rejected.
 In case of rejection, new datasets can be simulated until the conditions
@@ -98,11 +105,11 @@ after which the latest datamatrix is returned or an error is reported.
 
 The \code{reject} function should take a single input (a data.frame or matrix) and
 output TRUE if the dataset is to be rejected or FALSE if it is to be accepted.
-This package provides the \code{\link{function_list}} convenience function which
+This package provides the \verb{\link{function_list}} convenience function which
 allows to easily create a rejection function which assesses several
 conditions on the input dataset by simply passing individual test functions
 to \code{function_list}. Such test function templates are found in
-\code{\link{is_collinear}} and \code{\link{contains_constant}}. See the example
+\verb{\link{is_collinear}} and \verb{\link{contains_constant}}. See the example
 below.
 }
 
@@ -115,9 +122,9 @@ simulate_data_conditional(dsgn, 100,
 
 }
 \seealso{
-\code{\link{simdesign}},
-\code{\link{simulate_data}},
-\code{\link{function_list}},
-\code{\link{is_collinear}},
-\code{\link{contains_constant}}
+\verb{\link{simdesign}},
+\verb{\link{simulate_data}},
+\verb{\link{function_list}},
+\verb{\link{is_collinear}},
+\verb{\link{contains_constant}}
 }

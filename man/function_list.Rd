@@ -4,14 +4,17 @@
 \alias{function_list}
 \title{Apply list of functions to input}
 \usage{
-function_list(..., stringsAsFactors = default.stringsAsFactors(),
-  check.names = TRUE)
+function_list(
+  ...,
+  stringsAsFactors = default.stringsAsFactors(),
+  check.names = TRUE
+)
 }
 \arguments{
 \item{...}{Named or unnamed arguments, each of which is a function taking exactly
 one input. See details.}
 
-\item{stringsAsFactors, check.names}{Arguments of \code{\link[base:data.frame]{data.frame}}.}
+\item{stringsAsFactors, check.names}{Arguments of \verb{\link[base:data.frame]\{data.frame\}}.}
 }
 \value{
 Function with a single input which outputs a data.frame.
@@ -25,7 +28,7 @@ another function which applies all of the user specified functions to a new
 input, and collects the results as list or data.frame.
 This is useful to e.g. transform columns of a data.frame or check
 the validity of a matrix during simulations. See the example here and
-in \code{\link{simulate_data_conditional}}.
+in \verb{\link{simulate_data_conditional}}.
 
 The assumptions for the individual functions are:
 
@@ -52,5 +55,5 @@ f(diag(2))
 
 }
 \seealso{
-\code{\link[base:data.frame]{data.frame}}
+\verb{\link[base:data.frame]\{data.frame\}}
 }

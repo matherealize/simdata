@@ -8,12 +8,24 @@
 \usage{
 simulate_data(generator, ...)
 
-\method{simulate_data}{default}(generator, n_obs = 1,
-  transform_initial = base::identity, names_final = NULL,
-  prefix_final = NULL, process_final = list(), seed = NULL, ...)
+\method{simulate_data}{default}(
+  generator,
+  n_obs = 1,
+  transform_initial = base::identity,
+  names_final = NULL,
+  prefix_final = NULL,
+  process_final = list(),
+  seed = NULL,
+  ...
+)
 
-\method{simulate_data}{simdesign}(generator, n_obs, seed = NULL,
-  apply_transformation = TRUE, apply_processing = TRUE)
+\method{simulate_data}{simdesign}(
+  generator,
+  n_obs,
+  seed = NULL,
+  apply_transformation = TRUE,
+  apply_processing = TRUE
+)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
@@ -37,7 +49,7 @@ by \code{names_final} argument. Set to NULL if no prefixes should
 be added.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
+datamatrix \code{X} before returning it. See \verb{\link{process_data}}.}
 
 \item{seed}{Set random seed to ensure reproducibility of results.}
 
@@ -71,14 +83,14 @@ outliers).
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{default}: Function to be used if no \code{\link{simdesign}}
+\item \code{default}: Function to be used if no \verb{\link{simdesign}}
 S3 class is used.
 
-\item \code{simdesign}: Function to be used with \code{\link{simdesign}} S3 class.
+\item \code{simdesign}: Function to be used with \verb{\link{simdesign}} S3 class.
 }}
 
 \note{
-This function is best used in conjunction with the \code{\link{simdesign}}
+This function is best used in conjunction with the \verb{\link{simdesign}}
 S3 class or any template based upon it, which facilitates further data
 visualization and conveniently stores information as a template for simulation tasks.
 }
@@ -97,21 +109,21 @@ Otherwise the \code{check_and_infer} step will fail.
 
 Transformations should be applicable to the output of the \code{generator}
 function (i.e. take a data.frame or matrix as input) and output another
-data.frame or matrix. A convenience function \code{\link{function_list}} is
+data.frame or matrix. A convenience function \verb{\link{function_list}} is
 provided by this package to specify transformations as a list of functions,
 which take the whole datamatrix \code{Z} as single argument and can be used to
 apply specific transformations to the columns of that matrix. See the
-documentation for \code{\link{function_list}} for details.
+documentation for \verb{\link{function_list}} for details.
 }
 
 \section{Post-processing}{
 
-Post-processing the datamatrix is based on \code{\link{process_data}}.
+Post-processing the datamatrix is based on \verb{\link{process_data}}.
 }
 
 \seealso{
-\code{\link{simdesign}},
-\code{\link{mvtnorm_simdesign}},
-\code{\link{simulate_data_conditional}},
-\code{\link{process_data}}
+\verb{\link{simdesign}},
+\verb{\link{mvtnorm_simdesign}},
+\verb{\link{simulate_data_conditional}},
+\verb{\link{process_data}}
 }

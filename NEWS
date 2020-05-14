@@ -1,3 +1,8 @@
+# simdata v0.2.0.9002 (build date 2020-05-14)
+Renamed the package to simdata. Bug fixes.
+
+- Fixed cor_from_upper to work with single vectors
+
 # simulatoR v0.2.0 (build date 2019-11-26)
 Numerous fixes and enhancments. If you have worked with previous versions of 
 the package it is likely that you will have to adapt your code to the new

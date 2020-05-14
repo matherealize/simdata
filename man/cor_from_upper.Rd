@@ -28,5 +28,5 @@ cor_from_upper(2, rbind(c(1,2,0.8)))
 
 }
 \seealso{
-\code{\link{cor_to_upper}}
+\verb{\link{cor_to_upper}}
 }

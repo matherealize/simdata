@@ -20,7 +20,7 @@ Applies functions to a matrix or data.frame.
 }
 \details{
 Functions are passed into the post-processor as a named list. The name
-\code{f} of the list entry is the function to be applied via \code{\link[base:do.call]{base::do.call}}.
+\code{f} of the list entry is the function to be applied via \verb{\link[base:do.call]\{base::do.call\}}.
 The list entry itself is another named list, specifying the arguments
 to the function \code{f} as named arguments.
 
@@ -28,8 +28,8 @@ The functions must take a matrix or data.frame as first argument and
 return another matrix or data.frame of the same dimensions as
 single output.
 
-Examples of post-processing steps are truncation (\code{\link{process_truncate}})
-or centering / standardizing data (via \code{\link{scale}}, see example section
+Examples of post-processing steps are truncation (\verb{\link{process_truncate}})
+or centering / standardizing data (via \verb{\link{scale}}, see example section
 below).
 
 Can be useful to apply on simulated datasets, even outside of the
@@ -49,5 +49,5 @@ process_data(diag(5),
 
 }
 \seealso{
-\code{\link{process_truncate}}
+\verb{\link{process_truncate}}
 }

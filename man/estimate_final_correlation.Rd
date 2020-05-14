@@ -4,8 +4,13 @@
 \alias{estimate_final_correlation}
 \title{Estimate correlation matrix via simulation}
 \usage{
-estimate_final_correlation(obj, n_obs = 1e+05, cor_type = "pearson",
-  seed = NULL, ...)
+estimate_final_correlation(
+  obj,
+  n_obs = 1e+05,
+  cor_type = "pearson",
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{obj}{S3 class object of type \code{simdesign} (or inheriting from it).}
@@ -13,7 +18,7 @@ estimate_final_correlation(obj, n_obs = 1e+05, cor_type = "pearson",
 \item{n_obs}{Number of observations to simulate.}
 
 \item{cor_type}{Can be either a character (\code{pearson}, \code{spearman}, \code{kendall}) which is
-passed to \code{\link[stats:cor]{stats::cor}} or a function, which is directly
+passed to \verb{\link[stats:cor]\{stats::cor\}} or a function, which is directly
 used to compute the correlation matrix on the simulated data. Such a
 function is expected to take a single input matrix (and possibly other
 arguments which can be set via \code{...}) and output a single matrix.}
@@ -21,7 +26,7 @@ arguments which can be set via \code{...}) and output a single matrix.}
 \item{seed}{Random number seed. NULL does not change the current seed.}
 
 \item{...}{Further arguments are passed to the function that computes the correlation
-matrix (either \code{\link[stats:cor]{stats::cor}} or the user provided function).}
+matrix (either \verb{\link[stats:cor]\{stats::cor\}} or the user provided function).}
 }
 \description{
 Used to obtain an estimate of the correlation matrix after transforming
@@ -34,6 +39,6 @@ advised to use a very large number of observations to compute the correlation
 matrix.
 }
 \seealso{
-\code{\link{simulate_data}},
-\code{\link{simdesign}}
+\verb{\link{simulate_data}},
+\verb{\link{simdesign}}
 }

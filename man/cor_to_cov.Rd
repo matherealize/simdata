@@ -17,5 +17,5 @@ Rescale correlation matrix by variable standard deviations to yield a
 covariance matrix.
 }
 \seealso{
-\code{\link{cov_to_cor}}
+\verb{\link{cov_to_cor}}
 }
