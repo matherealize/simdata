@@ -8,6 +8,8 @@ cor_to_cov(m, sds = NULL)
 }
 \arguments{
 \item{m}{Symmetric correlation matrix.}
+
+\item{sds}{Standard deviations of the variables. Set to 1 for all varirables by default.}
 }
 \value{
 Symmetric covariance matrix.

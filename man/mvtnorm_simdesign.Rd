@@ -37,41 +37,7 @@ covariance matrix whose square root diagonal elements override
 
 \item{name}{Character, optional name of the simulation design.}
 
-\item{...}{Further arguments are directly stored in the list object to be passed to
-\verb{\link{simulate_data}}.}
-
-\item{generator}{Function which generates data from the underlying base distribution. It is
-assumend it takes the number of simulated observations \code{n_obs} as first
-argument, as all random generation functions in the \pkg{stats} and
-\pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
-array as output (matrix or data.frame). See details.}
-
-\item{transform_initial}{Function which specifies the transformation of the underlying
-dataset \code{Z} to final dataset \code{X}. See details.}
-
-\item{names_final}{NULL or character vector with variable names for final dataset \code{X}.
-Length needs to equal the number of columns of \code{X}. Overrides other naming options.}
-
-\item{prefix_final}{NULL or prefix attached to variables in final dataset \code{X}. Overriden
-by \code{names_final} argument. Set to NULL if no prefixes should
-be added.}
-
-\item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \verb{\link{process_data}}.}
-
-\item{n_var_final}{Integer, number of columns in final datamatrix \code{X}. Can be inferred when
-\code{check_and_infer} is TRUE.}
-
-\item{types_final}{Optional vector of length equal to \code{n_var_final} (set by the user or
-inferred) and hence number of columns of final dataset \code{X}.
-Allowed entries are "logical", "factor" and "numeric".
-Stores the type of the columns of \code{X}.
-If not specified by, inferred if \code{check_and_infer} is set to TRUE.}
-
-\item{check_and_infer}{If TRUE, then the simulation design is tested by simulating 5 observations
-using \verb{\link{simulate_data}}. If everything works without error,
-the variables \code{n_var_final} and \code{types_final} will be inferred
-from the results if not already set correctly by the user.}
+\item{...}{Further arguments are passed to the \verb{\link{simdesign}} constructor.}
 }
 \value{
 List object with class attribute "mvtnorm_simdesign" (S3 class), inheriting

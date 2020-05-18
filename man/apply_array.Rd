@@ -6,6 +6,13 @@
 \usage{
 apply_array(obj, dim, fun)
 }
+\arguments{
+\item{obj}{Matrix or data.frame.}
+
+\item{dim}{Dimension to apply function to.}
+
+\item{fun}{Function object to apply.}
+}
 \description{
 Used to make use of apply-like operations, regardless of wether the input
 is a matrix or a data.frame

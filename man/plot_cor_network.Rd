@@ -86,6 +86,9 @@ A numerical vector of the form c(bottom, left, top, right) which gives the
 number of lines of margin to be specified on the four sides of the plot.
 The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 as the \code{margin} argument for the \code{igraph::plot.igraph} function.}
+
+\item{vertex.size, margin, asp, vertex.color, vertex.frame.color, vertex.label.color, edge.color, edge.label.color}{Arguments to \verb{\link[igraph:plot.igraph]\{igraph::plot\}}, with sensible
+defaults for this package's usage.}
 }
 \description{
 Useful to visualize e.g. the associations of the initial multivariate

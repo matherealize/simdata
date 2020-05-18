@@ -119,7 +119,8 @@ simulate_data.simdesign <- function(generator,
                                     n_obs,
                                     seed = NULL,
                                     apply_transformation = TRUE, 
-                                    apply_processing = TRUE) {
+                                    apply_processing = TRUE,
+                                    ...) {
     
     transform_initial = generator$transform_initial
     names_final = generator$names_final
@@ -152,7 +153,12 @@ simulate_data.simdesign <- function(generator,
 #' an underlying base distribution while checking that certain
 #' conditions are met.
 #'
-#' @template simulate_data_template
+#' @param generator 
+#' Function which generates data from the underlying base distribution. It is
+#' assumend it takes the number of simulated observations `n_obs` as first
+#'  argument, as all random generation functions in the \pkg{stats} and 
+#' \pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
+#' array as output (matrix or data.frame). See details.
 #' @param n_obs
 #' Number of simulated observations.
 #' @param reject
@@ -329,10 +335,10 @@ estimate_final_correlation <- function(obj,
     sim_data = simulate_data(obj, n_obs = n_obs)
     
     if (is.character(cor_type)) {
-        f_cor = function(x, ...) cor(x, method = cor_type, ...)
+        f_cor = function(x, ...) stats::cor(x, method = cor_type, ...)
     } else if (class(cor_type) == "function") {
         f_cor = cor_type
-    } else f_cor = function(x, ...) cor(x, method = "pearson", ...)
+    } else f_cor = function(x, ...) stats::cor(x, method = "pearson", ...)
         
     
     f_cor(sim_data, ...)

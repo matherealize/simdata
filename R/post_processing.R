@@ -50,7 +50,7 @@ process_data <- function(X, functions = list()) {
 
     # apply post-processing functions
     for (f in names(functions)) {
-        X = do.call(f, modifyList(list(X), functions[[f]]))
+        X = do.call(f, utils::modifyList(list(X), functions[[f]]))
     }
 
     X
@@ -131,7 +131,7 @@ process_truncate <- function(X,
     if (length(do_trunc) > 0) {
         # determine thresholds to truncate at
         quantiles = apply(X[, do_trunc, drop = FALSE], 2,
-                          quantile, c(0.25, 0.75))
+                          stats::quantile, c(0.25, 0.75))
         iqr = apply(quantiles, 2, diff)
         truncate_upper = quantiles[2, ] +
             truncate_vector[do_trunc] * iqr

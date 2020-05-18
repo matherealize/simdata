@@ -45,19 +45,6 @@ the possible bias of the simulated datasets. See Value.}
 \item{seed}{Set random seed to ensure reproducibility of results. See Note below.}
 
 \item{...}{All further parameters are passed to \verb{\link{simulate_data}}.}
-
-\item{transform_initial}{Function which specifies the transformation of the underlying
-dataset \code{Z} to final dataset \code{X}. See details.}
-
-\item{names_final}{NULL or character vector with variable names for final dataset \code{X}.
-Length needs to equal the number of columns of \code{X}. Overrides other naming options.}
-
-\item{prefix_final}{NULL or prefix attached to variables in final dataset \code{X}. Overriden
-by \code{names_final} argument. Set to NULL if no prefixes should
-be added.}
-
-\item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \verb{\link{process_data}}.}
 }
 \value{
 Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X} if all

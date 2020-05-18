@@ -24,7 +24,8 @@ simulate_data(generator, ...)
   n_obs,
   seed = NULL,
   apply_transformation = TRUE,
-  apply_processing = TRUE
+  apply_processing = TRUE,
+  ...
 )
 }
 \arguments{

@@ -15,7 +15,7 @@
 #' @export
 contains_constant <- function(x, eps = .Machine$double.eps) {
     x = as.matrix(x)
-    val = any(apply(x, 2, sd) < eps)
+    val = any(apply(x, 2, stats::sd) < eps)
     
     if (val)
         warning("contains_constant: Matrix contains constant column.\n")
@@ -126,25 +126,6 @@ cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
     res
 }
 
-#' @title Convert covariance matrix to correlation matrix
-#' 
-#' @description 
-#' Wrapper for `\link[stats:cor]{stats::cov2cor}`.
-#' 
-#' @param m
-#' Symmetric covariance matrix.
-#' 
-#' @return 
-#' Symmetric correlation matrix.
-#' 
-#' @seealso 
-#' `\link{cor_to_cov}`
-#' 
-#' @export
-cov_to_cor <- function(m) {
-    cov2cor(m)
-}
-
 #' @title Convert correlation matrix to covariance matrix
 #' 
 #' @description 
@@ -153,6 +134,8 @@ cov_to_cor <- function(m) {
 #' 
 #' @param m
 #' Symmetric correlation matrix.
+#' @param sds
+#' Standard deviations of the variables. Set to 1 for all varirables by default.
 #' 
 #' @return 
 #' Symmetric covariance matrix.
@@ -274,6 +257,13 @@ as_function_list <- function(flist, ...) {
 #' @description 
 #' Used to make use of apply-like operations, regardless of wether the input 
 #' is a matrix or a data.frame
+#' 
+#' @param obj
+#' Matrix or data.frame.
+#' @param dim
+#' Dimension to apply function to.
+#' @param fun
+#' Function object to apply.
 apply_array <- function(obj, dim, fun) {
     if (is.matrix(obj)) {
         return(apply(obj, dim, fun))

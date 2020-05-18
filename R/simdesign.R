@@ -66,7 +66,7 @@ simdesign <- function(generator,
                       prefix_final = "v",
                       process_final = list(), 
                       name = "Simulation design",
-                      check_and_infer = TRUE, # TODO document
+                      check_and_infer = TRUE, 
                       ...) {
     design = c(
         list(
@@ -117,9 +117,9 @@ simdesign <- function(generator,
         } else {
             # note that the colnames could be empty, therefore
             # we need to modifyList
-            design = modifyList(design, 
-                                list(names_final = colnames(res)), 
-                                keep.null = TRUE)
+            design = utils::modifyList(design, 
+                                       list(names_final = colnames(res)), 
+                                       keep.null = TRUE)
         }
     }
     
@@ -152,11 +152,10 @@ simdesign <- function(generator,
 #' `sd_initial`.
 #' @param method
 #' `method` argument of `\link[mvtnorm:Mvnorm]{mvtnorm::rmvnorm}`.
-#' @template simulate_data_template
-#' @template simdesign_template
+#' @param name
+#' Character, optional name of the simulation design.
 #' @param ...
-#' Further arguments are directly stored in the list object to be passed to 
-#' `\link{simulate_data}`.
+#' Further arguments are passed to the `\link{simdesign}` constructor.
 #'
 #' @details
 #' This S3 class implements a simulation design based on an underlying
@@ -219,7 +218,7 @@ mvtnorm_simdesign <- function(relations_initial,
     } else {
         # is covariance matrix
         sd_initial = sqrt(diag(relations_initial))
-        cor_initial = cov2cor(cor_initial)
+        cor_initial = stats::cov2cor(cor_initial)
     }
     
     # define generator

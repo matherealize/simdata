@@ -52,6 +52,9 @@
 #' number of lines of margin to be specified on the four sides of the plot. 
 #' The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 #' as the `margin` argument for the `igraph::plot.igraph` function.
+#' @param vertex.size,margin,asp,vertex.color,vertex.frame.color,vertex.label.color,edge.color,edge.label.color 
+#' Arguments to `\link[igraph:plot.igraph]{igraph::plot}`, with sensible 
+#' defaults for this package's usage.
 #' @param ...
 #' Passed to `\link[igraph:plot.igraph]{igraph::plot}`, with a complete list
 #' of arguments and details given in `\link[igraph:plot.common]{igraph.plotting}`.
@@ -133,8 +136,8 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
 
     layout = igraph::layout_with_fr(net, start.temp = igraph::vcount(net))
 
-    op = par(mar = mar)
-    invisible(on.exit(par(op)))
+    op = graphics::par(mar = mar)
+    invisible(on.exit(graphics::par(op)))
     igraph::plot.igraph(
         net,
         vertex.size = vertex.size,
