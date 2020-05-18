@@ -140,9 +140,6 @@ cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
 #' @return 
 #' Symmetric covariance matrix.
 #' 
-#' @seealso 
-#' \code{\link{cov_to_cor}}
-#' 
 #' @export
 cor_to_cov <- function(m, sds = NULL) {
     if (is.null(sds))
