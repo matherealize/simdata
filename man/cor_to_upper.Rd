@@ -24,5 +24,5 @@ Convert correlation matrix to specification used by
 \code{cor_from_upper}
 }
 \seealso{
-\verb{\link{cor_from_upper}}
+\code{\link{cor_from_upper}}
 }

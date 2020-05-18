@@ -16,4 +16,4 @@
 #' be added. 
 #' @param process_final
 #' List of lists specifying post-processing functions applied to final
-#' datamatrix `X` before returning it. See `\link{process_data}`.
+#' datamatrix `X` before returning it. See \code{\link{process_data}}.

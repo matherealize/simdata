@@ -44,17 +44,17 @@ by \code{names_final} argument. Set to NULL if no prefixes should
 be added.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \verb{\link{process_data}}.}
+datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
 
 \item{name}{Character, optional name of the simulation design.}
 
 \item{check_and_infer}{If TRUE, then the simulation design is tested by simulating 5 observations
-using \verb{\link{simulate_data}}. If everything works without error,
+using \code{\link{simulate_data}}. If everything works without error,
 the variables \code{n_var_final} and \code{types_final} will be inferred
 from the results if not already set correctly by the user.}
 
 \item{...}{Further arguments are directly stored in the list object to be passed to
-\verb{\link{simulate_data}}.}
+\code{\link{simulate_data}}.}
 }
 \value{
 List object with class attribute "simdesign" (S3 class) containing
@@ -83,15 +83,15 @@ The \code{simdesign} class should be used in the following workflow:
 \item Specify a design template which will be used in subsequent data
 generating / visualization steps.
 \item Sample / visualize datamatrix following template (possibly
-multiple times) using \verb{\link{simulate_data}}.
+multiple times) using \code{\link{simulate_data}}.
 \item Use sampled datamatrix for simulation study.
 }
 
 For more details on generators and transformations, please see the
-documentation of \verb{\link{simulate_data}}.
+documentation of \code{\link{simulate_data}}.
 
 For details on post-processing, please see the documentation of
-\verb{\link{process_data}}.
+\code{\link{process_data}}.
 }
 \section{Simulation Templates}{
 
@@ -99,11 +99,11 @@ This class is intended to be used as a template for simulation designs
 which are based on specific underlying distributions. All such a template
 needs to define is the \code{generator} function and its construction and
 pass it to this function along with the other arguments. See
-\verb{\link{mvtnorm_simdesign}} for an example.
+\code{\link{mvtnorm_simdesign}} for an example.
 }
 
 \seealso{
-\verb{\link{mvtnorm_simdesign}},
-\verb{\link{simulate_data}},
-\verb{\link{simulate_data_conditional}}
+\code{\link{mvtnorm_simdesign}},
+\code{\link{simulate_data}},
+\code{\link{simulate_data_conditional}}
 }

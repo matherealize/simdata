@@ -63,7 +63,7 @@ is_collinear <- function(x) {
 #' Matrix with user supplied entries.
 #'
 #' @seealso
-#' `\link{cor_to_upper}`
+#' \code{\link{cor_to_upper}}
 #'
 #' @examples
 #' \dontrun{
@@ -113,7 +113,7 @@ cor_from_upper <- function(n_var, entries = NULL) {
 #' entries.
 #'
 #' @seealso
-#' `\link{cor_from_upper}`
+#' \code{\link{cor_from_upper}}
 #'
 #' @export
 cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
@@ -141,7 +141,7 @@ cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
 #' Symmetric covariance matrix.
 #' 
 #' @seealso 
-#' `\link{cov_to_cor}`
+#' \code{\link{cov_to_cor}}
 #' 
 #' @export
 cor_to_cov <- function(m, sds = NULL) {
@@ -158,7 +158,7 @@ cor_to_cov <- function(m, sds = NULL) {
 #' Named or unnamed arguments, each of which is a function taking exactly 
 #' one input. See details.
 #' @param stringsAsFactors,check.names
-#' Arguments of `\link[base:data.frame]{data.frame}`.
+#' Arguments of \code{\link[base:data.frame]{data.frame}}.
 #' 
 #' @details 
 #' This is a convenience function which takes a number of functions and returns
@@ -166,7 +166,7 @@ cor_to_cov <- function(m, sds = NULL) {
 #' input, and collects the results as list or data.frame.
 #' This is useful to e.g. transform columns of a data.frame or check 
 #' the validity of a matrix during simulations. See the example here and 
-#' in `\link{simulate_data_conditional}`.
+#' in \code{\link{simulate_data_conditional}}.
 #' 
 #' The assumptions for the individual functions are: 
 #' 
@@ -195,7 +195,7 @@ cor_to_cov <- function(m, sds = NULL) {
 #' Function with a single input which outputs a data.frame.
 #' 
 #' @seealso 
-#' `\link[base:data.frame]{data.frame}`
+#' \code{\link[base:data.frame]{data.frame}}
 #' 
 #' @export
 function_list <- function(..., 
@@ -243,7 +243,7 @@ get_from_function_list <- function(flist) {
 #' @param flist
 #' List in which each entry is a function object. Can be named or unnamed.
 #' @param ...
-#' Passed to `\link{function_list}`.
+#' Passed to \code{\link{function_list}}.
 #' 
 #' @inherit function_list return
 #' 

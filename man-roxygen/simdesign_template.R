@@ -11,6 +11,6 @@
 #' Character, optional name of the simulation design.
 #' @param check_and_infer
 #' If TRUE, then the simulation design is tested by simulating 5 observations
-#' using `\link{simulate_data}`. If everything works without error, 
+#' using \code{\link{simulate_data}}. If everything works without error, 
 #' the variables `n_var_final` and `types_final` will be inferred
 #' from the results if not already set correctly by the user.

@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Useful to visualize e.g. the associations of the initial multivariate
-#' gaussian distribution used by `\link{mvtnorm_simdesign}`.
+#' gaussian distribution used by \code{\link{mvtnorm_simdesign}}.
 #'
 #' @param obj
 #' Correlation matrix or S3 class object which has a class method available (see below).
@@ -43,29 +43,29 @@
 #' also be used to obtain nicer looking graph layouts.
 #' @param return_network
 #' If TRUE, the `igraph` network object is returned and can be plotted by 
-#' the user using e.g. the interactive `\link[igraph:tkplot]{igraph::tkplot}` 
+#' the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}} 
 #' function.
 #' @param mar
-#' `mar` argument to the `\link[graphics:par]{par}` function to set 
+#' `mar` argument to the \code{\link[graphics:par]{par}} function to set 
 #' margins of the plot (often required when the axes should be drawn). 
 #' A numerical vector of the form c(bottom, left, top, right) which gives the 
 #' number of lines of margin to be specified on the four sides of the plot. 
 #' The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 #' as the `margin` argument for the `igraph::plot.igraph` function.
 #' @param vertex.size,margin,asp,vertex.color,vertex.frame.color,vertex.label.color,edge.color,edge.label.color 
-#' Arguments to `\link[igraph:plot.igraph]{igraph::plot}`, with sensible 
+#' Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible 
 #' defaults for this package's usage.
 #' @param ...
-#' Passed to `\link[igraph:plot.igraph]{igraph::plot}`, with a complete list
-#' of arguments and details given in `\link[igraph:plot.common]{igraph.plotting}`.
+#' Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}, with a complete list
+#' of arguments and details given in \code{\link[igraph:plot.common]{igraph.plotting}}.
 #' 
 #' @details 
 #' For an explanation of all parameters not listed here, please refer to
-#' `\link[igraph:plot.igraph]{igraph::plot}`.
+#' \code{\link[igraph:plot.igraph]{igraph::plot}}.
 #'
 #' @seealso
-#' `\link{plot_cor_network.mvtnorm_simdesign}`,
-#' `\link{plot_estimated_cor_network}`
+#' \code{\link{plot_cor_network.mvtnorm_simdesign}},
+#' \code{\link{plot_estimated_cor_network}}
 #'
 #' @export
 plot_cor_network <- function(obj, ...) {
@@ -151,7 +151,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
         edge.label.color = edge.label.color, ...)
 }
 
-#' @describeIn plot_cor_network Function to be used with `\link{mvtnorm_simdesign}` 
+#' @describeIn plot_cor_network Function to be used with \code{\link{mvtnorm_simdesign}} 
 #' S3 class object to visualize initial correlation network of the underlying
 #' multivariate normal distribution.
 #'
@@ -165,15 +165,15 @@ plot_cor_network.mvtnorm_simdesign <- function(obj, ...) {
 #'
 #' @description
 #' Based on approximation via simulation specified by given simulation design.
-#' Convenience wrapper for combining `\link{estimate_final_correlation}` and
-#' `\link{plot_cor_network}`.
+#' Convenience wrapper for combining \code{\link{estimate_final_correlation}} and
+#' \code{\link{plot_cor_network}}.
 #'
 #' @inheritParams estimate_final_correlation
 #' @param show_categorical
 #' If TRUE, marks categorical variables differently from numeric ones.
 #' Determined by the `types_final` slot of the `obj` argument.
 #' @param ...
-#' Passed to `\link{plot_cor_network}`.
+#' Passed to \code{\link{plot_cor_network}}.
 #'
 #' @details 
 #' This function is useful to estimate the correlation network of a simulation
@@ -181,8 +181,8 @@ plot_cor_network.mvtnorm_simdesign <- function(obj, ...) {
 #' the final dataset `X`.
 #'
 #' @seealso
-#' `\link{plot_cor_network}`,
-#' `\link{estimate_final_correlation}`
+#' \code{\link{plot_cor_network}},
+#' \code{\link{estimate_final_correlation}}
 #'
 #' @export
 plot_estimated_cor_network <- function(obj, n_obs = 100000,

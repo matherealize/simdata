@@ -12,7 +12,7 @@
 #'
 #' @details
 #' Functions are passed into the post-processor as a named list. The name
-#' `f` of the list entry is the function to be applied via `\link[base:do.call]{base::do.call}`.
+#' `f` of the list entry is the function to be applied via \code{\link[base:do.call]{base::do.call}}.
 #' The list entry itself is another named list, specifying the arguments
 #' to the function `f` as named arguments.
 #'
@@ -20,8 +20,8 @@
 #' return another matrix or data.frame of the same dimensions as
 #' single output.
 #'
-#' Examples of post-processing steps are truncation (`\link{process_truncate}`)
-#' or centering / standardizing data (via `\link{scale}`, see example section
+#' Examples of post-processing steps are truncation (\code{\link{process_truncate}})
+#' or centering / standardizing data (via \code{\link{scale}}, see example section
 #' below).
 #'
 #' Can be useful to apply on simulated datasets, even outside of the
@@ -43,7 +43,7 @@
 #' }
 #' 
 #' @seealso 
-#' `\link{process_truncate}`
+#' \code{\link{process_truncate}}
 #'
 #' @export
 process_data <- function(X, functions = list()) {

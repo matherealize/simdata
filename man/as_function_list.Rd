@@ -9,7 +9,7 @@ as_function_list(flist, ...)
 \arguments{
 \item{flist}{List in which each entry is a function object. Can be named or unnamed.}
 
-\item{...}{Passed to \verb{\link{function_list}}.}
+\item{...}{Passed to \code{\link{function_list}}.}
 }
 \value{
 Function with a single input which outputs a data.frame.

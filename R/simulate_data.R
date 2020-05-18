@@ -36,17 +36,17 @@
 #' @section Transformations:
 #' Transformations should be applicable to the output of the `generator`
 #' function (i.e. take a data.frame or matrix as input) and output another
-#' data.frame or matrix. A convenience function `\link{function_list}` is 
+#' data.frame or matrix. A convenience function \code{\link{function_list}} is 
 #' provided by this package to specify transformations as a list of functions,
 #'  which take the whole datamatrix `Z` as single argument and can be used to
 #'  apply specific transformations to the columns of that matrix. See the 
-#'  documentation for `\link{function_list}` for details.
+#'  documentation for \code{\link{function_list}} for details.
 #'  
 #' @section Post-processing:
-#' Post-processing the datamatrix is based on `\link{process_data}`.
+#' Post-processing the datamatrix is based on \code{\link{process_data}}.
 #'
 #' @note
-#' This function is best used in conjunction with the `\link{simdesign}`
+#' This function is best used in conjunction with the \code{\link{simdesign}}
 #' S3 class or any template based upon it, which facilitates further data 
 #' visualization and conveniently stores information as a template for simulation tasks.
 #' 
@@ -54,17 +54,17 @@
 #' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
 #'
 #' @seealso
-#' `\link{simdesign}`, 
-#' `\link{mvtnorm_simdesign}`, 
-#' `\link{simulate_data_conditional}`,
-#' `\link{process_data}`
+#' \code{\link{simdesign}}, 
+#' \code{\link{mvtnorm_simdesign}}, 
+#' \code{\link{simulate_data_conditional}},
+#' \code{\link{process_data}}
 #'
 #' @export
 simulate_data <- function(generator, ...) {
     UseMethod("simulate_data", generator)
 }
 
-#' @describeIn simulate_data Function to be used if no `\link{simdesign}`
+#' @describeIn simulate_data Function to be used if no \code{\link{simdesign}}
 #' S3 class is used.
 #'
 #' @export
@@ -100,7 +100,7 @@ simulate_data.default <- function(generator,
     x
 }
 
-#' @describeIn simulate_data Function to be used with `\link{simdesign}` S3 class.
+#' @describeIn simulate_data Function to be used with \code{\link{simdesign}} S3 class.
 #' 
 #' @param apply_transformation
 #' If `generator` is a `simdesign` object, then this argument can be set to 
@@ -166,7 +166,7 @@ simulate_data.simdesign <- function(generator,
 #' TRUE or FALSE. Specifies when a simulated final datamatrix `X` should
 #' be rejected. Functions must output TRUE if condition IS NOT met / FALSE if 
 #' condition IS met and matrix can be accepted. Intended to be used with 
-#' `\link{function_list}`. See details.
+#' \code{\link{function_list}}. See details.
 #' @param reject_max_iter
 #' Intger > 0. In case of rejection, how many times should a new datamatrix be
 #' simulated until the conditions in `reject` are met?
@@ -182,11 +182,11 @@ simulate_data.simdesign <- function(generator,
 #' @param seed
 #' Set random seed to ensure reproducibility of results. See Note below.
 #' @param ...
-#' All further parameters are passed to `\link{simulate_data}`.
+#' All further parameters are passed to \code{\link{simulate_data}}.
 #'
 #' @details
 #' For details on generating, transforming and post-processing datasets, see
-#' `\link{simulate_data}`. This function simulates data conditional
+#' \code{\link{simulate_data}}. This function simulates data conditional
 #' on certain requirements that must be met by the final datamatrix `X`.
 #' This checking is conducted on the output of `simulate_data` (i.e.
 #' also includes possible post-processing steps).
@@ -206,11 +206,11 @@ simulate_data.simdesign <- function(generator,
 #' @section Rejection Function:
 #' The `reject` function should take a single input (a data.frame or matrix) and
 #' output TRUE if the dataset is to be rejected or FALSE if it is to be accepted.
-#' This package provides the `\link{function_list}` convenience function which
+#' This package provides the \code{\link{function_list}} convenience function which
 #' allows to easily create a rejection function which assesses several 
 #' conditions on the input dataset by simply passing individual test functions
 #' to `function_list`. Such test function templates are found in 
-#' `\link{is_collinear}` and `\link{contains_constant}`. See the example
+#' \code{\link{is_collinear}} and \code{\link{contains_constant}}. See the example
 #' below.
 #' 
 #' @note 
@@ -230,11 +230,11 @@ simulate_data.simdesign <- function(generator,
 #' find the returned dataset.
 #'
 #' @seealso
-#' `\link{simdesign}`, 
-#' `\link{simulate_data}`,
-#' `\link{function_list}`,
-#' `\link{is_collinear}`, 
-#' `\link{contains_constant}`
+#' \code{\link{simdesign}}, 
+#' \code{\link{simulate_data}},
+#' \code{\link{function_list}},
+#' \code{\link{is_collinear}}, 
+#' \code{\link{contains_constant}}
 #' 
 #' @examples
 #' \dontrun{
@@ -303,7 +303,7 @@ simulate_data_conditional <- function(generator,
 #' Number of observations to simulate.
 #' @param cor_type
 #' Can be either a character (`pearson`, `spearman`, `kendall`) which is 
-#' passed to `\link[stats:cor]{stats::cor}` or a function, which is directly
+#' passed to \code{\link[stats:cor]{stats::cor}} or a function, which is directly
 #' used to compute the correlation matrix on the simulated data. Such a 
 #' function is expected to take a single input matrix (and possibly other
 #' arguments which can be set via `...`) and output a single matrix. 
@@ -311,7 +311,7 @@ simulate_data_conditional <- function(generator,
 #' Random number seed. NULL does not change the current seed.
 #' @param ...
 #' Further arguments are passed to the function that computes the correlation
-#' matrix (either `\link[stats:cor]{stats::cor}` or the user provided function).
+#' matrix (either \code{\link[stats:cor]{stats::cor}} or the user provided function).
 #' 
 #' @details 
 #' This function is useful to estimate the final correlation of the data after
@@ -320,8 +320,8 @@ simulate_data_conditional <- function(generator,
 #' matrix. 
 #' 
 #' @seealso 
-#' `\link{simulate_data}`,
-#' `\link{simdesign}`
+#' \code{\link{simulate_data}},
+#' \code{\link{simdesign}}
 #' 
 #' @export
 estimate_final_correlation <- function(obj, 

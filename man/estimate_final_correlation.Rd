@@ -18,7 +18,7 @@ estimate_final_correlation(
 \item{n_obs}{Number of observations to simulate.}
 
 \item{cor_type}{Can be either a character (\code{pearson}, \code{spearman}, \code{kendall}) which is
-passed to \verb{\link[stats:cor]\{stats::cor\}} or a function, which is directly
+passed to \code{\link[stats:cor]{stats::cor}} or a function, which is directly
 used to compute the correlation matrix on the simulated data. Such a
 function is expected to take a single input matrix (and possibly other
 arguments which can be set via \code{...}) and output a single matrix.}
@@ -26,7 +26,7 @@ arguments which can be set via \code{...}) and output a single matrix.}
 \item{seed}{Random number seed. NULL does not change the current seed.}
 
 \item{...}{Further arguments are passed to the function that computes the correlation
-matrix (either \verb{\link[stats:cor]\{stats::cor\}} or the user provided function).}
+matrix (either \code{\link[stats:cor]{stats::cor}} or the user provided function).}
 }
 \description{
 Used to obtain an estimate of the correlation matrix after transforming
@@ -39,6 +39,6 @@ advised to use a very large number of observations to compute the correlation
 matrix.
 }
 \seealso{
-\verb{\link{simulate_data}},
-\verb{\link{simdesign}}
+\code{\link{simulate_data}},
+\code{\link{simdesign}}
 }

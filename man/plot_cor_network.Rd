@@ -38,8 +38,8 @@ plot_cor_network(obj, ...)
 \arguments{
 \item{obj}{Correlation matrix or S3 class object which has a class method available (see below).}
 
-\item{...}{Passed to \verb{\link[igraph:plot.igraph]\{igraph::plot\}}, with a complete list
-of arguments and details given in \verb{\link[igraph:plot.common]\{igraph.plotting\}}.}
+\item{...}{Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}, with a complete list
+of arguments and details given in \code{\link[igraph:plot.common]{igraph.plotting}}.}
 
 \item{categorical_indices}{Vector of indices of variables which should be drawn as rectangles
 (i.e. represent categorical data).}
@@ -77,37 +77,37 @@ obtain same layout but vary edge widths, correlation functions etc. Can
 also be used to obtain nicer looking graph layouts.}
 
 \item{return_network}{If TRUE, the \code{igraph} network object is returned and can be plotted by
-the user using e.g. the interactive \verb{\link[igraph:tkplot]\{igraph::tkplot\}}
+the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}}
 function.}
 
-\item{mar}{\code{mar} argument to the \verb{\link[graphics:par]\{par\}} function to set
+\item{mar}{\code{mar} argument to the \code{\link[graphics:par]{par}} function to set
 margins of the plot (often required when the axes should be drawn).
 A numerical vector of the form c(bottom, left, top, right) which gives the
 number of lines of margin to be specified on the four sides of the plot.
 The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 as the \code{margin} argument for the \code{igraph::plot.igraph} function.}
 
-\item{vertex.size, margin, asp, vertex.color, vertex.frame.color, vertex.label.color, edge.color, edge.label.color}{Arguments to \verb{\link[igraph:plot.igraph]\{igraph::plot\}}, with sensible
+\item{vertex.size, margin, asp, vertex.color, vertex.frame.color, vertex.label.color, edge.color, edge.label.color}{Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible
 defaults for this package's usage.}
 }
 \description{
 Useful to visualize e.g. the associations of the initial multivariate
-gaussian distribution used by \verb{\link{mvtnorm_simdesign}}.
+gaussian distribution used by \code{\link{mvtnorm_simdesign}}.
 }
 \details{
 For an explanation of all parameters not listed here, please refer to
-\verb{\link[igraph:plot.igraph]\{igraph::plot\}}.
+\code{\link[igraph:plot.igraph]{igraph::plot}}.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{default}: Function to be used for correlation matrix.
 
-\item \code{mvtnorm_simdesign}: Function to be used with \verb{\link{mvtnorm_simdesign}}
+\item \code{mvtnorm_simdesign}: Function to be used with \code{\link{mvtnorm_simdesign}}
 S3 class object to visualize initial correlation network of the underlying
 multivariate normal distribution.
 }}
 
 \seealso{
-\verb{\link{plot_cor_network.mvtnorm_simdesign}},
-\verb{\link{plot_estimated_cor_network}}
+\code{\link{plot_cor_network.mvtnorm_simdesign}},
+\code{\link{plot_estimated_cor_network}}
 }

@@ -28,7 +28,7 @@ array as output (matrix or data.frame). See details.}
 TRUE or FALSE. Specifies when a simulated final datamatrix \code{X} should
 be rejected. Functions must output TRUE if condition IS NOT met / FALSE if
 condition IS met and matrix can be accepted. Intended to be used with
-\verb{\link{function_list}}. See details.}
+\code{\link{function_list}}. See details.}
 
 \item{reject_max_iter}{Intger > 0. In case of rejection, how many times should a new datamatrix be
 simulated until the conditions in \code{reject} are met?}
@@ -44,7 +44,7 @@ the possible bias of the simulated datasets. See Value.}
 
 \item{seed}{Set random seed to ensure reproducibility of results. See Note below.}
 
-\item{...}{All further parameters are passed to \verb{\link{simulate_data}}.}
+\item{...}{All further parameters are passed to \code{\link{simulate_data}}.}
 }
 \value{
 Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X} if all
@@ -62,7 +62,7 @@ conditions are met.
 }
 \details{
 For details on generating, transforming and post-processing datasets, see
-\verb{\link{simulate_data}}. This function simulates data conditional
+\code{\link{simulate_data}}. This function simulates data conditional
 on certain requirements that must be met by the final datamatrix \code{X}.
 This checking is conducted on the output of \code{simulate_data} (i.e.
 also includes possible post-processing steps).
@@ -92,11 +92,11 @@ after which the latest datamatrix is returned or an error is reported.
 
 The \code{reject} function should take a single input (a data.frame or matrix) and
 output TRUE if the dataset is to be rejected or FALSE if it is to be accepted.
-This package provides the \verb{\link{function_list}} convenience function which
+This package provides the \code{\link{function_list}} convenience function which
 allows to easily create a rejection function which assesses several
 conditions on the input dataset by simply passing individual test functions
 to \code{function_list}. Such test function templates are found in
-\verb{\link{is_collinear}} and \verb{\link{contains_constant}}. See the example
+\code{\link{is_collinear}} and \code{\link{contains_constant}}. See the example
 below.
 }
 
@@ -109,9 +109,9 @@ simulate_data_conditional(dsgn, 100,
 
 }
 \seealso{
-\verb{\link{simdesign}},
-\verb{\link{simulate_data}},
-\verb{\link{function_list}},
-\verb{\link{is_collinear}},
-\verb{\link{contains_constant}}
+\code{\link{simdesign}},
+\code{\link{simulate_data}},
+\code{\link{function_list}},
+\code{\link{is_collinear}},
+\code{\link{contains_constant}}
 }
