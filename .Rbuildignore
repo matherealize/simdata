@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 Notes.txt
 man-roxygen
+^doc$
+^Meta$
