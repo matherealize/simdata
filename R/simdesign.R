@@ -243,3 +243,69 @@ mvtnorm_simdesign <- function(relations_initial,
     
     dsgn
 }
+
+#' @title Uniform disc sampling design specification
+#' 
+#' @description 
+#' Provides 2-dimensional points, spread uniformly over disc, or partial 
+#' disc segment (i.e. a circle, or ring, or ring segment). Useful for e.g. 
+#' building up clustering exercises.
+#' 
+#' @param r_min
+#' Minimum radius of points.
+#' @param r_max
+#' Maximum radius of points.
+#' @param angle_min
+#' Minimum angle of points (between 0 and 2pi).
+#' @param angle_max
+#' Maximum angle of points (between 0 and 2pi).
+#' 
+#' @details 
+#' The distribution of points on a disk depends on the radius - the farther out,
+#' the more area the points need to cover. Thus, simply sampling two uniform 
+#' values for radius and angle will not work. See references.
+#' 
+#' @references 
+#' \url{https://mathworld.wolfram.com/DiskPointPicking.html}
+#' 
+#' @examples 
+#' \dontrun{
+#' disc_sampler = discunif_simdesign()
+#' plot(simulate_data(disc_sampler, 1000))
+#' 
+#' ring_segment_sampler = discunif_simdesign(r_min = 0.5, angle_min = 0.5*pi)
+#' plot(simulate_data(ring_segment_sampler, 1000))
+#' 
+#' circle_sampler = discunif_simdesign(r_min = 1)
+#' plot(simulate_data(circle_sampler, 1000))
+#' } 
+#' 
+#' @export
+discunif_simdesign <- function(r_min = 0, r_max = 1, 
+                               angle_min = 0, angle_max = 2*pi, 
+                               name = "Uniform circle simulation design",                              
+                               ...) {
+    
+    # define generator
+    # use sqrt of radius instead of radius itself
+    generator = function(n) {
+        r = sqrt(runif(n, min = r_min, max = r_max) )
+        phi = runif(n, min = angle_min, max = angle_max)
+        matrix(c(r * cos(phi), r * sin(phi)), ncol = 2)
+    }
+    
+    # setup simulation design
+    dsgn = simdesign(
+        generator = generator, 
+        r_min = r_min,
+        r_max = r_max, 
+        angle_min = angle_min, 
+        angle_max = angle_max,
+        name = name,
+        ...
+    )
+    
+    class(dsgn) = c("discunif_simdesign", class(dsgn))
+    
+    dsgn
+}
