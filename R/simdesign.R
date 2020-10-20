@@ -126,7 +126,9 @@ simdesign <- function(generator,
     design
 }
 
-#' @title Design specification for simulating datasets
+# Design templates ############################################################
+
+#' @title Multivariate normal design specification
 #'
 #' @description
 #' Stores information necessary to simulate and visualize datasets based

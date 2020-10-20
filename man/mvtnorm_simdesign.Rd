@@ -2,7 +2,7 @@
 % Please edit documentation in R/simdesign.R
 \name{mvtnorm_simdesign}
 \alias{mvtnorm_simdesign}
-\title{Design specification for simulating datasets}
+\title{Multivariate normal design specification}
 \usage{
 mvtnorm_simdesign(
   relations_initial,
