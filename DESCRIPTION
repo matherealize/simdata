@@ -1,7 +1,7 @@
 Package: simdata
 Type: Package
 Title: Generate Simulated Datasets
-Version: 0.2.0.9002
+Version: 0.2.0.9003
 Author: Michael Kammer [aut, cre]
 Authors@R: person("Michael", "Kammer", 
     email = "michael.kammer@meduniwien.ac.at", 
