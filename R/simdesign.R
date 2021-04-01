@@ -91,14 +91,37 @@ simdesign <- function(generator,
     # check if simulation design works by simulating 5 samples
     res = tryCatch(
         simulate_data(design, 5), 
-        error = function(err) {
-            warning("Unable to simulate from design, please double check arguments. Returning NULL.")
-            NULL
-        }
+        error = function(err) err
     )
     
-    if (is.null(res))
-        return(NULL)
+    if (inherits(res, "condition")) {
+        print(res)
+        warning(
+            "Unable to simulate from design. ",
+            "Please double check arguments. ", 
+            "Returning the potentially faulty design object."
+        )
+        return(design)
+    }
+    
+    if (is.null(res)) {
+        warning(
+            "Simulation from design returned NULL. ", 
+            "Please double check arguments. ", 
+            "Returning the potentially faulty design object."
+        )
+        return(design)
+    }
+    
+    if (length(res) != 5) {
+        warning(
+            "Simulation from design returned unexpected number ",
+            sprintf("of observations (%d instead of %d). ", length(res), 5), 
+            "Please double check arguments. ",
+            "Returning the potentially faulty design object."
+        )
+        return(design)
+    }
     
     n_var_res = ncol(res)
     
