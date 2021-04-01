@@ -9,10 +9,12 @@ contains_constant(x, eps = .Machine$double.eps)
 \arguments{
 \item{x}{Matrix or Data.frame.}
 
-\item{eps}{Threshold for standard deviation below which a column is considered to be constant.}
+\item{eps}{Threshold for standard deviation below which a column is considered to be
+constant.}
 }
 \value{
-TRUE if one of the columns has standard deviation of below `eps``, else FALSE.
+TRUE if one of the columns has standard deviation of below `eps``, else
+FALSE.
 }
 \description{
 Check if matrix contains constant column(s)

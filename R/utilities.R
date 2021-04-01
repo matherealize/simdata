@@ -4,10 +4,12 @@
 #' @param x
 #' Matrix or Data.frame.
 #' @param eps
-#' Threshold for standard deviation below which a column is considered to be constant. 
+#' Threshold for standard deviation below which a column is considered to be 
+#' constant. 
 #'
 #' @return
-#' TRUE if one of the columns has standard deviation of below `eps``, else FALSE.
+#' TRUE if one of the columns has standard deviation of below `eps``, else 
+#' FALSE.
 #'
 #' @note
 #' Prints a warning if constant is found.

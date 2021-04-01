@@ -87,13 +87,15 @@ outliers).
 \item \code{default}: Function to be used if no \code{\link{simdesign}}
 S3 class is used.
 
-\item \code{simdesign}: Function to be used with \code{\link{simdesign}} S3 class.
+\item \code{simdesign}: Function to be used with \code{\link{simdesign}}
+S3 class.
 }}
 
 \note{
 This function is best used in conjunction with the \code{\link{simdesign}}
 S3 class or any template based upon it, which facilitates further data
-visualization and conveniently stores information as a template for simulation tasks.
+visualization and conveniently stores information as a template for
+simulation tasks.
 }
 \section{Generators}{
 
@@ -102,8 +104,8 @@ as the random generation functions in the R \pkg{stats} and \pkg{extraDistr}
 packages. Specifically, that means it takes the number of observations as
 first argument. All further arguments can be set via passing them as
 named argument to this function. It is expected to return a two-dimensional
-array (matrix or data.frame) for which the number of columns can be determined.
-Otherwise the \code{check_and_infer} step will fail.
+array (matrix or data.frame) for which the number of columns can be
+determined. Otherwise the \code{check_and_infer} step will fail.
 }
 
 \section{Transformations}{

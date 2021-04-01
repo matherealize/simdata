@@ -41,13 +41,14 @@ covariance matrix whose square root diagonal elements override
 }
 \value{
 List object with class attribute "mvtnorm_simdesign" (S3 class), inheriting
-from "simdesign". It contains the same entries as a \code{\link{simdesign}} object
-but in addition the following entries:
+from "simdesign". It contains the same entries as a \code{\link{simdesign}}
+object but in addition the following entries:
 
 \describe{
 \item{\code{mean_initial}}{}
 \item{\code{sd_initial}}{}
-\item{\code{cor_initial}}{Initial correlation matrix of multivariate normal distribution}
+\item{\code{cor_initial}}{Initial correlation matrix of multivariate normal
+distribution}
 }
 }
 \description{
@@ -74,7 +75,7 @@ multivariate Normal distribution (number of dimensions specified by
 dimensions of \code{relations}).
 \item \code{Z} is then transformed into the final dataset \code{X} by applying
 the \code{transform} function to \code{Z}.
-\item X is post-processed if specified.
+\item \code{X} is post-processed if specified.
 }
 }
 

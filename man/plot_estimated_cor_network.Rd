@@ -19,9 +19,9 @@ plot_estimated_cor_network(
 \item{n_obs}{Number of observations to simulate.}
 
 \item{cor_type}{Can be either a character (\code{pearson}, \code{spearman}, \code{kendall}) which is
-passed to \code{\link[stats:cor]{stats::cor}} or a function, which is directly
-used to compute the correlation matrix on the simulated data. Such a
-function is expected to take a single input matrix (and possibly other
+passed to \code{\link[stats:cor]{stats::cor}} or a function, which is
+directly used to compute the correlation matrix on the simulated data.
+Such a function is expected to take a single input matrix (and possibly other
 arguments which can be set via \code{...}) and output a single matrix.}
 
 \item{seed}{Random number seed. NULL does not change the current seed.}

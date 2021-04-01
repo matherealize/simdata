@@ -206,7 +206,7 @@ simdesign <- function(generator,
 #' dimensions of `relations`).
 #' \item `Z` is then transformed into the final dataset `X` by applying
 #' the `transform` function to `Z`.
-#' \item X is post-processed if specified.
+#' \item `X` is post-processed if specified.
 #' }
 #' 
 #' @note
@@ -216,13 +216,14 @@ simdesign <- function(generator,
 #'
 #' @return
 #' List object with class attribute "mvtnorm_simdesign" (S3 class), inheriting
-#' from "simdesign". It contains the same entries as a \code{\link{simdesign}} object
-#' but in addition the following entries:
+#' from "simdesign". It contains the same entries as a \code{\link{simdesign}} 
+#' object but in addition the following entries:
 #' 
 #' \describe{
 #' \item{`mean_initial`}{}
 #' \item{`sd_initial`}{}
-#' \item{`cor_initial`}{Initial correlation matrix of multivariate normal distribution}
+#' \item{`cor_initial`}{Initial correlation matrix of multivariate normal 
+#' distribution}
 #' }
 #'
 #' @seealso

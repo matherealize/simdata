@@ -78,8 +78,8 @@ corresponding to the returned dataset.
 
 Examples for restrictions include
 variance restrictions (e.g. no constant columns which could happen due
-to extreme transformations of the initial gaussian distribution \code{Z}), ensuring
-a sufficient number of observations in a given class (e.g. certain
+to extreme transformations of the initial gaussian distribution \code{Z}),
+ensuring a sufficient number of observations in a given class (e.g. certain
 binary variables should have at least x\\% events) or preventing
 multicollinearity (e.g. \code{X} must have full column rank). If \code{reject}
 evaluates to FALSE, the current datamatrix \code{X} is rejected.
@@ -90,14 +90,15 @@ after which the latest datamatrix is returned or an error is reported.
 
 \section{Rejection Function}{
 
-The \code{reject} function should take a single input (a data.frame or matrix) and
-output TRUE if the dataset is to be rejected or FALSE if it is to be accepted.
-This package provides the \code{\link{function_list}} convenience function which
-allows to easily create a rejection function which assesses several
+The \code{reject} function should take a single input (a data.frame or matrix)
+and output TRUE if the dataset is to be rejected or FALSE if it is to be
+accepted.
+This package provides the \code{\link{function_list}} convenience function
+which allows to easily create a rejection function which assesses several
 conditions on the input dataset by simply passing individual test functions
 to \code{function_list}. Such test function templates are found in
-\code{\link{is_collinear}} and \code{\link{contains_constant}}. See the example
-below.
+\code{\link{is_collinear}} and \code{\link{contains_constant}}.
+See the example below.
 }
 
 \examples{

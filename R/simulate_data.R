@@ -30,8 +30,8 @@
 #' packages. Specifically, that means it takes the number of observations as
 #' first argument. All further arguments can be set via passing them as
 #' named argument to this function. It is expected to return a two-dimensional
-#' array (matrix or data.frame) for which the number of columns can be determined.
-#' Otherwise the `check_and_infer` step will fail.
+#' array (matrix or data.frame) for which the number of columns can be
+#' determined. Otherwise the `check_and_infer` step will fail.
 #'
 #' @section Transformations:
 #' Transformations should be applicable to the output of the `generator`
@@ -48,7 +48,8 @@
 #' @note
 #' This function is best used in conjunction with the \code{\link{simdesign}}
 #' S3 class or any template based upon it, which facilitates further data 
-#' visualization and conveniently stores information as a template for simulation tasks.
+#' visualization and conveniently stores information as a template for 
+#' simulation tasks.
 #' 
 #' @return
 #' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
@@ -100,7 +101,8 @@ simulate_data.default <- function(generator,
     x
 }
 
-#' @describeIn simulate_data Function to be used with \code{\link{simdesign}} S3 class.
+#' @describeIn simulate_data Function to be used with \code{\link{simdesign}}
+#' S3 class.
 #' 
 #' @param apply_transformation
 #' If `generator` is a `simdesign` object, then this argument can be set to 
@@ -143,8 +145,6 @@ simulate_data.simdesign <- function(generator,
                   seed = seed)
 }
 
-# TODO test where design is used to transform data to contain constant column
-# or collinear!!
 # Conditional Data Simulation #######################################
 #' @title Simulate data which satisfies certain conditions
 #'
@@ -194,8 +194,8 @@ simulate_data.simdesign <- function(generator,
 #' @section Rejecting Datasets:
 #' Examples for restrictions include
 #' variance restrictions (e.g. no constant columns which could happen due
-#' to extreme transformations of the initial gaussian distribution `Z`), ensuring
-#' a sufficient number of observations in a given class (e.g. certain
+#' to extreme transformations of the initial gaussian distribution `Z`), 
+#' ensuring a sufficient number of observations in a given class (e.g. certain
 #' binary variables should have at least x\% events) or preventing
 #' multicollinearity (e.g. `X` must have full column rank). If `reject` 
 #' evaluates to FALSE, the current datamatrix `X` is rejected.
@@ -204,14 +204,15 @@ simulate_data.simdesign <- function(generator,
 #' after which the latest datamatrix is returned or an error is reported.
 #'
 #' @section Rejection Function:
-#' The `reject` function should take a single input (a data.frame or matrix) and
-#' output TRUE if the dataset is to be rejected or FALSE if it is to be accepted.
-#' This package provides the \code{\link{function_list}} convenience function which
-#' allows to easily create a rejection function which assesses several 
+#' The `reject` function should take a single input (a data.frame or matrix) 
+#' and output TRUE if the dataset is to be rejected or FALSE if it is to be 
+#' accepted.
+#' This package provides the \code{\link{function_list}} convenience function 
+#' which allows to easily create a rejection function which assesses several 
 #' conditions on the input dataset by simply passing individual test functions
 #' to `function_list`. Such test function templates are found in 
-#' \code{\link{is_collinear}} and \code{\link{contains_constant}}. See the example
-#' below.
+#' \code{\link{is_collinear}} and \code{\link{contains_constant}}. 
+#' See the example below.
 #' 
 #' @note 
 #' Seeding the random number generator is tricky in this case. The seed can not
@@ -271,12 +272,17 @@ simulate_data_conditional <- function(generator,
         if (reject_max_iter == 0) {
             if (!simulation_success) {
                 if (on_reject == "stop") {
-                    stop("No suitable datamatrix found within iteration limit.\n")
+                    stop("No suitable datamatrix ",
+                         "found within iteration limit.\n")
                 } else if (on_reject == "current") {
-                    warning("No suitable datamatrix found within iteration limit. Returning current candidate matrix.\n")
+                    warning("No suitable datamatrix ",
+                            "found within iteration limit. ",
+                            "Returning current candidate matrix.\n")
                     simulation_success = TRUE
                 } else {
-                    warning("No suitable datamatrix found within iteration limit. Returning NULL.\n")
+                    warning("No suitable datamatrix ",
+                            "found within iteration limit. ",
+                            "Returning NULL.\n")
                     simulation_success = TRUE
                     x = NULL
                 }
@@ -303,15 +309,16 @@ simulate_data_conditional <- function(generator,
 #' Number of observations to simulate.
 #' @param cor_type
 #' Can be either a character (`pearson`, `spearman`, `kendall`) which is 
-#' passed to \code{\link[stats:cor]{stats::cor}} or a function, which is directly
-#' used to compute the correlation matrix on the simulated data. Such a 
-#' function is expected to take a single input matrix (and possibly other
+#' passed to \code{\link[stats:cor]{stats::cor}} or a function, which is 
+#' directly used to compute the correlation matrix on the simulated data.
+#' Such a function is expected to take a single input matrix (and possibly other
 #' arguments which can be set via `...`) and output a single matrix. 
 #' @param seed
 #' Random number seed. NULL does not change the current seed.
 #' @param ...
 #' Further arguments are passed to the function that computes the correlation
-#' matrix (either \code{\link[stats:cor]{stats::cor}} or the user provided function).
+#' matrix (either \code{\link[stats:cor]{stats::cor}} or the user provided
+#' function).
 #' 
 #' @details 
 #' This function is useful to estimate the final correlation of the data after
