@@ -388,19 +388,21 @@ dataset before it is returned by `simulate_data`. This is useful to e.g.
 standardize and truncate data, as shown below. 
 
 To add post-processing functions to the `simdesign` object, simply pass a 
-list to the constructor or add it directly to the class object. Each entry has 
+list to the constructor or add it directly to the object. Each entry has 
 a name (name of a function) and is a list with named arguments passed to the 
 function (if default parameters should be used simply pass an empty list). 
-See the `process_data` help for further details.
-The simulation of the data does not need to be changed in any way.
+See the `do_processing` help for further details.
+The simulation of the data does not need to be changed in any way. 
 
-- Add truncation to the post-processing via `process_truncate`
+### Truncation
+
+- Add truncation to the post-processing via `process_truncate_by_iqr`
     - Truncation is only added for specific numeric variables by passing a 
     named vector
 
 ```{r}
 sim_design$process_final = list(
-    process_truncate = list(
+    process_truncate_by_iqr = list(
         truncate_multipliers = c(v6 = 2, v7 = 2, v8 = 2)
     )
 )
@@ -425,13 +427,51 @@ p = ggplot(sim_data %>%
 print(p)
 ```
 
+Note that the above truncation is based on statistics derived from each 
+individual simulated dataset. To implement truncation based on statistics 
+derived from the data generating mechanism itself, one can 1) simulate a 
+reasonably large, untruncated dataset, 2) derive the desired upper and lower
+truncation thresholds, and 3) add `process_truncate_by_threshold` with the
+derived truncation thresholds to the simulator object to truncate by 
+fixed tresholds in every simulation run. Truncation can be done independently
+for lower and upper thresholds (see example below).
+
+```{r}
+sim_design$process_final = list(
+    process_truncate_by_threshold = list(
+        truncate_upper = c(v8 = 200, v7 = 300),
+        truncate_lower = c(v6 = 2)
+    )
+)
+
+sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+```
+
+Compare the results with the [results before](#simfinal) and note the 
+truncation in the specified variables (`v6, v7, v8`).
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
+p = ggplot(sim_data %>% 
+               select(one_of(numeric_vars)) %>%
+               melt(measure.vars = colnames(.)), 
+           aes(x = "", y = value)) +
+    geom_violin() +
+    geom_dotplot(binaxis = "y", stackdir = "center") + 
+    facet_wrap(~ variable, scales = "free", nrow = 3) +
+    theme_bw() + 
+    ylab("Value") +
+    theme(axis.title.x = element_blank())
+print(p)
+```
+
+### Standardization
 Similarly, standardization can be applied using the standard `scale` function, 
 changing the scale on the y-axis of the following plots. 
 Note that the order of functions passed via `process_final` is important.
 
 ```{r}
 sim_design$process_final = list(
-    process_truncate = list(
+    process_truncate_by_iqr = list(
         truncate_multipliers = c(v6 = 2, v7 = 2, v8 = 2)
     ), 
     scale = list()

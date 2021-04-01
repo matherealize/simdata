@@ -43,7 +43,7 @@
 #'  documentation for \code{\link{function_list}} for details.
 #'  
 #' @section Post-processing:
-#' Post-processing the datamatrix is based on \code{\link{process_data}}.
+#' Post-processing the datamatrix is based on \code{\link{do_processing}}.
 #'
 #' @note
 #' This function is best used in conjunction with the \code{\link{simdesign}}
@@ -58,7 +58,7 @@
 #' \code{\link{simdesign}}, 
 #' \code{\link{mvtnorm_simdesign}}, 
 #' \code{\link{simulate_data_conditional}},
-#' \code{\link{process_data}}
+#' \code{\link{do_processing}}
 #'
 #' @export
 simulate_data <- function(generator, ...) {
@@ -89,7 +89,7 @@ simulate_data.default <- function(generator,
     x = transform_initial(x)
 
     # apply post-processing functions
-    x = process_data(x, process_final)
+    x = do_processing(x, process_final)
 
     # rename columns
     if (!is.null(names_final)) {

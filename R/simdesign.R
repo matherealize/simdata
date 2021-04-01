@@ -27,7 +27,7 @@
 #' documentation of \code{\link{simulate_data}}.
 #' 
 #' For details on post-processing, please see the documentation of 
-#' \code{\link{process_data}}.
+#' \code{\link{do_processing}}.
 #' 
 #' @section Simulation Templates:
 #' This class is intended to be used as a template for simulation designs 

@@ -44,7 +44,7 @@ by \code{names_final} argument. Set to NULL if no prefixes should
 be added.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
+datamatrix \code{X} before returning it. See \code{\link{do_processing}}.}
 
 \item{name}{Character, optional name of the simulation design.}
 
@@ -91,7 +91,7 @@ For more details on generators and transformations, please see the
 documentation of \code{\link{simulate_data}}.
 
 For details on post-processing, please see the documentation of
-\code{\link{process_data}}.
+\code{\link{do_processing}}.
 }
 \section{Simulation Templates}{
 

@@ -50,7 +50,7 @@ by \code{names_final} argument. Set to NULL if no prefixes should
 be added.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
-datamatrix \code{X} before returning it. See \code{\link{process_data}}.}
+datamatrix \code{X} before returning it. See \code{\link{do_processing}}.}
 
 \item{seed}{Set random seed to ensure reproducibility of results.}
 
@@ -121,12 +121,12 @@ documentation for \code{\link{function_list}} for details.
 
 \section{Post-processing}{
 
-Post-processing the datamatrix is based on \code{\link{process_data}}.
+Post-processing the datamatrix is based on \code{\link{do_processing}}.
 }
 
 \seealso{
 \code{\link{simdesign}},
 \code{\link{mvtnorm_simdesign}},
 \code{\link{simulate_data_conditional}},
-\code{\link{process_data}}
+\code{\link{do_processing}}
 }
