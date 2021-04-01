@@ -1,10 +1,18 @@
+# simdata v0.2.0.9003 (build date 2020-04-01)
+Fixes and enhancements.
+
+- Changes to post-processing pipeline: renamed process_data function to 
+    do_process; renamed process_truncate to process_truncate_by_iqr
+- Added process_truncate_by_threshold function
+- More robust error handling in simdesign
+
 # simdata v0.2.0.9002 (build date 2020-05-14)
 Renamed the package to simdata. Bug fixes.
 
 - Fixed cor_from_upper to work with single vectors
 
 # simulatoR v0.2.0 (build date 2019-11-26)
-Numerous fixes and enhancments. If you have worked with previous versions of 
+Numerous fixes and enhancements. If you have worked with previous versions of 
 the package it is likely that you will have to adapt your code to the new
 interfaces implemented in this version. However, the necessary changes should be 
 minimal.
