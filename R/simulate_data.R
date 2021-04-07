@@ -142,7 +142,8 @@ simulate_data.simdesign <- function(generator,
                   transform_initial = transform_initial,
                   names_final = names_final,
                   process_final = process_final,
-                  seed = seed)
+                  seed = seed, 
+                  ...)
 }
 
 # Conditional Data Simulation #######################################
