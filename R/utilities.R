@@ -76,8 +76,8 @@ is_collinear <- function(x) {
 cor_from_upper <- function(n_var, entries = NULL) {
     if (any(entries[, 1:2] < 0)) 
         stop("Indices in 'entries[, 1:2]' must be positive.")
-    if (any(entries[, 3] < 0))
-        stop("All correlations in 'entries[, 3]' must be positive.")
+    if (any(entries[, 3] < -1) | any(entries[, 3] > 1))
+        stop("All correlations in 'entries[, 3]' must be in [-1,1].")
     
     # ones in the diagonal
     cor_mat = diag(n_var)

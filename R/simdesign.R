@@ -255,10 +255,12 @@ mvtnorm_simdesign <- function(relations_initial,
     }
     
     # define generator
-    generator = function(n) mvtnorm::rmvnorm(n, 
-                                             mean = mean_initial, 
-                                             sigma = relations_initial, 
-                                             method = method)
+    generator = function(n) {
+        mvtnorm::rmvnorm(n, 
+                         mean = mean_initial, 
+                         sigma = relations_initial, 
+                         method = method)
+    }
     
     # setup simulation design
     dsgn = simdesign(
