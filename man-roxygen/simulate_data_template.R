@@ -1,6 +1,6 @@
 #' @param generator 
 #' Function which generates data from the underlying base distribution. It is
-#' assumend it takes the number of simulated observations `n_obs` as first
+#' assumed it takes the number of simulated observations `n_obs` as first
 #'  argument, as all random generation functions in the \pkg{stats} and 
 #' \pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
 #' array as output (matrix or data.frame). See details.

@@ -105,15 +105,14 @@ simulate_data.default <- function(generator,
 #' S3 class.
 #' 
 #' @param apply_transformation
-#' If `generator` is a `simdesign` object, then this argument can be set to 
-#' FALSE to override the stored information and not transform and process data. 
+#' This argument can be set to FALSE to override the information stored in the 
+#' passed `simdesign` object and not transform and process data. 
 #' Thus, the raw data from the design generator is returned. This can be useful
-#' for debugging purposes, but is usually unnecessary to be changed.
+#' for debugging purposes.
 #' @param apply_processing
-#' If `generator` is a `simdesign` object, then this argument can be set to 
-#' FALSE to override the stored information and not process the data after
-#' the initial data is transformed. This can be useful for debugging purposes, 
-#' but is usually unnecessary to be changed.
+#' This argument can be set to FALSE to override the information stored in the 
+#' passed `simdesign` object and not transform and process data after
+#' the initial data is transformed. This can be useful for debugging purposes.
 #'
 #' @export
 #' @method simulate_data simdesign

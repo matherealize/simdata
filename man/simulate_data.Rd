@@ -30,7 +30,7 @@ simulate_data(generator, ...)
 }
 \arguments{
 \item{generator}{Function which generates data from the underlying base distribution. It is
-assumend it takes the number of simulated observations \code{n_obs} as first
+assumed it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
 \pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
 array as output (matrix or data.frame). See details.}
@@ -54,15 +54,14 @@ datamatrix \code{X} before returning it. See \code{\link{do_processing}}.}
 
 \item{seed}{Set random seed to ensure reproducibility of results.}
 
-\item{apply_transformation}{If \code{generator} is a \code{simdesign} object, then this argument can be set to
-FALSE to override the stored information and not transform and process data.
+\item{apply_transformation}{This argument can be set to FALSE to override the information stored in the
+passed \code{simdesign} object and not transform and process data.
 Thus, the raw data from the design generator is returned. This can be useful
-for debugging purposes, but is usually unnecessary to be changed.}
+for debugging purposes.}
 
-\item{apply_processing}{If \code{generator} is a \code{simdesign} object, then this argument can be set to
-FALSE to override the stored information and not process the data after
-the initial data is transformed. This can be useful for debugging purposes,
-but is usually unnecessary to be changed.}
+\item{apply_processing}{This argument can be set to FALSE to override the information stored in the
+passed \code{simdesign} object and not transform and process data after
+the initial data is transformed. This can be useful for debugging purposes.}
 }
 \value{
 Data.frame or matrix with \code{n_obs} rows for simulated dataset \code{X}.
