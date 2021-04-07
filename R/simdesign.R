@@ -240,9 +240,6 @@ mvtnorm_simdesign <- function(relations_initial,
                               method = "svd",
                               name = "Multivariate-normal based simulation design",
                               ...) {
-    
-    # TODO: assertions, i.e. square matrix, pos def matrix
-    
     # prepare means and standard deviations
     mean_initial = rep_len(mean_initial, nrow(relations_initial))
     sd_initial = rep_len(sd_initial, nrow(relations_initial))
@@ -317,8 +314,18 @@ mvtnorm_simdesign <- function(relations_initial,
 #' @export
 discunif_simdesign <- function(r_min = 0, r_max = 1, 
                                angle_min = 0, angle_max = 2*pi, 
-                               name = "Uniform circle simulation design",                              
+                               name = "Uniform circle simulation design",                      
                                ...) {
+    
+    if (r_min < 0 | r_max < 0) {
+        stop("r_min and r_max must be positive.")
+    }
+    if (r_max < r_min) {
+        stop("r_max must be larger than r_min.")
+    }
+    if (angle_max < angle_min) {
+        stop("angle_max must be larger than angle_min.")
+    }
     
     # define generator
     # use sqrt of radius instead of radius itself

@@ -74,6 +74,11 @@ is_collinear <- function(x) {
 #'
 #' @export
 cor_from_upper <- function(n_var, entries = NULL) {
+    if (any(entries[, 1:2] < 0)) 
+        stop("Indices in 'entries[, 1:2]' must be positive.")
+    if (any(entries[, 3] < 0))
+        stop("All correlations in 'entries[, 3]' must be positive.")
+    
     # ones in the diagonal
     cor_mat = diag(n_var)
 
@@ -119,6 +124,10 @@ cor_from_upper <- function(n_var, entries = NULL) {
 #'
 #' @export
 cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
+    m = as.matrix(m)
+    if (!is_correlation_matrix(m))
+        stop("'m' is not a proper correlation matrix.")
+    
     ind = which(upper.tri(m), arr.ind = TRUE)
     res = cbind(ind, m[ind])
     
@@ -147,7 +156,41 @@ cor_to_cov <- function(m, sds = NULL) {
     if (is.null(sds))
         sds = rep(1, nrow(m))
     
+    if (any(sds < 0)) 
+        stop("All entries in 'sds' must be positive.")
+    
+    m = as.matrix(m)
+    if (!is_correlation_matrix(m)) 
+        stop("'m' is not a proper correlation matrix.")
+    
     diag(sds) %*% m %*% diag(sds)
+}
+
+is_correlation_matrix <- function(m) {
+    ok = TRUE
+    if (!is.numeric(m)) {
+        warning("'m' must be numeric.")
+        ok = FALSE
+    }
+    if (!isSymmetric(m)) {
+        warning("'m' must be a symmetric matrix.")
+        ok = FALSE
+    }
+    if (any(diag(m) != 1)) {
+        warning("The diagonal elements of 'm' must be equal to one.")
+        ok = FALSE
+    }
+    if (any(m > 1) | any(m < -1)) {
+        warning("All the elements of 'm' must be in [-1,1].")
+        ok = FALSE
+    }
+    m_ev <- eigen(m, symmetric = TRUE, only.values = TRUE)
+    if (any(m_ev$values <= 0)) {
+        warning("'m' must be a positive definite matrix.")
+        ok = FALSE
+    }
+    
+    ok
 }
 
 # Function helper ###################################################
