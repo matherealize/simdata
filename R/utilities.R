@@ -125,7 +125,7 @@ cor_from_upper <- function(n_var, entries = NULL) {
 #' @export
 cor_to_upper <- function(m, remove_below = .Machine$double.eps) {
     m = as.matrix(m)
-    if (!is_correlation_matrix(m))
+    if (!is_cor_matrix(m))
         stop("'m' is not a proper correlation matrix.")
     
     ind = which(upper.tri(m), arr.ind = TRUE)
@@ -160,13 +160,27 @@ cor_to_cov <- function(m, sds = NULL) {
         stop("All entries in 'sds' must be positive.")
     
     m = as.matrix(m)
-    if (!is_correlation_matrix(m)) 
+    if (!is_cor_matrix(m)) 
         stop("'m' is not a proper correlation matrix.")
     
     diag(sds) %*% m %*% diag(sds)
 }
 
-is_correlation_matrix <- function(m) {
+#' @title Check if matrix is a correlation matrix
+#' 
+#' @description 
+#' Checks if matrix is numeric, symmetric, has diagonal elements of one, 
+#' has only entries in [-1, 1], and is positive definite. Prints a warning
+#' if a problem was found.
+#' 
+#' @param m
+#' Matrix.
+#' 
+#' @return 
+#' TRUE if matrix is a correlation matrix, else FALSE.
+#' 
+#' @export
+is_cor_matrix <- function(m) {
     ok = TRUE
     if (!is.numeric(m)) {
         warning("'m' must be numeric.")
