@@ -170,7 +170,7 @@ cor_to_cov <- function(m, sds = NULL) {
 #' 
 #' @description 
 #' Checks if matrix is numeric, symmetric, has diagonal elements of one, 
-#' has only entries in [-1, 1], and is positive definite. Prints a warning
+#' has only entries in `[-1, 1]`, and is positive definite. Prints a warning
 #' if a problem was found.
 #' 
 #' @param m

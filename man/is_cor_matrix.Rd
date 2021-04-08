@@ -14,6 +14,6 @@ TRUE if matrix is a correlation matrix, else FALSE.
 }
 \description{
 Checks if matrix is numeric, symmetric, has diagonal elements of one,
-has only entries in \link{-1, 1}, and is positive definite. Prints a warning
+has only entries in \verb{[-1, 1]}, and is positive definite. Prints a warning
 if a problem was found.
 }

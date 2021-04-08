@@ -30,8 +30,10 @@ return another matrix or data.frame of the same dimensions as
 single output.
 
 Examples of post-processing steps are truncation
-(\code{\link{process_truncate}}) or centering / standardizing data
-(via \code{\link{scale}}, see example section below).
+(\code{\link{process_truncate_by_iqr}},
+\code{\link{process_truncate_by_threshold}}) or
+centering / standardizing data (via \code{\link{scale}},
+see example section below).
 
 Can be useful to apply on simulated datasets, even outside of the
 simulation function (e.g. when standardization is only required at the
@@ -48,7 +50,4 @@ do_processing(diag(5),
   functions = list(scale = list(center = TRUE, scale = FALSE)))
 }
 
-}
-\seealso{
-\code{\link{process_truncate}}
 }
