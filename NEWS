@@ -1,14 +1,27 @@
-# simdata v0.2.0.9003 (build date 2020-04-01)
-Fixes and enhancements.
+# simdata v0.2.0.9003 (build date 2021-04-08)
+Changes:
 
-- Changes to post-processing pipeline: renamed process_data function to 
+- Post-processing pipeline: renamed process_data function to 
     do_process; renamed process_truncate to process_truncate_by_iqr
-- Added process_truncate_by_threshold function
+    
+Additions:
+
+- discunif_simdesign to simulate circular data
+- process_truncate_by_threshold function to truncate by fixed thresholds
+- names_from_function_list to obtain names of functions from function_list
+- is_cor_matrix to check if a matrix is a correlation matrix
+
+Fixes and enhancements:
+
 - More robust error handling in simdesign
+- More robust and transparent naming of variables
 - Basic error checking in essential functions
+- More robust handling of function_lists
 
 # simdata v0.2.0.9002 (build date 2020-05-14)
-Renamed the package to simdata. Bug fixes.
+Renamed the package to simdata. 
+
+Fixes:
 
 - Fixed cor_from_upper to work with single vectors
 
@@ -18,10 +31,15 @@ the package it is likely that you will have to adapt your code to the new
 interfaces implemented in this version. However, the necessary changes should be 
 minimal.
 
+Changes:
+
 - Reworked simdesign class
 - Reworked simulate_data and simulate_data_conditional function
 - Reworked network visualization
-- Added package vignette
+
+Additions: 
+
+- Package Demo vignette to demonstrate functionality
 
 # simulatoR v0.1.0 (build date 2019-11-14)
 Initial release.
