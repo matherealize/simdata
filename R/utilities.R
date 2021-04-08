@@ -207,6 +207,76 @@ is_cor_matrix <- function(m) {
     ok
 }
 
+
+
+# TODO ##################
+optimize_cor_for_pair <- function(cor_target, dist1, dist2, 
+                                  n_obs = 100000, seed = NULL,
+                                  tol = 0.01, ...) {
+    
+    objective <- function(cor_current, cor_target, n_obs, 
+                          dist1, dist2) {
+        cor_mat = diag(2)
+        cor_mat[1, 2] = cor_mat[2, 1] = cor_current
+        z = pnorm(mvtnorm::rmvnorm(n_obs, mean = c(0, 0), 
+                                   sigma = cor_mat, 
+                                   method = "svd"))
+        x = cbind(dist1(z[, 1]), dist2(z[, 2]))
+        cor(x)[1, 2] - cor_target
+    }
+    
+    if (!is.null(seed))
+        set.seed(seed)
+    
+    uniroot(objective, interval = c(-1, 1),
+            cor_target = cor_target, n_obs = n_obs, 
+            dist1 = dist1, dist2 = dist2, ...)
+}
+
+optimize_cor_mat <- function(cor_target, dist, 
+                             ensure_cor_mat = TRUE, 
+                             conv_norm_type = "O",
+                             return_diagnostics = FALSE, ...) {
+    
+    if (!is_cor_matrix(cor_target)) {
+        stop("'cor_target' must be a proper correlation matrix.")
+    }
+    if (length(dist) != ncol(cor_target)) {
+        stop("Number of marginal distributions must be equal to size of ", 
+             "correlation matrix.")    
+    }
+    
+    cor_mat = diag(ncol(cor_target))
+    conv_res = list()
+    
+    for (row in seq(1, nrow(cor_target) - 1)) {
+        conv_res[[row]] = list()
+        for (col in seq(row + 1, ncol(cor_target))) {
+            conv_res[[row]][[col]] = optimize_cor_for_pair(
+                cor_target = cor_target[row, col], 
+                dist1 = dist[[row]], dist2 = dist[[col]], ...
+            )
+            cor_mat[row, col] = conv_res[[row]][[col]]$root
+        }
+    }
+    
+    cor_mat[lower.tri(cor_mat)] = t(cor_mat)[lower.tri(cor_mat)]
+    
+    if (ensure_cor_mat) {
+        # ensure that matrix found is positive definite correlation matrix
+        # by finding the closes pd matrix
+        respd = Matrix::nearPD(cor_mat, corr = TRUE, keepDiag = TRUE, 
+                               conv.norm.type = conv_norm_type, trace = FALSE)
+        cor_mat = as.matrix(respd$mat)
+    }
+    
+    if (return_diagnostics) {
+        return(list(cor_mat = cor_mat, convergence = conv_res))
+    } else {
+        return(cor_mat)   
+    }
+}
+
 # Function helper ###################################################
 #' @title Apply list of functions to input
 #' 
@@ -362,4 +432,15 @@ apply_array <- function(obj, dim, fun) {
     }
     
     NULL
+}
+
+# apply list of one dimensional functions to columns of obj
+# # TODO###############
+colapply_functions <- function(obj, flist) {
+    if (length(flist) != dim(obj)[2])
+        stop("Number of columns of 'obj' must be equal to number of functions.")
+    
+    res = lapply(1:length(flist), function(col) flist[[col]](obj[, col]))
+    names(res) = names(flist) #TODO: what happens if empty??
+    do.call(cbind, res)
 }

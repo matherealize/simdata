@@ -188,6 +188,64 @@ simdesign <- function(generator,
 }
 
 # Design templates ############################################################
+norta_simdesign <- function(cor_target_final = NULL,
+                            cor_initial = NULL, 
+                            dist = list(),
+                            tol_initial = 0.001, n_obs_initial = 10000,
+                            conv_norm_type = "O", 
+                            method = "svd",
+                            name = "NORTA based simulation design",
+                            ...) {
+    
+    if (is.null(cor_target_final) & is.null(cor_initial)) {
+        stop("One of 'cor_target_final' or 'cor_initial' must be specified.")
+    }
+    
+    if (is.null(cor_initial) & !is.null(cor_target_final)) {
+        if (!is_cor_matrix(cor_target_final)) {
+            stop("'cor_target_final' must be a proper correlation matrix.")
+        }
+        
+        # optimize initial correlation structure 
+        cor_initial = optimize_cor_mat(cor_target_final, dist, 
+                                       ensure_cor_mat = TRUE,
+                                       return_diagnostics = FALSE,
+                                       conv_norm_type = conv_norm_type, 
+                                       tol = tol_initial, 
+                                       n_obs = n_obs_initial)
+    }
+    
+    if (!is_cor_matrix(cor_initial)) {
+        stop("'cor_initial' must be a proper correlation matrix.")
+    }
+        
+    # generator 
+    generator = function(n) {
+        W = mvtnorm::rmvnorm(n, 
+                             mean = rep(0, ncol(cor_initial)), 
+                             sigma = cor_initial,
+                             method = method)
+        colapply_functions(pnorm(W), dist)
+    }
+    
+    # setup simulation design
+    dsgn = simdesign(
+        generator = generator, 
+        name = name,
+        cor_target_final = cor_target_final, 
+        cor_initial = cor_initial, 
+        tol_initial = tol_initial,
+        n_obs_initial = n_obs_initial,
+        conv_norm_type = conv_norm_type, 
+        method = method,
+        ...
+    )
+    
+    class(dsgn) = c("norta_simdesign", class(dsgn))
+    
+    dsgn
+}
+
 #' @title Multivariate normal design specification
 #'
 #' @description
