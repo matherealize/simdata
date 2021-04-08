@@ -245,6 +245,15 @@ is_cor_matrix <- function(m) {
 #'    v2 = function(x) x[,2] + 10)
 #'    
 #' f(diag(2))
+#' 
+#' # function_list can be used to add new columns
+#' # naming of columns should be handled separately in such cases
+#' 
+#' f = function_list(
+#'    function(x) x, # return x as it is
+#'    X1_X2 = function(x) x[,2] + 10) # add new column
+#'    
+#' f(diag(2))
 #' } 
 #' 
 #' @return 
