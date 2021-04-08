@@ -7,11 +7,12 @@
 get_from_function_list(flist)
 }
 \arguments{
-\item{flist}{\code{function_list} object.}
+\item{flist}{\code{function_list} or function object.}
 }
 \value{
 List with named or unnamed entries corresponding to individual function
-objects that were passed to the \code{function_list} object.
+objects that were passed to the \code{function_list} object. If \code{flist} is a
+simple function, returns NULL.
 }
 \description{
 Extract individual function objects from environment of a \code{function_list}

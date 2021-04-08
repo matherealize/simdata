@@ -12,7 +12,8 @@ as_function_list(flist, ...)
 \item{...}{Passed to \code{\link{function_list}}.}
 }
 \value{
-Function with a single input which outputs a data.frame.
+Function with a single input which outputs a data.frame. Has special
+'flist' entry in its environment which stores individual functions as list.
 }
 \description{
 Create a \code{function_list} object from a list of functions. This is useful

@@ -248,7 +248,8 @@ is_cor_matrix <- function(m) {
 #' } 
 #' 
 #' @return 
-#' Function with a single input which outputs a data.frame.
+#' Function with a single input which outputs a data.frame. Has special 
+#' 'flist' entry in its environment which stores individual functions as list.
 #' 
 #' @seealso 
 #' \code{\link[base:data.frame]{data.frame}}

@@ -17,7 +17,8 @@ one input. See details.}
 \item{stringsAsFactors, check.names}{Arguments of \code{\link[base:data.frame]{data.frame}}.}
 }
 \value{
-Function with a single input which outputs a data.frame.
+Function with a single input which outputs a data.frame. Has special
+'flist' entry in its environment which stores individual functions as list.
 }
 \description{
 Apply list of functions to input
