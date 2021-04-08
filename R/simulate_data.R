@@ -44,6 +44,12 @@
 #'  
 #' @section Post-processing:
 #' Post-processing the datamatrix is based on \code{\link{do_processing}}.
+#' 
+#' @section Naming of variables: 
+#' Variables are named by `names_final` if not NULL and of correct length. 
+#' Otherwise, if `prefix_final` is not NULL, it is used as prefix for variable
+#' numbers. Otherwise, variables names remain as returned by the `generator`
+#' function.
 #'
 #' @note
 #' This function is best used in conjunction with the \code{\link{simdesign}}
@@ -92,7 +98,13 @@ simulate_data.default <- function(generator,
     x = do_processing(x, process_final)
 
     # rename columns
-    if (!is.null(names_final)) {
+    if (!is.null(names_final) & ncol(x) != length(names_final)) {
+        warning(
+            "Number of simulated variables differs from length of ", 
+            "'names_final'. Resetting names in output."
+        )
+    }
+    if (!is.null(names_final) & ncol(x) == length(names_final)) {
         colnames(x) = names_final
     } else if (!is.null(prefix_final)) {
         colnames(x) = paste0(prefix_final, 1:ncol(x))

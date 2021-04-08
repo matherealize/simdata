@@ -43,11 +43,12 @@ array as output (matrix or data.frame). See details.}
 dataset \code{Z} to final dataset \code{X}. See details.}
 
 \item{names_final}{NULL or character vector with variable names for final dataset \code{X}.
-Length needs to equal the number of columns of \code{X}. Overrides other naming options.}
+Length needs to equal the number of columns of \code{X}.
+Overrides other naming options. See details.}
 
 \item{prefix_final}{NULL or prefix attached to variables in final dataset \code{X}. Overriden
 by \code{names_final} argument. Set to NULL if no prefixes should
-be added.}
+be added. See details.}
 
 \item{process_final}{List of lists specifying post-processing functions applied to final
 datamatrix \code{X} before returning it. See \code{\link{do_processing}}.}
@@ -121,6 +122,14 @@ documentation for \code{\link{function_list}} for details.
 \section{Post-processing}{
 
 Post-processing the datamatrix is based on \code{\link{do_processing}}.
+}
+
+\section{Naming of variables}{
+
+Variables are named by \code{names_final} if not NULL and of correct length.
+Otherwise, if \code{prefix_final} is not NULL, it is used as prefix for variable
+numbers. Otherwise, variables names remain as returned by the \code{generator}
+function.
 }
 
 \seealso{
