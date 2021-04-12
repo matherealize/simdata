@@ -191,6 +191,9 @@ simdesign <- function(generator,
 norta_simdesign <- function(cor_target_final = NULL,
                             cor_initial = NULL, 
                             dist = list(),
+                            tol_initial = 0.001, 
+                            n_obs_initial = 10000,
+                            seed_initial = 1,
                             tol_initial = 0.001, n_obs_initial = 10000,
                             conv_norm_type = "O", 
                             method = "svd",
@@ -212,7 +215,8 @@ norta_simdesign <- function(cor_target_final = NULL,
                                        return_diagnostics = FALSE,
                                        conv_norm_type = conv_norm_type, 
                                        tol = tol_initial, 
-                                       n_obs = n_obs_initial)
+                                       n_obs = n_obs_initial, 
+                                       seed = seed_initial)
     }
     
     if (!is_cor_matrix(cor_initial)) {
