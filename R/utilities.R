@@ -214,6 +214,9 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
                                   n_obs = 100000, seed = NULL,
                                   tol = 0.01, ...) {
     
+    if (cor_target > 1 | cor_target < -1)
+        stop("'cor_target' must be a correlation in [-1,1].")
+    
     objective <- function(cor_current, cor_target, n_obs, 
                           dist1, dist2) {
         cor_mat = diag(2)
