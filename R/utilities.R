@@ -228,7 +228,7 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
     if (!is.null(seed))
         set.seed(seed)
     
-    uniroot(objective, interval = c(-1, 1),
+    uniroot(objective, interval = c(-1, 1), tol = tol,
             cor_target = cor_target, n_obs = n_obs, 
             dist1 = dist1, dist2 = dist2, ...)
 }
