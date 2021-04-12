@@ -441,6 +441,10 @@ colapply_functions <- function(obj, flist) {
         stop("Number of columns of 'obj' must be equal to number of functions.")
     
     res = lapply(1:length(flist), function(col) flist[[col]](obj[, col]))
-    names(res) = names(flist) #TODO: what happens if empty??
-    do.call(cbind, res)
+    names(res) = colnames(obj)
+    res = do.call(cbind, res)
+    if (is.data.frame(obj))
+        res = data.frame(res)
+    
+    res
 }
