@@ -440,6 +440,9 @@ apply_array <- function(obj, dim, fun) {
 # apply list of one dimensional functions to columns of obj
 # # TODO###############
 colapply_functions <- function(obj, flist) {
+    if (length(dim(obj)) != 2) 
+        stop("'obj' must be a 2-dimensional array.")
+    
     if (length(flist) != dim(obj)[2])
         stop("Number of columns of 'obj' must be equal to number of functions.")
     
