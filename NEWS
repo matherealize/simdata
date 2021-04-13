@@ -1,3 +1,11 @@
+# simdata v0.3.0.9000 (build date 2021-04-09)
+Added NORTA based simulation design and associated functionality.
+ 
+Additions: 
+
+- norta_simdesign to simulate data based on a NORTA design
+- optimize_cor_mat to facilitate NORTA simulation
+
 # simdata v0.2.0.9003 (build date 2021-04-08)
 Changes:
 
