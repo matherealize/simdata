@@ -207,9 +207,32 @@ is_cor_matrix <- function(m) {
     ok
 }
 
-
-
-# TODO ##################
+#' @title Find pairwise initial correlation for NORTA from target correlation
+#' 
+#' @description 
+#' This function can be used to find a suitable initial correlation for use
+#' in the NORTA procedure for a pair of variables with given marginal 
+#' distributions and target correlation.
+#' 
+#' @param cor_target
+#' Target correlation of variable pair.
+#' @param dist1,dist2
+#' Marginal distributions of variable pair, given as univariable quantile
+#' functions.
+#' @param n_obs
+#' Number of observations to be used in the numerical optimization procedure.
+#' @param seed
+#' Seed for generating standard normal random variables in the numerical 
+#' optimization procedure.
+#' @param tol,...
+#' Further parameters passed to \code{\link[stats:uniroot]{stats::uniroot}}.
+#' 
+#' @details 
+#' Uses \code{\link[stats:uniroot]{stats::uniroot}} for actual optimization.
+#' 
+#' @return
+#' Output of \code{\link[stats:uniroot]{stats::uniroot}} for the univariable
+#' optimization for find the initial correlation.
 optimize_cor_for_pair <- function(cor_target, dist1, dist2, 
                                   n_obs = 100000, seed = NULL,
                                   tol = 0.01, ...) {
@@ -236,6 +259,59 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
             dist1 = dist1, dist2 = dist2, ...)
 }
 
+#' @title Find initial correlation matrix for NORTA from target correlation
+#' 
+#' @description 
+#' This function can be used to find a suitable correlation matrix to be used
+#' for simulating initial multivariate normal data in a NORTA based simulation
+#' design (see \code{\link{norta_simdesign}}).
+#' 
+#' @param cor_target
+#' Target correlation matrix.
+#' @param dist
+#' List of functions of marginal distributions for simulated variables. 
+#' Must have the same length as the specified correlation matrix 
+#' (`cor_target`), and the order of the entries must correspond to the 
+#' variables in the correlation matrix. See \code{\link{norta_simdesign}} for 
+#' details of the specification of the marginal distributions.
+#' @param ensure_cor_mat
+#' if TRUE, this function ensures that the optimized matrix is a proper 
+#' correlation matrix by ensuring positive definitiness. If FALSE, the 
+#' optimized matrix is returned as is.
+#' @param conv_norm_type
+#' Metric to be used to find closest positive definite matrix to optimal matrix, 
+#' used if `ensure_cor_mat` is TRUE. 
+#' Passed to \code{\link[Matrix:nearPD]{Matrix::nearPD}}.
+#' @param return_diagnostics
+#' TRUE to return additional diagnostics of the optimization procedure, see
+#' below.
+#' @param ...
+#' Additional parameters passed to \code{\link{optimize_cor_for_pair}}.
+#' 
+#' @details 
+#' This function first finds a suitable correlation matrix for the underlying
+#' multivariate normal data used in the NORTA procedure. It does so by 
+#' solving k*(k-1) univariable optimisation problems (where k is the number
+#' of variables). In case the result is not a positive-definite matrix, the
+#' nearest positive-definite matrix is found according to the user specified
+#' metric using \code{\link[Matrix:nearPD]{Matrix::nearPD}}.
+#' See e.g. Ghosh and Henderson (2003) for an overview of the procedure.
+#' 
+#' @return 
+#' If `return_diagnostics` is FALSE, a correlation matrix to be used in the 
+#' definition of a \code{\link{norta_simdesign}} object. If TRUE, then a list
+#' with two entries: `cor_mat` containing the correlation matrix, and 
+#' `convergence` containing a list of objects returned by the individual
+#' optimisation problems from \code{\link[stats:uniroot]{stats::uniroot}}.
+#' 
+#' @references Ghosh, S. and Henderson, S. G. (2003) \emph{Behavior of the
+#' NORTA method for correlated random vector generation as the dimension 
+#' increases}. ACM Transactions on Modeling and Computer Simulation.
+#' 
+#' @seealso 
+#' \code{\link{norta_simdesign}}
+#' 
+#' @export
 optimize_cor_mat <- function(cor_target, dist, 
                              ensure_cor_mat = TRUE, 
                              conv_norm_type = "O",
@@ -251,6 +327,11 @@ optimize_cor_mat <- function(cor_target, dist,
     
     cor_mat = diag(ncol(cor_target))
     conv_res = list()
+    
+    # TODO
+    # if cor_target is 0, can the underlying cor be anything different than 0?
+    # to speed up adding uncorrelated vars
+    # maybe specific tol below which it is considered 0
     
     for (row in seq(1, nrow(cor_target) - 1)) {
         conv_res[[row]] = list()
@@ -438,7 +519,20 @@ apply_array <- function(obj, dim, fun) {
 }
 
 # apply list of one dimensional functions to columns of obj
-# # TODO###############
+#' @title Apply list of functions to column of object
+#' 
+#' @description 
+#' Helper function to simplify workflow with lists of functions.
+#' 
+#' @param obj
+#' 2-dimensional array (matrix or data.frame). 
+#' @param flist
+#' List of functions of length equal to the number of columns of `obj`.
+#' Each entry must be a function applicable to a single column of `obj`.
+#' The i-th entry of `flist` is applied to the i-th column of `obj`.
+#' 
+#' @return 
+#' Matrix or data.frame (same type as `obj`) with names taken from `obj`.
 colapply_functions <- function(obj, flist) {
     if (length(dim(obj)) != 2) 
         stop("'obj' must be a 2-dimensional array.")

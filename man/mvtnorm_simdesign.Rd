@@ -74,7 +74,7 @@ following procedure:
 multivariate Normal distribution (number of dimensions specified by
 dimensions of \code{relations}).
 \item \code{Z} is then transformed into the final dataset \code{X} by applying
-the \code{transform} function to \code{Z}.
+the \code{transform_initial} function to \code{Z}.
 \item \code{X} is post-processed if specified.
 }
 }
