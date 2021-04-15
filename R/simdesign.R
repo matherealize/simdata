@@ -257,11 +257,12 @@ simdesign <- function(generator,
 #' A list of functions `dist` is used to define the marginal distributions of 
 #' the variables. Each entry must be a quantile function, i.e. a function 
 #' that maps `[0, 1]` to the domain of a probability distribution. Each entry
-#' must take a single input, and return a single number. Examples for acceptable
-#' entries include all standard quantile functions implemented in R (e.g. 
-#' `qnorm`, `qbinom`, ...), user defined functions wrapping these (e.g. 
-#' `function(x) = qnorm(x, mean = 10, sd = 4)`), or empirical quantile 
-#' functions. See example in the NORTA vignette.
+#' must take a single input vector, and return a single numeric vector.
+#' Examples for acceptable entries include all standard quantile functions
+#' implemented in R (e.g. `qnorm`, `qbinom`, ...), user defined functions
+#' wrapping these (e.g. `function(x) = qnorm(x, mean = 10, sd = 4)`), or
+#' empirical quantile functions. See example in the NORTA vignette of this 
+#' package.
 #' 
 #' @section Target correlations: 
 #' Not every valid correlation matrix (i.e. symmetric, positive-definite matrix 
