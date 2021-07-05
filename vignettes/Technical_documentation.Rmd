@@ -1,0 +1,139 @@
+---
+title: "simdata: Technical documentation"
+author: "Michael Kammer"
+date: "`r Sys.Date()`"
+output: 
+    rmarkdown::html_vignette:
+        fig_width: 8
+        fig_height: 6
+        toc: true
+        toc_depth: 2
+        number_sections: true
+vignette: >
+  %\VignetteIndexEntry{simdata: Technical documentation}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+# Introduction
+
+This document is intended to elaborate on the inner workings of the `simdata`
+package, for users who may wish to extend it for their purposes.
+
+The `simdata` package is based on a very simple idea: 
+
+- the `simdesign` S3 class, and any concrete subclass implemented by the user,
+which provides a data generating mechanism, and stores all necessary data to 
+simulate data from the data generating mechanism
+- the `simulate_data` method for the `simdesign` class, which actually 
+implements drawing from the data generating mechanism
+
+Both key functionalities can be embellished by further features to adapt to 
+the task of interest. How to do this is presented in the `Demo` vignette of 
+the package. The package further provides some utilities around the
+core functionality, to assist in simulation tasks, but which are not essential
+to the usage of the package.
+
+# `simdesign` S3 class
+
+The main class of this package is the `simdesign` S3 class. It is a list with
+class attribute `simdesign` and entries as defined in the documentation of 
+the `simdesign` class.
+
+## Subclassing `simdesign` 
+A template for a constructor implementing a subclass for a specific simulation
+design is given by:
+
+```{r eval=FALSE, include=TRUE}
+# constructor takes any number of arguments arg1, arg2, and so on
+# and it must use the elipsis ... as final argument
+new_simdesign <- function(arg1, arg2, ...) {
+    
+    # define generator function in one argument
+    generator = function(n) {
+        # implement data generating mechanism
+        # make use of any argument passed to the new_simdesign constructor
+        # make sure it returns a two-dimensional array
+    }
+    
+    # setup simdesign subclass
+    # make sure to pass generator function and ...
+    # all other information passed is optional
+    dsgn = simdesign(
+        generator = generator, 
+        arg1 = arg1, 
+        arg2 = arg2, 
+        ...
+    )
+    
+    # extend the class attribute 
+    class(dsgn) = c("binomial_simdesign", class(dsgn))
+    
+    # return the object
+    dsgn
+}
+```
+
+Examples for actual implementations are provided in the `Demo` vignette of 
+this package.
+
+# Simulation of data
+
+## `simulate_data` method
+
+The data generation in the `simulate_data` method follows a simple recipe.
+In principle, the method can be used without a `simdesign` object, but here
+we assume they are used together. In the following graphic, circular shapes
+denote functions.
+
+![](overview.svg){width=100%}
+
+1) Data is drawn from an initial distribution using the `generator` field (a
+function object) of the `simdesign` class.
+    - Relevant input: the function stored in the `generator` field of the
+    `simdesign`class, `n_obs` (number of observations), any further
+    argument passed to `simulate_data` which is not specified in the
+    documentation
+    - Output: initial generated dataset `Z`
+2) The initial data `Z` is transformed by one or several functions which are
+applied to the dataset.
+    - Relevant input: `Z`, function stored in the `transform_initial`
+    field of the `simdesign` class (can be implemented by using a
+    `function_list`, see documentation of this package)
+    - Default: `base::identity` is used to return the dataset `Z` unchanged
+    - Output: final generated dataset `X`
+3) Optional: the final data `X` can be post-processed before further usage.
+    - Relevant input: `X`, functions stored in the `process_final` field of
+    the `simdesign` object
+    - Default: `base::identity` is used to return the dataset `X` unchanged
+    - Output: post-processed dataset `X'`.
+    
+The final output of the method is a dataset (a matrix or data.frame depending
+on the data generating mechanism) which can be used in further analysis steps.
+
+### Implemented methods
+
+`simulate_data` is a S3 method, which implements
+
+- `simulate_data.default`: the default method doing all the actual work
+- `simulate_data.simdesign`: calls `simulate_data.default` with appropriate
+parameters as stored in the `simdesign` object; the intended way to use this
+function
+
+## `simulate_data_conditional` function
+
+Data can be simulated to conform to specific user-specified constraints.
+These constraints are implemented through a rejection function applied to a
+simulated dataset. Only datasets for which the function returns FALSE (i.e.
+not rejected) are returned. This is implemented by repeatedly calling
+`simulate_data` to obtain new instances of datasets from the data generating 
+mechanism, either until the rejection function accepts the dataset, or until
+a maximum number of iterations was conducted. This process is depicted in the 
+following diagram, in which circular shaps denote functions.
+
+![](simulate_data_conditional.svg){width=100%}
+
+# R session information {#rsession}
+```{r echo=FALSE}
+sessionInfo()
+```
