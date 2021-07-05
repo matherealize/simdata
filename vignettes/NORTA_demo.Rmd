@@ -1,0 +1,333 @@
+---
+title: 'simdata: NORTA based simulation designs'
+author: "Michael Kammer"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: yes
+    toc_depth: '2'
+    df_print: paged
+  rmarkdown::html_vignette:
+    fig_width: 8
+    fig_height: 6
+    toc: yes
+    toc_depth: 2
+    number_sections: yes
+vignette: |
+  %\VignetteIndexEntry{simdata: NORTA based simulation designs}            
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+bibliography: Demo_references.bib
+---
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+library(nhanesA)
+library(fitdistrplus)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(ggcorrplot)
+library(simdata)
+```
+
+
+# Introduction
+
+This document describes the workflow to define NORmal-To-Anything (NORTA) 
+based simulation designs using the `simdata` package. The method is very 
+useful to re-create existing datasets through a parametric
+approximation for usage in simulation studies. It is also quite easy to use, 
+and allows the definition of presets for sharing simulation setups.
+General details of the methodology and further references are given in e.g. 
+@NORTA1 and @NORTA2.
+
+## Outline of NORTA {#outline}
+
+The goal of the NORTA procedure is to produce identically independently
+distributed (iid) samples from random variables with a given 
+correlation structure (Pearson correlation matrix) and given marginal
+distributions, thereby e.g. approximating existing datasets.
+
+Following @NORTA2, we want to sample iid replicates of the random vector 
+$X = (X_1, X_2, \ldots, X_k)$. Denote by $F_i(s) = P(X_i \leq s)$ the 
+distribution functions (i.e. the marginal distributions) of the components of 
+$X$, and by $\Sigma_X$ the $k \times k$ correlation matrix of $X$. Then NORTA
+proceeds as follows:
+
+- Generate multivariate standard normal random vectors (i.e mean 0, variance 1)
+$Z = (Z_1, Z_2, \ldots, Z_k)$ with a correlation matrix $\Sigma_Z$.
+- Compute the random vector $X$ via $X_i := F_i^{-1}(\Phi(Z_i))$, where $\Phi$
+denotes the distribution function of the standard normal distribution, and 
+$F_i^{-1}(t) := \inf\{x: F_i(x) \geq t\}$ is the quantile function of $X_i$.
+
+The resulting vector $X$ then has the desired marginal distribution. To obtain
+the target correlation structure $\Sigma_X$, the correlation matrix $\Sigma_Z$
+for the first step has to be chosen appropriately. This can be achieved
+via solving univariable optimisation problems for each pair of variables
+$X_i$ and $X_j$ in $X$ and is part of the `simdata` package.
+
+## Caveats of NORTA
+
+The NORTA procedure has some known limitations, which may lead to discrepancies
+between the target correlation structure and the correlation structure obtained 
+from the sampling process. These are, however, partly alleviated when using
+existing datasets as templates, or by special techniques within `simdata`. 
+
+- Not all combinations of given marginal distributions and target correlation
+are feasible by the nature of the variables. This is not an issue when an 
+existing dataset is used as template, since that demonstrates that 
+the combination exists.
+- The optimisation procedure to obtain $\Sigma_Z$ may lead to a matrix which
+is not positive definite (since the optimisation is only done for pairs of 
+variables), and therefore not a proper correlation matrix. To 
+alleviate this, the `simdata` package ensures positive definiteness by using 
+the closest positive definite matrix instead. This may lead to discrepancies
+between the target correlation and the achieved correlation structure.
+- NORTA cannot reproduce non-linear relationships between variables.
+- The optimisation procedure to obtain $\Sigma_Z$ may take a while to compute
+when the number of variables increases. This is alleviated through the fact
+that this computation has to be done only a single time, during definition 
+of the simulation design. All further simulation iterations only use the 
+optimisation result and are therefore not subject to this issue.
+- When applied to an existing dataset, NORTA relies on the estimation of the 
+target correlation matrix and marginal distributions. More complex
+data (e.g. special marginal distributions, complex correlation structure)
+therefore requires more observations for an accurate representation.
+
+## Comparison to other methods
+
+NORTA is well suited to re-create existing datasets through an explicit
+parametric approximation. Similar methods exist, that achieve this through
+other means. A particularly interesting alternative is the generation 
+of synthetic datasets using an approach closely related to multiple imputation,
+and is implemented in e.g. the `synthpop` R package (@Synthpop). Its' primary
+aim is to achieve confidentiality by re-creating copies to be shared for 
+existing, sensitive datasets.
+
+In comparison, `synthpop` potentially offers more flexible data generation than
+NORTA, thereby leading to a better approximation of an original dataset. 
+However, `synthpop` is also more opaque than the explicit, user defined 
+specification of correlation and marginal distributions of NORTA. This also 
+entails that `synthpop` can be generally used more like a black-box approach, 
+which requires little user input, but is also less transparent than the 
+manual curation of the simulation setup in NORTA. Furthermore, NORTA allows
+easy changes to the design to obtain a wide variety of study designs from a 
+single template dataset, whereas `synthpop` is more targeted at re-creating
+the original dataset.
+Both methods therefore have their distinct usecases and complement each other. 
+
+# Workflow in `simdata`
+
+Given the [outline of the method](#outline), all the user has to specify to 
+define a NORTA design on $k$ variables are
+
+- A $k \times k$ target correlation matrix
+- The $k$ marginal distributions for each variable, given as quantile functions
+
+These can be estimated from existing datasets of interest, circumventing some 
+limitations of the NORTA approach. See the [example below](#example) for the 
+setup within this package.
+
+## Some common distributions
+
+The required marginal distributions are given as quantile functions. R provides
+implementations of many standard distributions which can be directly used, see
+the help on `distributions`. The quantile functions use the prefix "q", as in 
+e.g. `qnorm` or `qbinom`. Further implementations can be found in the 
+packages `extraDistr`, `actuar` and many others (see
+https://cran.r-project.org/web/views/Distributions.html). 
+
+# Example {#example}
+
+In this example we will setup a NORTA based simulation design for a dataset
+extracted from the National Health And Nutrition Examination Survey (NHANES), 
+accessible in R via several packages (we use the `nhanesA` package in this 
+demo).
+
+First we will load the dataset and extract several variables of interest, 
+namely gender ('Gender'), age ('Age'), race ('Race'), weight ('Weight'),
+bmi ('BMI'), systolic ('BPsys') and diastolic blood pressure ('BPdia').
+These variabes demonstrate several different kinds of distributions. 
+For a detailed description of the data, please see the documentation at 
+https://www.cdc.gov/nchs/nhanes.htm. Here we are not concerned with the exact
+codings of the variables, so we will not add labels to factor variables. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+df = nhanes("DEMO_J") %>% 
+    left_join(nhanes("BMX_J")) %>% 
+    left_join(nhanes("BPX_J")) %>% 
+    dplyr::select(Gender = RIAGENDR, 
+           Age = RIDAGEYR, 
+           Race = RIDRETH1, 
+           Weight = BMXWT, 
+           BMI = BMXBMI, 
+           BPsys = BPXSY1, 
+           BPdia = BPXDI1) %>% 
+    filter(complete.cases(.)) %>% 
+    filter(Age > 18) 
+
+print(head(df))
+```
+
+Using this dataset, we first define the target correlation `cor_target` and 
+plot it.
+
+```{r echo=TRUE}
+cor_target = cor(df)
+ggcorrplot::ggcorrplot(cor_target, lab = TRUE)
+```
+
+Further, we define a list of marginal distributions `dist` representing the
+individual variables. Each entry of the list must be a function in one 
+argument, defining the quantile function of the variable. The order of the
+entries must correspond to the order in the target correlation `cor_target`.
+
+We also use the `fitdistrplus::fitdist` function to find 
+appropriate distribution candidates and fit their parameters. Decisions
+regarding the fit of a distribution can be made using e.g. the 
+Akaike information criterion (AIC) or Bayesian information criterion (BIC) 
+displayed by the summary of the fit object returned by the function (the lower
+their values, the better the fit). 
+
+In case a parametric distribution doesn't fit very well, we instead make use
+of a density estimate and use this to define the marginal quantile function.
+
+- Gender: a binomial distribution with $P(2) \approx 0.5$.
+- Age: the distribution is not very "nice". 
+    - We approximate it using a kernel density estimate using the 
+    `stats::density` function. 
+    - Note that the boundaries of the distribution can be more or less smoothed
+    with the `cut` parameter.
+    - To obtain a quantile function, first we integrate the density, normalize
+    it, and then use `stats::approxfun` to derive a univariable quantile
+    function.
+    
+The code to implement these marginal distributions is shown below.
+
+
+```{r echo=TRUE, results='hide', warning=FALSE}
+dist = list()
+
+# gender
+dist[["Gender"]] = function(x) qbinom(x, size = 1, prob = 0.5)
+
+# TODO: package helper!
+# age
+# doesn't really fit a nice parametric distribution, use a KDE instead
+dens = density(df$Age, cut = 1) # cut defines how to deal with boundaries
+# integrate
+int_dens = cbind(Age = dens$x, cdf = cumsum(dens$y))
+# normalize to obtain cumulative distribution function
+int_dens[, "cdf"] = int_dens[, "cdf"] / max(int_dens[, "cdf"])
+# derive quantile function
+# outside the defined domain retun minimum and maximum age, respectively
+dist[["Age"]] = approxfun(int_dens[, "cdf"], int_dens[, "Age"], 
+                          yleft = min(int_dens[, "Age"]), 
+                          yright = max(int_dens[, "Age"]))
+
+# TODO: implement package helper
+# race
+# categorical variable with 5 categories
+# can use categorical distribution implemented in LaplacesDemon, or
+dist[["Race"]] = function(x) 
+    cut(x, breaks = c(0, 0.135, 0.227, 0.575, 0.806, 1), 
+        labels = 1:5)
+
+# weight
+fit = fitdist(as.numeric(df$Weight), "gamma")
+summary(fit)
+dist[["Weight"]] = function(x) qgamma(x, shape = 14.44, rate = 0.17)
+
+# bmi
+fit = fitdist(as.numeric(df$BMI), "lnorm")
+summary(fit)
+dist[["BMI"]] = function(x) qlnorm(x, meanlog = 3.36, sdlog = 0.23)
+
+# systolic blood pressure
+fit = fitdist(as.numeric(df$BPsys), "lnorm")
+summary(fit)
+dist[["BPsys"]] = function(x) qlnorm(x, meanlog = 4.83, sdlog = 0.15)
+
+# BPdia
+fit = fitdist(as.numeric(df %>% filter(BPdia > 0) %>% pull(BPdia)), "norm")
+summary(fit)
+dist[["BPdia"]] = function(x) qnorm(x, mean = 72.42, sd = 11.95)
+```
+
+Now we can use the `simdata::norta_simdesign` to obtain a design using these
+specification. After that, we simulate a dataset of the same size as the 
+original data set using `simdata::simulate_data`, and compare the resulting 
+summary statistics and correlation structures.
+
+```{r}
+dsgn = norta_simdesign(cor_target_final = cor_target, dist = dist, 
+                       transform_initial = data.frame,
+                       names_final = names(dist), seed_initial = 1)
+simdf = simulate_data(dsgn, nrow(df), seed = 2)
+```
+
+Summary statistics of the original and simulated datasets. 
+
+```{r message=FALSE, warning=FALSE}
+summary(df)
+summary(simdf)
+```
+
+Correlation structures of the original and simulated datasets.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggcorrplot::ggcorrplot(cor(df), title = "Original", lab = TRUE)
+ggcorrplot::ggcorrplot(cor(simdf), title = "Simulated", lab = TRUE)
+```
+
+We may also inspect the continuous variables regarding their univariate and
+bivariate distributions. The original data is shown in black, the simulated
+data is shown in red. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+vars = c("Age", "Weight", "BMI", "BPsys", "BPdia")
+limits = list(
+    Age = c(10, 90), 
+    Weight = c(0, 225), 
+    BMI = c(10, 80),
+    BPsys = c(65, 240), 
+    BPdia = c(0, 140)
+)
+plist = list()
+for (i in seq_along(vars)) for (j in seq_along(vars)) {
+    vari = vars[i]
+    varj = vars[j]
+    if (i == j) {
+        p = ggplot(df, aes_string(x = vari)) + 
+            geom_density() + 
+            geom_density(data = simdf, color = "red") + 
+            coord_cartesian(xlim = limits[[vari]])
+    } else if (i < j) {
+        p = ggplot(df, aes_string(x = vari, y = varj)) + 
+            geom_point(alpha = 0.05) + 
+            coord_cartesian(xlim = limits[[vari]], ylim = limits[[varj]])
+    } else {
+        p = ggplot(simdf, aes_string(x = varj, y = vari)) + 
+            geom_point(color = "red", alpha = 0.05) + 
+            coord_cartesian(xlim = limits[[varj]], ylim = limits[[vari]])
+    }
+    plist = append(plist, list(p + theme_bw(base_size = 7)))
+}
+
+p = patchwork::wrap_plots(plist)
+print(p)
+```
+
+From this we can observe, that the agreement between the original data and
+the simulated data is generally quite good. Note, however, that e.g. the 
+slightly non-linear relationship between age and diastolic blood pressure
+cannot be fully captured by the approach, as expected. Furthermore, the 
+original data shows some outliers, which are also not reproducible due to the
+parametric nature of the NORTA procedure. 
+
+# R session information {#rsession}
+```{r echo=FALSE}
+sessionInfo()
+```
+
+# References
