@@ -132,9 +132,16 @@ numbers. Otherwise, variables names remain as returned by the \code{generator}
 function.
 }
 
+\examples{
+\dontrun{
+generator = function(n) mvtnorm::rmvnorm(n, mean = 0)
+simulate_data(generator, 10)
+}
+
+}
 \seealso{
 \code{\link{simdesign}},
-\code{\link{mvtnorm_simdesign}},
+\code{\link{simdesign_mvtnorm}},
 \code{\link{simulate_data_conditional}},
 \code{\link{do_processing}}
 }

@@ -3,7 +3,7 @@
 \name{plot_cor_network}
 \alias{plot_cor_network}
 \alias{plot_cor_network.default}
-\alias{plot_cor_network.mvtnorm_simdesign}
+\alias{plot_cor_network.simdesign_mvtnorm}
 \title{Visualize fixed correlation structure as a network}
 \usage{
 plot_cor_network(obj, ...)
@@ -33,7 +33,7 @@ plot_cor_network(obj, ...)
   ...
 )
 
-\method{plot_cor_network}{mvtnorm_simdesign}(obj, ...)
+\method{plot_cor_network}{simdesign_mvtnorm}(obj, ...)
 }
 \arguments{
 \item{obj}{Correlation matrix or S3 class object which has a class method available (see below).}
@@ -92,7 +92,7 @@ defaults for this package's usage.}
 }
 \description{
 Useful to visualize e.g. the associations of the initial multivariate
-gaussian distribution used by \code{\link{mvtnorm_simdesign}}.
+gaussian distribution used by \code{\link{simdesign_mvtnorm}}.
 }
 \details{
 For an explanation of all parameters not listed here, please refer to
@@ -102,12 +102,12 @@ For an explanation of all parameters not listed here, please refer to
 \itemize{
 \item \code{default}: Function to be used for correlation matrix.
 
-\item \code{mvtnorm_simdesign}: Function to be used with \code{\link{mvtnorm_simdesign}}
+\item \code{simdesign_mvtnorm}: Function to be used with \code{\link{simdesign_mvtnorm}}
 S3 class object to visualize initial correlation network of the underlying
 multivariate normal distribution.
 }}
 
 \seealso{
-\code{\link{plot_cor_network.mvtnorm_simdesign}},
+\code{\link{plot_cor_network.simdesign_mvtnorm}},
 \code{\link{plot_estimated_cor_network}}
 }

@@ -121,7 +121,7 @@ random seed (`seed`).
 ```{r message=FALSE, warning=FALSE}
 correlation_matrix = diag(1, nrow = 5)
 
-sim_design = simdata::mvtnorm_simdesign(relations = correlation_matrix, 
+sim_design = simdata::simdesign_mvtnorm(relations = correlation_matrix, 
                                         transform_initial = data.frame,
                                         prefix_final = "variable")
 sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
@@ -159,7 +159,7 @@ transformation = simdata::function_list(
   check.names = FALSE # pass columnnames exactly as specified here
 )
 
-sim_design = simdata::mvtnorm_simdesign(
+sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix,
   transform_initial = transformation, 
   prefix_final = NULL
@@ -218,7 +218,7 @@ transformation = simdata::function_list(
   v16 = function(z) z[,14] < 0,
   v17 = function(z) z[,15] < 0)
 
-sim_design = simdata::mvtnorm_simdesign(
+sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix,
   transform_initial = transformation,
   prefix_final = NULL
@@ -548,7 +548,7 @@ transformation = simdata::function_list("v1" = function(x) x[, 1],
                                         "v1*2" = function(x) x[, 1] * 2, 
                                         check.names = FALSE)
 
-sim_design = simdata::mvtnorm_simdesign(
+sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix,        
   transform_initial = transformation, 
   prefix_final = NULL
@@ -589,7 +589,7 @@ transformation = simdata::function_list(
   },
   check.names = FALSE)
 
-sim_design = simdata::mvtnorm_simdesign(
+sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix,        
   transform_initial = transformation,
   prefix_final = NULL
@@ -611,7 +611,7 @@ knitr::kable(head(sim_data[[1]]))
 
 ### Other initial distributions {#other}
 In this package, simulating initial data from a multivariate Normal distribution
-is already implemented in the `mvtnorm_simdesign` S3 class. However, it is easy
+is already implemented in the `simdesign_mvtnorm` S3 class. However, it is easy
 to implement other distributions and extend the underlying interface of the
 `simdesign` class. To do this, all that needs to be implemented is the 
 `generator` object of the new simulation class. Below we show how to code
@@ -745,7 +745,7 @@ transformation[[61]] = function(x) x[, 61:100]
 transformation = simdata::as_function_list(transformation)
 
 # create simulation design
-sim_design = simdata::mvtnorm_simdesign(
+sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix, 
   transform_initial = transformation
 )
@@ -837,7 +837,7 @@ transformation = simdata::function_list(
     check.names = FALSE # pass columnnames exactly as specified here
   )
 
-sim_design = simdata::mvtnorm_simdesign(
+sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix,
   transform_initial = transformation, 
   prefix_final = NULL

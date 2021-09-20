@@ -22,7 +22,8 @@ simdesign(
 assumed it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
 \pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
-array as output (matrix or data.frame). See details.}
+array as output (matrix or data.frame). Alternatively an R object derived
+from the \code{simdata::simdesign} class. See details.}
 
 \item{transform_initial}{Function which specifies the transformation of the underlying
 dataset \code{Z} to final dataset \code{X}. See details.}
@@ -116,11 +117,19 @@ This class is intended to be used as a template for simulation designs
 which are based on specific underlying distributions. All such a template
 needs to define is the \code{generator} function and its construction and
 pass it to this function along with the other arguments. See
-\code{\link{mvtnorm_simdesign}} for an example.
+\code{\link{simdesign_mvtnorm}} for an example.
 }
 
+\examples{
+\dontrun{
+generator = function(n) mvtnorm::rmvnorm(n, mean = 0)
+sim_design = simdesign(generator)
+simulate_data(sim_design, 10)
+}
+
+}
 \seealso{
-\code{\link{mvtnorm_simdesign}},
+\code{\link{simdesign_mvtnorm}},
 \code{\link{simulate_data}},
 \code{\link{simulate_data_conditional}}
 }

@@ -48,7 +48,7 @@
 #' which are based on specific underlying distributions. All such a template
 #' needs to define is the `generator` function and its construction and 
 #' pass it to this function along with the other arguments. See 
-#' \code{\link{mvtnorm_simdesign}} for an example.
+#' \code{\link{simdesign_mvtnorm}} for an example.
 #'
 #' @return
 #' List object with class attribute "simdesign" (S3 class) containing
@@ -74,7 +74,7 @@
 #' }
 #'
 #' @seealso
-#' \code{\link{mvtnorm_simdesign}},
+#' \code{\link{simdesign_mvtnorm}},
 #' \code{\link{simulate_data}},
 #' \code{\link{simulate_data_conditional}}
 #'
@@ -179,8 +179,8 @@ simdesign <- function(generator,
     if (length(names_final) == n_var_res) {
         design$names_final = names_final
     } else if (length(
-        names_from_function_list(transform_initial)) == n_var_res) {
-        design$names_final = names_from_function_list(transform_initial)
+        get_names_from_function_list(transform_initial)) == n_var_res) {
+        design$names_final = get_names_from_function_list(transform_initial)
     } else if (!is.null(prefix_final)) {
         design$names_final = paste0(prefix_final, 1:n_var_res) 
     } else  {
@@ -286,7 +286,7 @@ simdesign <- function(generator,
 #' See e.g. Ghosh and Henderson 2003 for the motivation why this works.
 #' 
 #' @return
-#' List object with class attribute "norta_simdesign" (S3 class), inheriting
+#' List object with class attribute "simdesign_norta" (S3 class), inheriting
 #' from "simdesign". It contains the same entries as a \code{\link{simdesign}} 
 #' object but in addition the following entries:
 #' 
@@ -316,7 +316,7 @@ simdesign <- function(generator,
 #' Transactions on Modeling and Computer Simulation.
 #'
 #' @export
-norta_simdesign <- function(cor_target_final = NULL,
+simdesign_norta <- function(cor_target_final = NULL,
                             cor_initial = NULL, 
                             dist = list(),
                             tol_initial = 0.001, 
@@ -372,7 +372,7 @@ norta_simdesign <- function(cor_target_final = NULL,
         ...
     )
     
-    class(dsgn) = c("norta_simdesign", class(dsgn))
+    class(dsgn) = c("simdesign_norta", class(dsgn))
     
     dsgn
 }
@@ -431,7 +431,7 @@ norta_simdesign <- function(cor_target_final = NULL,
 #' correlations between the variables of the final datamatrix `X`.
 #'
 #' @return
-#' List object with class attribute "mvtnorm_simdesign" (S3 class), inheriting
+#' List object with class attribute "simdesign_mvtnorm" (S3 class), inheriting
 #' from "simdesign". It contains the same entries as a \code{\link{simdesign}} 
 #' object but in addition the following entries:
 #' 
@@ -446,10 +446,10 @@ norta_simdesign <- function(cor_target_final = NULL,
 #' \code{\link{simdesign}},
 #' \code{\link{simulate_data}},
 #' \code{\link{simulate_data_conditional}}, 
-#' \code{\link{plot_cor_network.mvtnorm_simdesign}}
+#' \code{\link{plot_cor_network.simdesign_mvtnorm}}
 #'
 #' @export
-mvtnorm_simdesign <- function(relations_initial,
+simdesign_mvtnorm <- function(relations_initial,
                               mean_initial = 0,
                               sd_initial = 1,
                               is_correlation = TRUE, 
@@ -488,7 +488,7 @@ mvtnorm_simdesign <- function(relations_initial,
         ...
     )
     
-    class(dsgn) = c("mvtnorm_simdesign", class(dsgn))
+    class(dsgn) = c("simdesign_mvtnorm", class(dsgn))
     
     dsgn
 }
@@ -519,18 +519,18 @@ mvtnorm_simdesign <- function(relations_initial,
 #' 
 #' @examples 
 #' \dontrun{
-#' disc_sampler = discunif_simdesign()
+#' disc_sampler = simdesign_discunif()
 #' plot(simulate_data(disc_sampler, 1000))
 #' 
-#' ring_segment_sampler = discunif_simdesign(r_min = 0.5, angle_min = 0.5*pi)
+#' ring_segment_sampler = simdesign_discunif(r_min = 0.5, angle_min = 0.5*pi)
 #' plot(simulate_data(ring_segment_sampler, 1000))
 #' 
-#' circle_sampler = discunif_simdesign(r_min = 1)
+#' circle_sampler = simdesign_discunif(r_min = 1)
 #' plot(simulate_data(circle_sampler, 1000))
 #' } 
 #' 
 #' @export
-discunif_simdesign <- function(r_min = 0, r_max = 1, 
+simdesign_discunif <- function(r_min = 0, r_max = 1, 
                                angle_min = 0, angle_max = 2*pi, 
                                name = "Uniform circle simulation design",                      
                                ...) {
@@ -564,7 +564,7 @@ discunif_simdesign <- function(r_min = 0, r_max = 1,
         ...
     )
     
-    class(dsgn) = c("discunif_simdesign", class(dsgn))
+    class(dsgn) = c("simdesign_discunif", class(dsgn))
     
     dsgn
 }

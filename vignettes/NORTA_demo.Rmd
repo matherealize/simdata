@@ -272,13 +272,13 @@ dist[["BPdia"]] = function(x) qnorm(x, mean = 72.42, sd = 11.95)
 
 ## Simulate data
 
-Now we can use the `simdata::norta_simdesign` to obtain a design using these
+Now we can use the `simdata::simdesign_norta` to obtain a design using these
 specification. After that, we simulate a dataset of the same size as the 
 original data set using `simdata::simulate_data`, and compare the resulting 
 summary statistics and correlation structures.
 
 ```{r}
-dsgn = simdata::norta_simdesign(cor_target_final = cor_target, dist = dist, 
+dsgn = simdata::simdesign_norta(cor_target_final = cor_target, dist = dist, 
                                 transform_initial = data.frame,
                                 names_final = names(dist), seed_initial = 1)
 simdf = simdata::simulate_data(dsgn, nrow(df), seed = 2)

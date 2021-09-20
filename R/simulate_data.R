@@ -69,7 +69,7 @@
 #'
 #' @seealso
 #' \code{\link{simdesign}}, 
-#' \code{\link{mvtnorm_simdesign}}, 
+#' \code{\link{simdesign_mvtnorm}}, 
 #' \code{\link{simulate_data_conditional}},
 #' \code{\link{do_processing}}
 #'
@@ -258,7 +258,7 @@ simulate_data.simdesign <- function(generator,
 #' 
 #' @examples
 #' \dontrun{
-#' dsgn = mvtnorm_simdesign(diag(5))
+#' dsgn = simdesign_mvtnorm(diag(5))
 #' simulate_data_conditional(dsgn, 100, 
 #'    reject = function_list(is_collinear, contains_constant))
 #' }

@@ -18,3 +18,6 @@ simple function, returns NULL.
 Extract individual function objects from environment of a \code{function_list}
 object.
 }
+\seealso{
+\code{\link{function_list}}
+}

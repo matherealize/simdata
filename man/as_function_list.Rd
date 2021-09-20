@@ -19,3 +19,6 @@ Function with a single input which outputs a data.frame. Has special
 Create a \code{function_list} object from a list of functions. This is useful
 if such a list is created programmatically.
 }
+\seealso{
+\code{\link{function_list}}
+}

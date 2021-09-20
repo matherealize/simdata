@@ -65,5 +65,7 @@ f(diag(2))
 
 }
 \seealso{
-\code{\link[base:data.frame]{data.frame}}
+\code{\link[base:data.frame]{data.frame}},
+\code{\link{get_from_function_list}},
+\code{\link{get_names_from_function_list}}
 }

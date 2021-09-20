@@ -19,7 +19,7 @@ optimize_cor_mat(
 \item{dist}{List of functions of marginal distributions for simulated variables.
 Must have the same length as the specified correlation matrix
 (\code{cor_target}), and the order of the entries must correspond to the
-variables in the correlation matrix. See \code{\link{norta_simdesign}} for
+variables in the correlation matrix. See \code{\link{simdesign_norta}} for
 details of the specification of the marginal distributions.}
 
 \item{ensure_cor_mat}{if TRUE, this function ensures that the optimized matrix is a proper
@@ -37,7 +37,7 @@ below.}
 }
 \value{
 If \code{return_diagnostics} is FALSE, a correlation matrix to be used in the
-definition of a \code{\link{norta_simdesign}} object. If TRUE, then a list
+definition of a \code{\link{simdesign_norta}} object. If TRUE, then a list
 with two entries: \code{cor_mat} containing the correlation matrix, and
 \code{convergence} containing a list of objects returned by the individual
 optimisation problems from \code{\link[stats:uniroot]{stats::uniroot}}.
@@ -45,7 +45,7 @@ optimisation problems from \code{\link[stats:uniroot]{stats::uniroot}}.
 \description{
 This function can be used to find a suitable correlation matrix to be used
 for simulating initial multivariate normal data in a NORTA based simulation
-design (see \code{\link{norta_simdesign}}).
+design (see \code{\link{simdesign_norta}}).
 }
 \details{
 This function first finds a suitable correlation matrix for the underlying
@@ -62,5 +62,5 @@ NORTA method for correlated random vector generation as the dimension
 increases}. ACM Transactions on Modeling and Computer Simulation.
 }
 \seealso{
-\code{\link{norta_simdesign}}
+\code{\link{simdesign_norta}}
 }

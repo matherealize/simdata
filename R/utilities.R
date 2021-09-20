@@ -264,7 +264,7 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
 #' @description 
 #' This function can be used to find a suitable correlation matrix to be used
 #' for simulating initial multivariate normal data in a NORTA based simulation
-#' design (see \code{\link{norta_simdesign}}).
+#' design (see \code{\link{simdesign_norta}}).
 #' 
 #' @param cor_target
 #' Target correlation matrix.
@@ -272,7 +272,7 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
 #' List of functions of marginal distributions for simulated variables. 
 #' Must have the same length as the specified correlation matrix 
 #' (`cor_target`), and the order of the entries must correspond to the 
-#' variables in the correlation matrix. See \code{\link{norta_simdesign}} for 
+#' variables in the correlation matrix. See \code{\link{simdesign_norta}} for 
 #' details of the specification of the marginal distributions.
 #' @param ensure_cor_mat
 #' if TRUE, this function ensures that the optimized matrix is a proper 
@@ -299,7 +299,7 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
 #' 
 #' @return 
 #' If `return_diagnostics` is FALSE, a correlation matrix to be used in the 
-#' definition of a \code{\link{norta_simdesign}} object. If TRUE, then a list
+#' definition of a \code{\link{simdesign_norta}} object. If TRUE, then a list
 #' with two entries: `cor_mat` containing the correlation matrix, and 
 #' `convergence` containing a list of objects returned by the individual
 #' optimisation problems from \code{\link[stats:uniroot]{stats::uniroot}}.
@@ -309,7 +309,7 @@ optimize_cor_for_pair <- function(cor_target, dist1, dist2,
 #' increases}. ACM Transactions on Modeling and Computer Simulation.
 #' 
 #' @seealso 
-#' \code{\link{norta_simdesign}}
+#' \code{\link{simdesign_norta}}
 #' 
 #' @export
 optimize_cor_mat <- function(cor_target, dist, 
@@ -415,7 +415,9 @@ optimize_cor_mat <- function(cor_target, dist,
 #' 'flist' entry in its environment which stores individual functions as list.
 #' 
 #' @seealso 
-#' \code{\link[base:data.frame]{data.frame}}
+#' \code{\link[base:data.frame]{data.frame}}, 
+#' \code{\link{get_from_function_list}},
+#' \code{\link{get_names_from_function_list}}
 #' 
 #' @export
 function_list <- function(..., 
@@ -450,6 +452,9 @@ function_list <- function(...,
 #' objects that were passed to the `function_list` object. If `flist` is a 
 #' simple function, returns NULL. 
 #' 
+#' @seealso 
+#' \code{\link{function_list}}
+#' 
 #' @export
 get_from_function_list <- function(flist) {
     get0("fct_list", envir = environment(flist))
@@ -468,8 +473,11 @@ get_from_function_list <- function(flist) {
 #' Names of list corresponding to individual function objects that were passed 
 #' to the `function_list` object. If `flist` is a simple function, returns NULL. 
 #' 
+#' @seealso 
+#' \code{\link{function_list}}
+#' 
 #' @export
-names_from_function_list <- function(flist) {
+get_names_from_function_list <- function(flist) {
     names(get_from_function_list(flist))
 }
 
@@ -485,6 +493,9 @@ names_from_function_list <- function(flist) {
 #' Passed to \code{\link{function_list}}.
 #' 
 #' @inherit function_list return
+#' 
+#' @seealso 
+#' \code{\link{function_list}}
 #' 
 #' @export
 as_function_list <- function(flist, ...) {
@@ -518,7 +529,6 @@ apply_array <- function(obj, dim, fun) {
     NULL
 }
 
-# apply list of one dimensional functions to columns of obj
 #' @title Apply list of functions to column of object
 #' 
 #' @description 

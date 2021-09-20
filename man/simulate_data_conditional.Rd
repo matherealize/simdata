@@ -103,7 +103,7 @@ See the example below.
 
 \examples{
 \dontrun{
-dsgn = mvtnorm_simdesign(diag(5))
+dsgn = simdesign_mvtnorm(diag(5))
 simulate_data_conditional(dsgn, 100, 
    reject = function_list(is_collinear, contains_constant))
 }
