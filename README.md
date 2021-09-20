@@ -12,6 +12,8 @@ devtools::install_github("matherealize/simdata")
 ```
 
 ## Useage
-Please take a look at the package vignette:
+Please take a look at the package vignettes:
 
-- [Introduction to simdata package and basic workflow](https://matherealize.github.io/Demo_simulation.html)
+- [Introduction to simdata package and basic workflow](https://matherealize.github.io/simdata_demo.html)
+- [Introduction to NORTA based simulation workflow in the simdata package](https://matherealize.github.io/simdata_NORTA_demo.html)
+- [Technical documentation, implementation overview](https://matherealize.github.io/simdata_technical_documentation.html)
