@@ -1,10 +1,22 @@
 # simdata v0.3.0.9000 (build date 2021-04-09)
-Added NORTA based simulation design and associated functionality.
+Added NORTA based simulation design and associated functionality. Added
+vignettes explaining the workflow, and the technical design of the package.
  
 Additions: 
 
-- norta_simdesign to simulate data based on a NORTA design
+- simdesign_norta to simulate data based on a NORTA design
 - optimize_cor_mat to facilitate NORTA simulation
+- Vignette demonstrating the NORTA workflow
+- Vignette explaining the technical implementation of the package
+
+Changes: 
+
+- Updated vignettes
+- Changes in function names to improve naming consistency and enhance 
+    searchability: 
+    - mvtnorm_simdesign -> simdesign_mvtnorm 
+    - discunif_simdesign -> simdesign_discunif
+    - names_from_function_list -> get_names_from_function_list
 
 # simdata v0.2.0.9003 (build date 2021-04-08)
 Changes:
