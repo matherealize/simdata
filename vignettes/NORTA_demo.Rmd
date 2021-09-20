@@ -30,7 +30,6 @@ library(ggcorrplot)
 library(simdata)
 ```
 
-
 # Introduction
 
 This document describes the workflow to define NORmal-To-Anything (NORTA) 
@@ -40,6 +39,11 @@ approximation for usage in simulation studies. It is also quite easy to use,
 and allows the definition of presets for sharing simulation setups.
 General details of the methodology and further references are given in e.g. 
 @NORTA1 and @NORTA2.
+
+In this vignette we will prefix all relevant function calls by `::` to show 
+the package which implements the function - this is not necessary but only 
+done for demonstration purposes.
+
 
 ## Outline of NORTA {#outline}
 
@@ -144,6 +148,8 @@ extracted from the National Health And Nutrition Examination Survey (NHANES),
 accessible in R via several packages (we use the `nhanesA` package in this 
 demo).
 
+## Load dataset
+
 First we will load the dataset and extract several variables of interest, 
 namely gender ('Gender'), age ('Age'), race ('Race'), weight ('Weight'),
 bmi ('BMI'), systolic ('BPsys') and diastolic blood pressure ('BPdia').
@@ -153,21 +159,23 @@ https://www.cdc.gov/nchs/nhanes.htm. Here we are not concerned with the exact
 codings of the variables, so we will not add labels to factor variables. 
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-df = nhanes("DEMO_J") %>% 
-    left_join(nhanes("BMX_J")) %>% 
-    left_join(nhanes("BPX_J")) %>% 
-    dplyr::select(Gender = RIAGENDR, 
-           Age = RIDAGEYR, 
-           Race = RIDRETH1, 
-           Weight = BMXWT, 
-           BMI = BMXBMI, 
-           BPsys = BPXSY1, 
-           BPdia = BPXDI1) %>% 
-    filter(complete.cases(.)) %>% 
-    filter(Age > 18) 
+df = nhanesA::nhanes("DEMO_J") %>% 
+  left_join(nhanesA::nhanes("BMX_J")) %>% 
+  left_join(nhanesA::nhanes("BPX_J")) %>% 
+  dplyr::select(Gender = RIAGENDR, 
+                Age = RIDAGEYR, 
+                Race = RIDRETH1, 
+                Weight = BMXWT, 
+                BMI = BMXBMI, 
+                BPsys = BPXSY1, 
+                BPdia = BPXDI1) %>% 
+  filter(complete.cases(.)) %>% 
+  filter(Age > 18) 
 
 print(head(df))
 ```
+
+## Estimate target correlation
 
 Using this dataset, we first define the target correlation `cor_target` and 
 plot it.
@@ -176,6 +184,8 @@ plot it.
 cor_target = cor(df)
 ggcorrplot::ggcorrplot(cor_target, lab = TRUE)
 ```
+
+## Define marginal distributions
 
 Further, we define a list of marginal distributions `dist` representing the
 individual variables. Each entry of the list must be a function in one 
@@ -201,9 +211,18 @@ of a density estimate and use this to define the marginal quantile function.
     - To obtain a quantile function, first we integrate the density, normalize
     it, and then use `stats::approxfun` to derive a univariable quantile
     function.
+- Race: a categorical distribution with 5 categories specified by probabilities
+    - Can also be implemented using the categorical distribution from the 
+    package `LaplacesDemon` implemented via `qcat`
+- Weight: gamma distribution parameters estimated using `fitdistrplus::fitdist`
+- BMI and systolic blood pressure: log-normal distribution parameters 
+  estimated using `fitdistrplus::fitdist`
+- Diastolic blood pressure: normal distribution parameters estimated using
+  `fitdistrplus::fitdist` after removing zero values from the data
     
-The code to implement these marginal distributions is shown below.
-
+The code to implement these marginal distributions is shown below. Helper 
+functions to ease the workflow will be implemented in future versions of the 
+package.
 
 ```{r echo=TRUE, results='hide', warning=FALSE}
 dist = list()
@@ -211,9 +230,7 @@ dist = list()
 # gender
 dist[["Gender"]] = function(x) qbinom(x, size = 1, prob = 0.5)
 
-# TODO: package helper!
 # age
-# doesn't really fit a nice parametric distribution, use a KDE instead
 dens = density(df$Age, cut = 1) # cut defines how to deal with boundaries
 # integrate
 int_dens = cbind(Age = dens$x, cdf = cumsum(dens$y))
@@ -225,34 +242,35 @@ dist[["Age"]] = approxfun(int_dens[, "cdf"], int_dens[, "Age"],
                           yleft = min(int_dens[, "Age"]), 
                           yright = max(int_dens[, "Age"]))
 
-# TODO: implement package helper
 # race
-# categorical variable with 5 categories
-# can use categorical distribution implemented in LaplacesDemon, or
 dist[["Race"]] = function(x) 
     cut(x, breaks = c(0, 0.135, 0.227, 0.575, 0.806, 1), 
         labels = 1:5)
 
 # weight
-fit = fitdist(as.numeric(df$Weight), "gamma")
+fit = fitdistrplus::fitdist(as.numeric(df$Weight), "gamma")
 summary(fit)
 dist[["Weight"]] = function(x) qgamma(x, shape = 14.44, rate = 0.17)
 
 # bmi
-fit = fitdist(as.numeric(df$BMI), "lnorm")
+fit = fitdistrplus::fitdist(as.numeric(df$BMI), "lnorm")
 summary(fit)
 dist[["BMI"]] = function(x) qlnorm(x, meanlog = 3.36, sdlog = 0.23)
 
 # systolic blood pressure
-fit = fitdist(as.numeric(df$BPsys), "lnorm")
+fit = fitdistrplus::fitdist(as.numeric(df$BPsys), "lnorm")
 summary(fit)
 dist[["BPsys"]] = function(x) qlnorm(x, meanlog = 4.83, sdlog = 0.15)
 
-# BPdia
-fit = fitdist(as.numeric(df %>% filter(BPdia > 0) %>% pull(BPdia)), "norm")
+# diastolic blood pressure
+fit = fitdistrplus::fitdist(as.numeric(df %>% 
+                                         filter(BPdia > 0) %>% 
+                                         pull(BPdia)), "norm")
 summary(fit)
 dist[["BPdia"]] = function(x) qnorm(x, mean = 72.42, sd = 11.95)
 ```
+
+## Simulate data
 
 Now we can use the `simdata::norta_simdesign` to obtain a design using these
 specification. After that, we simulate a dataset of the same size as the 
@@ -260,11 +278,13 @@ original data set using `simdata::simulate_data`, and compare the resulting
 summary statistics and correlation structures.
 
 ```{r}
-dsgn = norta_simdesign(cor_target_final = cor_target, dist = dist, 
-                       transform_initial = data.frame,
-                       names_final = names(dist), seed_initial = 1)
-simdf = simulate_data(dsgn, nrow(df), seed = 2)
+dsgn = simdata::norta_simdesign(cor_target_final = cor_target, dist = dist, 
+                                transform_initial = data.frame,
+                                names_final = names(dist), seed_initial = 1)
+simdf = simdata::simulate_data(dsgn, nrow(df), seed = 2)
 ```
+
+## Results
 
 Summary statistics of the original and simulated datasets. 
 
