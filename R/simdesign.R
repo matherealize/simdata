@@ -65,6 +65,13 @@
 #' \item{`process_final`}{}
 #' \item{`entries for further information as passed by the user`}{}
 #' }
+#' 
+#' @examples 
+#' \dontrun{
+#' generator = function(n) mvtnorm::rmvnorm(n, mean = 0)
+#' sim_design = simdesign(generator)
+#' simulate_data(sim_design, 10)
+#' }
 #'
 #' @seealso
 #' \code{\link{mvtnorm_simdesign}},

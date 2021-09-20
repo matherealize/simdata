@@ -25,7 +25,8 @@
 #' }
 #' 
 #' @section Generators:
-#' The `generator` function is assumend to provide the same interface
+#' The `generator` function which is either passed directly, or via a 
+#' `simdata::simdesign` object, is assumed to provide the same interface
 #' as the random generation functions in the R \pkg{stats} and \pkg{extraDistr}
 #' packages. Specifically, that means it takes the number of observations as
 #' first argument. All further arguments can be set via passing them as
@@ -59,6 +60,12 @@
 #' 
 #' @return
 #' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
+#' 
+#' @examples 
+#' \dontrun{
+#' generator = function(n) mvtnorm::rmvnorm(n, mean = 0)
+#' simulate_data(generator, 10)
+#' }
 #'
 #' @seealso
 #' \code{\link{simdesign}}, 
@@ -76,7 +83,7 @@ simulate_data <- function(generator, ...) {
 #'
 #' @export
 #' @method simulate_data default
-simulate_data.default <- function(generator, 
+simulate_data.default <- function(generator = function(n) matrix(rnorm(n)), 
                                   n_obs = 1, 
                                   transform_initial = base::identity,
                                   names_final = NULL,
@@ -129,7 +136,7 @@ simulate_data.default <- function(generator,
 #' @export
 #' @method simulate_data simdesign
 simulate_data.simdesign <- function(generator,
-                                    n_obs,
+                                    n_obs = 1,
                                     seed = NULL,
                                     apply_transformation = TRUE, 
                                     apply_processing = TRUE,

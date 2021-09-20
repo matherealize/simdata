@@ -3,7 +3,8 @@
 #' assumed it takes the number of simulated observations `n_obs` as first
 #' argument, as all random generation functions in the \pkg{stats} and 
 #' \pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
-#' array as output (matrix or data.frame). See details.
+#' array as output (matrix or data.frame). Alternatively an R object derived
+#' from the `simdata::simdesign` class. See details.
 #' @param transform_initial
 #' Function which specifies the transformation of the underlying
 #' dataset `Z` to final dataset `X`. See details.
