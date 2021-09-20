@@ -16,9 +16,9 @@
 #' as connected. Useful to control complexity of drawn network.
 #' Set to NULL to disable.
 #' @param vertex_labels
-#' Character vector of length `nrow(obj)` of labels for vertices. If not NULL, 
+#' Character vector of length `nrow(obj)` of labels for vertices. If not NULL,
 #' overrides the `vertex_label_prefix` argument. If set to NA omits all
-#' or some vertex labels. 
+#' or some vertex labels.
 #' @param vertex_label_prefix
 #' String which is added as prefix to node labels.
 #' @param edge_width_function
@@ -29,7 +29,7 @@
 #' outputs labels for these values as character vector. Defines edges labels.
 #' If set to NULL, then no edge labels will be displayed.
 #' @param use_edge_weights
-#' Logical, if TRUE then the layout will be influenced by the absolute 
+#' Logical, if TRUE then the layout will be influenced by the absolute
 #' correlations (i.e. edge weights) such that highly correlated variables will
 #' be put closer together.
 #' If FALSE, then the layout is independent of the correlation structure.
@@ -42,24 +42,24 @@
 #' obtain same layout but vary edge widths, correlation functions etc. Can
 #' also be used to obtain nicer looking graph layouts.
 #' @param return_network
-#' If TRUE, the `igraph` network object is returned and can be plotted by 
-#' the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}} 
+#' If TRUE, the `igraph` network object is returned and can be plotted by
+#' the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}}
 #' function.
 #' @param mar
-#' `mar` argument to the \code{\link[graphics:par]{par}} function to set 
-#' margins of the plot (often required when the axes should be drawn). 
-#' A numerical vector of the form c(bottom, left, top, right) which gives the 
-#' number of lines of margin to be specified on the four sides of the plot. 
+#' `mar` argument to the \code{\link[graphics:par]{par}} function to set
+#' margins of the plot (often required when the axes should be drawn).
+#' A numerical vector of the form c(bottom, left, top, right) which gives the
+#' number of lines of margin to be specified on the four sides of the plot.
 #' The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 #' as the `margin` argument for the `igraph::plot.igraph` function.
-#' @param vertex.size,margin,asp,vertex.color,vertex.frame.color,vertex.label.color,edge.color,edge.label.color 
-#' Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible 
+#' @param vertex.size,margin,asp,vertex.color,vertex.frame.color,vertex.label.color,edge.color,edge.label.color
+#' Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible
 #' defaults for this package's usage.
 #' @param ...
 #' Passed to \code{\link[igraph:plot.igraph]{igraph::plot}}, with a complete list
 #' of arguments and details given in \code{\link[igraph:plot.common]{igraph.plotting}}.
-#' 
-#' @details 
+#'
+#' @details
 #' For an explanation of all parameters not listed here, please refer to
 #' \code{\link[igraph:plot.igraph]{igraph::plot}}.
 #'
@@ -86,7 +86,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
                                      use_edge_weights = FALSE,
                                      edge_weight_function = base::identity,
                                      seed = NULL,
-                                     return_network = FALSE, 
+                                     return_network = FALSE,
                                      mar = c(0, 0, 0, 0),
                                      vertex.size = 12, margin = 0, asp = 0,
                                      vertex.color = "#fff7bc",
@@ -95,48 +95,48 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
                                      edge.color = "#fec44f",
                                      edge.label.color = "black",
                                      ...) {
-    nodes = data.frame(id = 1:ncol(obj))
-    associations = cor_to_upper(obj)
+    nodes <- data.frame(id = 1:ncol(obj))
+    associations <- cor_to_upper(obj)
 
     if (!is.null(cor_cutoff))
-        associations = associations[abs(associations[, 3]) > cor_cutoff, ,
-                                    drop = FALSE]
+        associations <- associations[abs(associations[, 3]) > cor_cutoff, ,
+            drop = FALSE]
 
-    edges = data.frame(from = associations[, 1], to = associations[, 2])
+    edges <- data.frame(from = associations[, 1], to = associations[, 2])
 
-    net = igraph::graph_from_data_frame(d = edges, 
-                                        vertices = nodes,
-                                        directed = FALSE)
+    net <- igraph::graph_from_data_frame(d = edges,
+        vertices = nodes,
+        directed = FALSE)
 
     if (is.null(vertex_labels)) {
-        igraph::V(net)$label = paste0(vertex_label_prefix, nodes$id)    
-    } else igraph::V(net)$label = vertex_labels
+        igraph::V(net)$label <- paste0(vertex_label_prefix, nodes$id)
+    } else igraph::V(net)$label <- vertex_labels
 
-    igraph::V(net)$shape = "circle"
+    igraph::V(net)$shape <- "circle"
     if (!is.null(categorical_indices))
-        igraph::V(net)$shape[categorical_indices] = "rectangle"
+        igraph::V(net)$shape[categorical_indices] <- "rectangle"
 
-    connection_indices = cbind(edges$from, edges$to)
-    igraph::E(net)$width = edge_width_function(abs(obj[connection_indices]))
+    connection_indices <- cbind(edges$from, edges$to)
+    igraph::E(net)$width <- edge_width_function(abs(obj[connection_indices]))
     if (!is.null(edge_label_function)) {
-        igraph::E(net)$label = edge_label_function(obj[connection_indices])
+        igraph::E(net)$label <- edge_label_function(obj[connection_indices])
     }
-    
-    weights = NULL
+
+    weights <- NULL
     if (use_edge_weights) {
-        weights = edge_weight_function(abs(obj[connection_indices]))
-        igraph::E(net)$weight = weights   
+        weights <- edge_weight_function(abs(obj[connection_indices]))
+        igraph::E(net)$weight <- weights
     }
-    
+
     if (return_network)
         return(net)
 
     if (!is.null(seed))
         set.seed(seed)
 
-    layout = igraph::layout_with_fr(net, start.temp = igraph::vcount(net))
+    layout <- igraph::layout_with_fr(net, start.temp = igraph::vcount(net))
 
-    op = graphics::par(mar = mar)
+    op <- graphics::par(mar = mar)
     invisible(on.exit(graphics::par(op)))
     igraph::plot.igraph(
         net,
@@ -151,7 +151,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
         edge.label.color = edge.label.color, ...)
 }
 
-#' @describeIn plot_cor_network Function to be used with \code{\link{simdesign_mvtnorm}} 
+#' @describeIn plot_cor_network Function to be used with \code{\link{simdesign_mvtnorm}}
 #' S3 class object to visualize initial correlation network of the underlying
 #' multivariate normal distribution.
 #'
@@ -175,9 +175,9 @@ plot_cor_network.simdesign_mvtnorm <- function(obj, ...) {
 #' @param ...
 #' Passed to \code{\link{plot_cor_network}}.
 #'
-#' @details 
+#' @details
 #' This function is useful to estimate the correlation network of a simulation
-#' setup after the initial underlying distribution `Z` has been transformed to 
+#' setup after the initial underlying distribution `Z` has been transformed to
 #' the final dataset `X`.
 #'
 #' @seealso
@@ -188,21 +188,21 @@ plot_cor_network.simdesign_mvtnorm <- function(obj, ...) {
 plot_estimated_cor_network <- function(obj, n_obs = 100000,
                                        cor_type = "pearson",
                                        seed = NULL,
-                                       show_categorical = TRUE, 
+                                       show_categorical = TRUE,
                                        ...) {
-    
-    if (show_categorical) {
-        categorical_indices = which(obj$types_final == "logical" |
-                                        obj$types_final == "factor")
-    } else categorical_indices = NULL
 
-    relations = estimate_final_correlation(obj, 
-                                           n_obs = n_obs, 
-                                           cor_type = cor_type, 
-                                           seed = seed)
-    
-    plot_cor_network(relations, 
-                     seed = seed,
-                     categorical_indices = categorical_indices, 
-                     vertex_labels = obj$names_final, ...)
+    if (show_categorical) {
+        categorical_indices <- which(obj$types_final == "logical" |
+            obj$types_final == "factor")
+    } else categorical_indices <- NULL
+
+    relations <- estimate_final_correlation(obj,
+        n_obs = n_obs,
+        cor_type = cor_type,
+        seed = seed)
+
+    plot_cor_network(relations,
+        seed = seed,
+        categorical_indices = categorical_indices,
+        vertex_labels = obj$names_final, ...)
 }

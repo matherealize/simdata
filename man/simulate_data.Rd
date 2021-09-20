@@ -136,7 +136,7 @@ function.
 
 \examples{
 \dontrun{
-generator = function(n) mvtnorm::rmvnorm(n, mean = 0)
+generator <- function(n) mvtnorm::rmvnorm(n, mean = 0)
 simulate_data(generator, 10)
 }
 

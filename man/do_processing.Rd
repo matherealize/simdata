@@ -4,10 +4,10 @@
 \alias{do_processing}
 \title{Post-processing of datamatrix}
 \usage{
-do_processing(X, functions = list())
+do_processing(x, functions = list())
 }
 \arguments{
-\item{X}{Matrix or Data.frame.}
+\item{x}{Matrix or Data.frame.}
 
 \item{functions}{List of lists, specifying functions to be applied as well as their
 arguments. See details.}
@@ -46,8 +46,8 @@ functions is not checked either.
 }
 \examples{
 \dontrun{
-do_processing(diag(5), 
-  functions = list(scale = list(center = TRUE, scale = FALSE)))
+do_processing(diag(5),
+    functions = list(scale = list(center = TRUE, scale = FALSE)))
 }
 
 }

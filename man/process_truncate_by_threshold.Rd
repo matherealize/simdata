@@ -5,26 +5,26 @@
 \title{Truncate columns of datamatrix at specified thresholds}
 \usage{
 process_truncate_by_threshold(
-  X,
+  x,
   truncate_lower = NA,
   truncate_upper = NA,
   only_numeric = TRUE
 )
 }
 \arguments{
-\item{X}{Matrix or Data.frame.}
+\item{x}{Matrix or Data.frame.}
 
 \item{truncate_lower, truncate_upper}{Vectors of truncation parameters, i.e. lower and upper tresholds for
 truncation.
 Either a single value which is replicated as necessary or of same dimension
-as \code{ncol(X)}. If any vector entry is NA, the corresponding column will not be
+as \code{ncol(x)}. If any vector entry is NA, the corresponding column will not be
 truncated. Truncation at lower and upper thresholds is treated independently.
-If named, then the names must correspond to columnnames in \code{X},
+If named, then the names must correspond to columnnames in \code{x},
 and only specified columns will be processed. See details.}
 
-\item{only_numeric}{If TRUE and if \code{X} is a data.frame, then only columns of type \code{numeric} will
+\item{only_numeric}{If TRUE and if \code{x} is a data.frame, then only columns of type \code{numeric} will
 be processed. Otherwise all columns will be processed (e.g. also in the
-case that \code{X} is a matrix).}
+case that \code{x} is a matrix).}
 }
 \value{
 Matrix or data.frame of same dimensions as input.
@@ -44,10 +44,10 @@ Truncation parameters can be specified in three ways (note that whenever
 \itemize{
 \item A single numeric - then all columns will be processed in the same way
 \item A numeric vector without names - it is assumed that the length can be
-replicated to the number of columns in \code{X}, each column is processed by the
+replicated to the number of columns in \code{x}, each column is processed by the
 corresponding value in the vector
 \item A numeric vector with names - length can differ from the columns in
-\code{X} and only the columns for which the names occur in the vector are
+\code{x} and only the columns for which the names occur in the vector are
 processed
 }
 }

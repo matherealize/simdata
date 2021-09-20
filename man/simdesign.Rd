@@ -122,8 +122,8 @@ pass it to this function along with the other arguments. See
 
 \examples{
 \dontrun{
-generator = function(n) mvtnorm::rmvnorm(n, mean = 0)
-sim_design = simdesign(generator)
+generator <- function(n) mvtnorm::rmvnorm(n, mean = 0)
+sim_design <- simdesign(generator)
 simulate_data(sim_design, 10)
 }
 

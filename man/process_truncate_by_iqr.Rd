@@ -4,20 +4,20 @@
 \alias{process_truncate_by_iqr}
 \title{Truncate columns of datamatrix at datamatrix specific thresholds}
 \usage{
-process_truncate_by_iqr(X, truncate_multipliers = NA, only_numeric = TRUE)
+process_truncate_by_iqr(x, truncate_multipliers = NA, only_numeric = TRUE)
 }
 \arguments{
-\item{X}{Matrix or Data.frame.}
+\item{x}{Matrix or Data.frame.}
 
 \item{truncate_multipliers}{Vector of truncation parameters. Either a single value which is
-replicated as necessary or of same dimension as \code{ncol(X)}.
+replicated as necessary or of same dimension as \code{ncol(x)}.
 If any vector entry is NA, the corresponding column will not be
-truncated. If named, then the names must correspond to columnnames in \code{X},
+truncated. If named, then the names must correspond to columnnames in \code{x},
 and only specified columns will be processed. See details.}
 
-\item{only_numeric}{If TRUE and if \code{X} is a data.frame, then only columns of type \code{numeric} will
+\item{only_numeric}{If TRUE and if \code{x} is a data.frame, then only columns of type \code{numeric} will
 be processed. Otherwise all columns will be processed (e.g. also in the
-case that \code{X} is a matrix).}
+case that \code{x} is a matrix).}
 }
 \value{
 Matrix or data.frame of same dimensions as input.
@@ -28,7 +28,7 @@ Truncation based on the interquartile range to be applied to a dataset.
 \details{
 Truncation is processed as follows:
 \enumerate{
-\item Compute the 1st and 3rd quartile q1 / q3 of variables in \code{X}.
+\item Compute the 1st and 3rd quartile q1 / q3 of variables in \code{x}.
 \item Multiply these quantities by values in \code{truncate_multipliers} to obtain
 \emph{L} and \emph{U}. If a value is NA, the corresponding variable is not truncated.
 \item Set any value smaller / larger than \emph{L} / \emph{U} to \emph{L} / \emph{U}.
@@ -40,10 +40,10 @@ Truncation multipliers can be specified in three ways (note that whenever
 \itemize{
 \item A single numeric - then all columns will be processed in the same way
 \item A numeric vector without names - it is assumed that the length can be
-replicated to the number of columns in \code{X}, each column is processed by the
+replicated to the number of columns in \code{x}, each column is processed by the
 corresponding value in the vector
 \item A numeric vector with names - length can differ from the columns in
-\code{X} and only the columns for which the names occur in the vector are
+\code{x} and only the columns for which the names occur in the vector are
 processed
 }
 }

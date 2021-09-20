@@ -38,15 +38,15 @@ values for radius and angle will not work. See references.
 }
 \examples{
 \dontrun{
-disc_sampler = simdesign_discunif()
+disc_sampler <- simdesign_discunif()
 plot(simulate_data(disc_sampler, 1000))
 
-ring_segment_sampler = simdesign_discunif(r_min = 0.5, angle_min = 0.5*pi)
+ring_segment_sampler <- simdesign_discunif(r_min = 0.5, angle_min = 0.5 * pi)
 plot(simulate_data(ring_segment_sampler, 1000))
 
-circle_sampler = simdesign_discunif(r_min = 1)
+circle_sampler <- simdesign_discunif(r_min = 1)
 plot(simulate_data(circle_sampler, 1000))
-} 
+}
 
 }
 \references{

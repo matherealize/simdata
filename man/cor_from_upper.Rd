@@ -23,7 +23,7 @@ by giving entries of the upper triangular part.
 }
 \examples{
 \dontrun{
-cor_from_upper(2, rbind(c(1,2,0.8)))
+cor_from_upper(2, rbind(c(1, 2, 0.8)))
 }
 
 }
