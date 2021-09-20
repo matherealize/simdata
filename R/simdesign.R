@@ -78,6 +78,8 @@
 #' \code{\link{simulate_data}},
 #' \code{\link{simulate_data_conditional}}
 #'
+#' @importFrom utils modifyList
+#'
 #' @export
 simdesign <- function(generator,
                       transform_initial = base::identity,
@@ -226,6 +228,9 @@ simdesign <- function(generator,
 #' If `cor_initial` is numerically optimized, specifies the number of draws in
 #' simulation during optimization used to estimate correlations. 
 #' Parameter passed to \code{\link{optimize_cor_for_pair}}.
+#' @param seed_initial
+#' Seed used for draws of the initial distribution used during optimization
+#' to estimate correlations. 
 #' @param conv_norm_type
 #' If `cor_initial` is numerically optimized and found not to be a proper
 #' correlation matrix (i.e. not positive-definite), specifies the metric used to 
@@ -314,6 +319,8 @@ simdesign <- function(generator,
 #' Ghosh, S. and Henderson, S. G. (2003) \emph{Behavior of the NORTA method 
 #' for correlated random vector generation as the dimension increases}. ACM 
 #' Transactions on Modeling and Computer Simulation.
+#'
+#' @importFrom stats pnorm
 #'
 #' @export
 simdesign_norta <- function(cor_target_final = NULL,
@@ -508,6 +515,10 @@ simdesign_mvtnorm <- function(relations_initial,
 #' Minimum angle of points (between 0 and 2pi).
 #' @param angle_max
 #' Maximum angle of points (between 0 and 2pi).
+#' @param name
+#' Character, optional name of the simulation design.
+#' @param ...
+#' Further arguments are passed to the \code{\link{simdesign}} constructor.
 #' 
 #' @details 
 #' The distribution of points on a disk depends on the radius - the farther out,
@@ -528,6 +539,8 @@ simdesign_mvtnorm <- function(relations_initial,
 #' circle_sampler = simdesign_discunif(r_min = 1)
 #' plot(simulate_data(circle_sampler, 1000))
 #' } 
+#' 
+#' @importFrom stats runif
 #' 
 #' @export
 simdesign_discunif <- function(r_min = 0, r_max = 1, 

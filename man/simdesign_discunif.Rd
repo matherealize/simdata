@@ -21,6 +21,10 @@ simdesign_discunif(
 \item{angle_min}{Minimum angle of points (between 0 and 2pi).}
 
 \item{angle_max}{Maximum angle of points (between 0 and 2pi).}
+
+\item{name}{Character, optional name of the simulation design.}
+
+\item{...}{Further arguments are passed to the \code{\link{simdesign}} constructor.}
 }
 \description{
 Provides 2-dimensional points, spread uniformly over disc, or partial

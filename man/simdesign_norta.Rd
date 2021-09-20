@@ -41,6 +41,9 @@ difference to the target correlation \code{cor_target_final}. Parameter passed t
 simulation during optimization used to estimate correlations.
 Parameter passed to \code{\link{optimize_cor_for_pair}}.}
 
+\item{seed_initial}{Seed used for draws of the initial distribution used during optimization
+to estimate correlations.}
+
 \item{conv_norm_type}{If \code{cor_initial} is numerically optimized and found not to be a proper
 correlation matrix (i.e. not positive-definite), specifies the metric used to
 find the nearest positive-definite correlation matrix.

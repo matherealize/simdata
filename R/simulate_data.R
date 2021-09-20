@@ -72,6 +72,8 @@
 #' \code{\link{simdesign_mvtnorm}}, 
 #' \code{\link{simulate_data_conditional}},
 #' \code{\link{do_processing}}
+#' 
+#' @importFrom stats rnorm
 #'
 #' @export
 simulate_data <- function(generator, ...) {

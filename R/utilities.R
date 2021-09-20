@@ -233,6 +233,8 @@ is_cor_matrix <- function(m) {
 #' @return
 #' Output of \code{\link[stats:uniroot]{stats::uniroot}} for the univariable
 #' optimization for find the initial correlation.
+#' 
+#' @importFrom stats cor pnorm uniroot 
 optimize_cor_for_pair <- function(cor_target, dist1, dist2, 
                                   n_obs = 100000, seed = NULL,
                                   tol = 0.01, ...) {
