@@ -101,38 +101,45 @@ environment of packages and specifically requires the `dplyr`, `purrr`,
 [parallelization example](#parallel) the `doParallel` and `doRNG` package 
 are loaded. 
 Please refer to [the R environment used to create this vignette](#rsession) for 
-detailed information.
+detailed information. In this vignette we will prefix all relevant 
+function calls by `::` to show the package which implements the function - this
+is not necessary but only done for demonstration purposes.
 
 # Example 1: Independent data, no transformation
 We demonstrate a very basic example here: 
 
-- Setup a design to sample from 5 independent Normal variables
+- Setup a design to sample from 5 independent normal variables
+    - Define a diagonal 5 x 5 correlation matrix (`correlation_matrix`)
     - Ensure that the data is returned as a data.frame by passing the `data.frame`
-    constructor to `transform_initial`. (Otherwise the data would be returned
-     as a matrix.)
+      constructor to `transform_initial`. (Otherwise the data would be returned
+      as a matrix.)
+    - Pass a prefix to the function to construct variable names
 - Simulate from the design to obtain 100 observations (`n_obs`) with a given
 random seed (`seed`).
 - Inspect the simulated data.
+
 ```{r message=FALSE, warning=FALSE}
-sim_design = mvtnorm_simdesign(relations = diag(1, nrow = 5), 
-                               transform_initial = data.frame,
-                               prefix_final = "variable")
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+correlation_matrix = diag(1, nrow = 5)
+
+sim_design = simdata::mvtnorm_simdesign(relations = correlation_matrix, 
+                                        transform_initial = data.frame,
+                                        prefix_final = "variable")
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 
 knitr::kable(head(sim_data))
 
 p = GGally::ggpairs(sim_data, 
                     upper = list(continuous = "points"), 
                     progress = FALSE) +
-    theme_bw()
+  theme_bw()
 print(p)
 ```
 
 # Example 2: Independent data, with transformation {#ex2}
 In this example we transform the initial data to obtain a more 
-interesting dataset.
+interesting dataset. The basic principle follows [Example 1](ex1).
 
-- Create a transformation function using `function_list`
+- Create a transformation function `transformation` using `simdata::function_list`
     - Pass functions that transform the columns of the simulated, initial
     dataset as named arguments 
     - The number of columns in the final dataset is given by the number of 
@@ -140,26 +147,30 @@ interesting dataset.
     - To let the names of the arguments determine the final columnnames, 
     set `prefix_final` to NULL in the `simdesign` constructor
 - Pass the created transformation function as `transform_initial` argument
-to the `simdesign` constructor.
+  to the `simdesign` constructor.
+
 ```{r message=TRUE, warning=TRUE}
-sim_design = mvtnorm_simdesign(
-    relations = diag(1, nrow = 5),
-    transform = function_list(
-        "v1" = function(x) x[, 1],
-        "v2*2" = function(x) x[, 2] * 2, 
-        "v3^2" = function(x) x[, 3]^2,
-        "v4+v5" = function(x) x[, 4] + x[, 5], 
-        check.names = FALSE # pass columnnames exactly as specified here
-    ), 
-    prefix_final = NULL
-    )
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+correlation_matrix = diag(1, nrow = 5)
+transformation = simdata::function_list(
+  "v1" = function(x) x[, 1],
+  "v2*2" = function(x) x[, 2] * 2, 
+  "v3^2" = function(x) x[, 3]^2,
+  "v4+v5" = function(x) x[, 4] + x[, 5], 
+  check.names = FALSE # pass columnnames exactly as specified here
+)
+
+sim_design = simdata::mvtnorm_simdesign(
+  relations = correlation_matrix,
+  transform_initial = transformation, 
+  prefix_final = NULL
+)
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 
 knitr::kable(head(sim_data))
 
 p = GGally::ggpairs(sim_data, upper = list(continuous = "points"), 
                     progress = FALSE) +
-    theme_bw()
+  theme_bw()
 print(p)
 ```
 
@@ -168,41 +179,49 @@ In this example we implement a design following @BinderSetup. The simulated
 data resembles data obtained from a biomedical study with a complex correlation 
 pattern and different variable distributions. 
 
-- Create a complex initial correlation matrix comfortably using `cor_from_upper`
-    - Hence, we draw from a multivariate Normal distribution `Z` with 15 dimensions
-    to obtain the initial dataset
+- Create a complex initial correlation matrix comfortably using 
+  `simdata::cor_from_upper`
+    - This defines the initial distribution as a multivariate Normal
+      distribution `Z` with 15 dimensions
 - Use a variety of transformations to create numeric, binary and ordinal variables
-    - Hence, we end up with a final dataset `X` of 17 columns
+    - Using the transformation the initial distribution `Z` is transformed to 
+      the final dataset `X` with 17 columns
+    
 ```{r}
-sim_design = mvtnorm_simdesign(
-    relations = cor_from_upper(15, 
-                               rbind(c(1,2,0.8), c(1,9,0.3), 
-                                     c(3,5,0.3), c(3,9,-0.5), 
-                                     c(4,6,-0.5), c(4,7,-0.3),
-                                     c(5,6,-0.3), c(5,12,0.5),
-                                     c(6,7,0.5), c(6,11,0.5), c(6,14,0.3),
-                                     c(7,11,0.3), c(7,14,0.3),
-                                     c(8,9,-0.3), c(8,11,0.3),
-                                     c(11,14,0.5))),
-    transform_initial = function_list(
-        v1 = function(z) floor(10 * z[,1] + 55), 
-        v2 = function(z) z[,2] < 0.6, 
-        v3 = function(z) exp(0.4 * z[,3] + 3),
-        v4 = function(z) z[,4] >= -1.2,
-        v5 = function(z) z[,4] >= 0.75,
-        v6 = function(z) exp(0.5 * z[,5] + 1.5),
-        v7 = function(z) floor(pmax(0, 100 * exp(z[,6]) - 20)),
-        v8 = function(z) floor(pmax(0, 80 * exp(z[,7]) - 20)),
-        v9 = function(z) z[,8] < -0.35,
-        v10 = function(z) (z[,9] >= 0.5) & (z[,9] < 1.5),
-        v11 = function(z) z[,9] >= 1.5,
-        v12 = function(z) 0.01*floor(100 * (z[,10] + 4)^2),
-        v13 = function(z) floor(10 * z[,11] + 55),
-        v14 = function(z) floor(10 * z[,12] + 55),
-        v15 = function(z) floor(10 * z[,13] + 55),
-        v16 = function(z) z[,14] < 0,
-        v17 = function(z) z[,15] < 0),
-    prefix_final = NULL
+correlation_matrix = simdata::cor_from_upper(
+  15, 
+  rbind(c(1,2,0.8), c(1,9,0.3), 
+        c(3,5,0.3), c(3,9,-0.5), 
+        c(4,6,-0.5), c(4,7,-0.3),
+        c(5,6,-0.3), c(5,12,0.5),
+        c(6,7,0.5), c(6,11,0.5), c(6,14,0.3),
+        c(7,11,0.3), c(7,14,0.3),
+        c(8,9,-0.3), c(8,11,0.3),
+        c(11,14,0.5)))
+
+transformation = simdata::function_list(
+  v1 = function(z) floor(10 * z[,1] + 55), 
+  v2 = function(z) z[,2] < 0.6, 
+  v3 = function(z) exp(0.4 * z[,3] + 3),
+  v4 = function(z) z[,4] >= -1.2,
+  v5 = function(z) z[,4] >= 0.75,
+  v6 = function(z) exp(0.5 * z[,5] + 1.5),
+  v7 = function(z) floor(pmax(0, 100 * exp(z[,6]) - 20)),
+  v8 = function(z) floor(pmax(0, 80 * exp(z[,7]) - 20)),
+  v9 = function(z) z[,8] < -0.35,
+  v10 = function(z) (z[,9] >= 0.5) & (z[,9] < 1.5),
+  v11 = function(z) z[,9] >= 1.5,
+  v12 = function(z) 0.01*floor(100 * (z[,10] + 4)^2),
+  v13 = function(z) floor(10 * z[,11] + 55),
+  v14 = function(z) floor(10 * z[,12] + 55),
+  v15 = function(z) floor(10 * z[,13] + 55),
+  v16 = function(z) z[,14] < 0,
+  v17 = function(z) z[,15] < 0)
+
+sim_design = simdata::mvtnorm_simdesign(
+  relations = correlation_matrix,
+  transform_initial = transformation,
+  prefix_final = NULL
 )
 ```
 
@@ -237,14 +256,14 @@ print(p)
 
 Or we can use the simple graph visualisation provided by this package. To keep
 this graph simple, correlations below a certain threshold are removed. The
-`plot_cor_network` function provides several options to improve display of 
+`simdata::plot_cor_network` function provides several options to improve display of 
 the graph, some of which are explained in more detail [below](#plotestcor). 
 Here we just point out that the layout of the network is based on the 
 Fruchterman-Reingold algorithm as implemented in the `igraph` package and 
 therefore comprises random parts. Therefore, using a seed for the random number 
 generation is advised.
 ```{r}
-plot_cor_network(sim_design, seed = 3876)
+simdata::plot_cor_network(sim_design, seed = 3876)
 ```
 
 ## Simulation and visualisation of final data {#simfinal}
@@ -252,7 +271,7 @@ plot_cor_network(sim_design, seed = 3876)
 We simulate from the design and visualise numeric variables via violinplots and
 discrete variables via barplots using `ggplot2`.
 ```{r}
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -337,12 +356,12 @@ graph layout via `use_edge_weights` - higher edge weight brings vertices
 closer together
 ```{r message=FALSE, warning=FALSE}
 # draw full network
-plot_estimated_cor_network(sim_design, 
-                           cor_cutoff = NULL, 
-                           edge_label_function = NULL,
-                           edge_width_function = function(x) x*25,
-                           use_edge_weights = TRUE, 
-                           seed = 2321673)
+simdata::plot_estimated_cor_network(sim_design, 
+                                    cor_cutoff = NULL, 
+                                    edge_label_function = NULL,
+                                    edge_width_function = function(x) x*25,
+                                    use_edge_weights = TRUE, 
+                                    seed = 2321673)
 ```
 
 The following graphs all use the default correlation cutoff of 0.1.
@@ -357,21 +376,21 @@ The following graphs all use the default correlation cutoff of 0.1.
     (`show_categorical`)
 ```{r message=FALSE, warning=FALSE}
 # simplify by using cor_cutoff
-plot_estimated_cor_network(sim_design, 
-                           seed = 2321673)
+simdata::plot_estimated_cor_network(sim_design, 
+                                    seed = 2321673)
 
 # set correlation type
-plot_estimated_cor_network(sim_design, 
-                           cor_type = "spearman", 
-                           seed = 2321673)
+simdata::plot_estimated_cor_network(sim_design, 
+                                    cor_type = "spearman", 
+                                    seed = 2321673)
 
 # set various parameters
-plot_estimated_cor_network(sim_design, seed = 2321673, 
-                           edge.color = "red", 
-                           axes = TRUE, cor_type = "s", 
-                           edge_width_function = function(x) var(x)*200,
-                           show_categorical = FALSE, 
-                           mar = c(2, 2, 0, 0))
+simdata::plot_estimated_cor_network(sim_design, seed = 2321673, 
+                                    edge.color = "red", 
+                                    axes = TRUE, cor_type = "s", 
+                                    edge_width_function = function(x) var(x)*200,
+                                    show_categorical = FALSE, 
+                                    mar = c(2, 2, 0, 0))
 ```
 
 In all of these plots it is evident that the dataset contains a tight cluster
@@ -407,7 +426,7 @@ sim_design$process_final = list(
     )
 )
 
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 ```
 
 Compare the results with the [results before](#simfinal) and note the 
@@ -444,7 +463,7 @@ sim_design$process_final = list(
     )
 )
 
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 ```
 
 Compare the results with the [results before](#simfinal) and note the 
@@ -476,7 +495,7 @@ sim_design$process_final = list(
     ), 
     scale = list()
 )
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 25897165)
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -524,24 +543,27 @@ make them collinear on purpose via a transformation.
 (`reject_max_iter`)
 - The number of tries is returned in a list (`return_tries`)
 ```{r}
-sim_design = mvtnorm_simdesign(
-    relations = diag(1, nrow = 2),        
-    transform_initial = function_list("v1" = function(x) x[, 1],
-                                      "v1*2" = function(x) x[, 1] * 2, 
-                                      check.names = FALSE), 
-    prefix_final = NULL
-    )
+correlation_matrix = diag(1, nrow = 2)
+transformation = simdata::function_list("v1" = function(x) x[, 1],
+                                        "v1*2" = function(x) x[, 1] * 2, 
+                                        check.names = FALSE)
+
+sim_design = simdata::mvtnorm_simdesign(
+  relations = correlation_matrix,        
+  transform_initial = transformation, 
+  prefix_final = NULL
+)
 
 # ignoring the collinearity
-sim_data = simulate_data(sim_design, n_obs = 100, seed = 2)
+sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 2)
 knitr::kable(cor(sim_data))
 
 # rejecting collinear matrices
-sim_data = simulate_data_conditional(sim_design,
-                                     n_obs = 100, seed = 2,
-                                     reject = is_collinear,
-                                     reject_max_iter = 3,
-                                     return_tries = TRUE)
+sim_data = simdata::simulate_data_conditional(sim_design,
+                                              n_obs = 100, seed = 2,
+                                              reject = is_collinear,
+                                              reject_max_iter = 3,
+                                              return_tries = TRUE)
 
 print(sim_data)
 ```
@@ -552,30 +574,34 @@ rejection function. All of them must be fulfilled or the matrix is rejected.
 In our example below we randomly transform the columns to be collinear or 
 constant. However, in the end we obtain a result which passes both checks.
 ```{r}
-sim_design = mvtnorm_simdesign(
-    relations = diag(1, nrow = 3),        
-    transform_initial = function_list(
-        "v1" = function(x) x[, 1],
-        "might_be_collinear" = function(x) {
-            if (rbinom(1, 1, 0.5)) {
-                return(x[, 1] * 2)
-            } else return(x[, 2])
-        }, 
-        "might_be_constant" = function(x) {
-            if (rbinom(1, 1, 0.5)) {
-                return(0)
-            } else return(x[, 3])
-        },
-        check.names = FALSE),
-    prefix_final = NULL
+correlation_matrix = diag(1, nrow = 3)
+transformation = simdata::function_list(
+  "v1" = function(x) x[, 1],
+  "might_be_collinear" = function(x) {
+    if (rbinom(1, 1, 0.5)) {
+      return(x[, 1] * 2)
+    } else return(x[, 2])
+  }, 
+  "might_be_constant" = function(x) {
+    if (rbinom(1, 1, 0.5)) {
+      return(0)
+    } else return(x[, 3])
+  },
+  check.names = FALSE)
+
+sim_design = simdata::mvtnorm_simdesign(
+  relations = correlation_matrix,        
+  transform_initial = transformation,
+  prefix_final = NULL
 )
 
-sim_data = simulate_data_conditional(sim_design,
-                                     n_obs = 100, seed = 3,
-                                     reject = function_list(is_collinear, 
-                                                            contains_constant),
-                                     reject_max_iter = 3, 
-                                     return_tries = TRUE)
+sim_data = simdata::simulate_data_conditional(
+  sim_design,
+  n_obs = 100, seed = 3,
+  reject = simdata::function_list(is_collinear, 
+                                  contains_constant),
+  reject_max_iter = 3, 
+  return_tries = TRUE)
 
 sprintf("Number of tries: %d", sim_data[[2]])
 knitr::kable(head(sim_data[[1]]))
@@ -599,33 +625,33 @@ a toy wrapper to simulate binary data using the `stats::rbinom` function.
 S3 methods which recognize the newly implemented class
 ```{r}
 binomial_simdesign <- function(size = 1, prob = 0.5, ...) {
-    
-    # define generator function
-    # make sure it returns a two-dimensional array
-    generator = function(n) matrix(rbinom(n, size = size, prob = prob), ncol = 1)
-    
-    # setup simdesign object
-    # make sure to pass generator function and ...
-    # all other information passed is optional
-    dsgn = simdesign(
-        generator = generator, 
-        size = size, 
-        prob = prob,
-        ...
-    )
-    
-    # extend the class attribute 
-    class(dsgn) = c("binomial_simdesign", class(dsgn))
-    
-    # return the object
-    dsgn
+  
+  # define generator function
+  # make sure it returns a two-dimensional array
+  generator = function(n) matrix(rbinom(n, size = size, prob = prob), ncol = 1)
+  
+  # setup simdesign object
+  # make sure to pass generator function and ...
+  # all other information passed is optional
+  dsgn = simdata::simdesign(
+    generator = generator, 
+    size = size, 
+    prob = prob,
+    ...
+  )
+  
+  # extend the class attribute 
+  class(dsgn) = c("binomial_simdesign", class(dsgn))
+  
+  # return the object
+  dsgn
 }
 ```
 
 Finally, we can use the newly created class as in the examples before.
 ```{r}
 sim_design = binomial_simdesign(size = 1, prob = 0.7)
-sim_data = simulate_data(sim_design, 100, seed = 1)
+sim_data = simdata::simulate_data(sim_design, 100, seed = 1)
 knitr::kable(table(sim_data))
 ```
 
@@ -639,26 +665,26 @@ created similarly.
 
 ```{r}
 realdata_simdesign <- function(dataset, ...) {
-    
-    # define generator function
-    # make sure it returns a two-dimensional array
-    generator = function(n) dataset[sample(1:nrow(dataset), n, replace = TRUE), ,
-                                    drop = FALSE]
-    
-    # setup simdesign object
-    # make sure to pass generator function and ...
-    # all other information passed is optional
-    dsgn = simdesign(
-        generator = generator, 
-        dataset = dataset,
-        ...
-    )
-    
-    # extend the class attribute 
-    class(dsgn) = c("realdata_simdesign", class(dsgn))
-    
-    # return the object
-    dsgn
+  
+  # define generator function
+  # make sure it returns a two-dimensional array
+  generator = function(n) dataset[sample(1:nrow(dataset), n, replace = TRUE), ,
+                                  drop = FALSE]
+  
+  # setup simdesign object
+  # make sure to pass generator function and ...
+  # all other information passed is optional
+  dsgn = simdata::simdesign(
+    generator = generator, 
+    dataset = dataset,
+    ...
+  )
+  
+  # extend the class attribute 
+  class(dsgn) = c("realdata_simdesign", class(dsgn))
+  
+  # return the object
+  dsgn
 }
 ```
 Note that this works because the dataset is saved to the environment of 
@@ -670,7 +696,7 @@ Finally, we can use the newly created class as in the examples before.
 ```{r}
 data(iris)
 sim_design = realdata_simdesign(iris, prefix_final = NULL)
-sim_data = simulate_data(sim_design, 100, seed = 1)
+sim_data = simdata::simulate_data(sim_design, 100, seed = 1)
 knitr::kable(head(sim_data))
 ```
 
@@ -696,27 +722,32 @@ of functions via `as_function_list`
     (this is possible as long as the resulting outputs have equal number of 
     rows)
 ```{r}
+correlation_matrix = simdata::cor_from_upper(
+  100,
+  entries = rbind(
+    expand.grid(1:30, 1:30, 0.5), 
+    expand.grid(31:50, 31:50, 0.2))
+)
+
 # create list of transformation functions programmatically
 # For the first 60 variables: 
 # odd varibles will be translated
 # even variables will be scaled
-transformations = list()
+transformation = list()
 for (i in 1:60) {
-    if (i %% 2) {
-        transformations[[i]] = substitute(function(x) x[, i] * 5, list(i = i))
-    } else transformations[[i]] = substitute(function(x) x[, i] - 10, list(i = i))
+  if (i %% 2) {
+    transformation[[i]] = substitute(function(x) x[, i] * 5, list(i = i))
+  } else transformation[[i]] = substitute(function(x) x[, i] - 10, list(i = i))
 }
 # the remaining are returned as they are
-transformations[[61]] = function(x) x[, 61:100]
+transformation[[61]] = function(x) x[, 61:100]
+# construct single transformation function from the list
+transformation = simdata::as_function_list(transformation)
 
 # create simulation design
-sim_design = mvtnorm_simdesign(
-    relations = cor_from_upper(100,
-                               entries = rbind(
-                                   expand.grid(1:30, 1:30, 0.5), 
-                                   expand.grid(31:50, 31:50, 0.2))
-    ), 
-    transform_initial = as_function_list(transformations)
+sim_design = simdata::mvtnorm_simdesign(
+  relations = correlation_matrix, 
+  transform_initial = transformation
 )
 ```
 
@@ -744,15 +775,16 @@ p = ggplot(sim_design$cor_initial %>%
     theme(axis.text = element_blank())
 print(p)
 ```
+
 A correlation network can often be used to clearly display such large correlation
 structures. To keep the network simple, we remove vertex and edge labels and 
 adjust vertex and edge sizes. 
 ```{r}
-plot_cor_network(sim_design, seed = 2,  
-                 vertex_labels = NA,
-                 edge_label_function = NULL,
-                 edge_width_function = function(x) 0.01,
-                 vertex.size = 3)
+simdata::plot_cor_network(sim_design, seed = 2,  
+                          vertex_labels = NA,
+                          edge_label_function = NULL,
+                          edge_width_function = function(x) 0.01,
+                          vertex.size = 3)
 ```
 
 The simulated data is subsequently obtained by applying the specified 
@@ -760,7 +792,7 @@ transformations to the initial multivariate Normal data. It is visualised
 below by means of density curves for each variable (for brevity the legend
 is not displayed and variables are indicated by different colors).
 ```{r}
-sim_data = simulate_data(sim_design, n_obs = 50, seed = 5)
+sim_data = simdata::simulate_data(sim_design, n_obs = 50, seed = 5)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -778,50 +810,55 @@ This example briefly shows how to use the package together with parallelization
 via clusters to speed up simulations. On Unix-based systems, forking provides
 an alternative method to parallelize code, which results in even simpler code
 than the one below. We use the same setup as in [Example 2](#ex2).
+The following code is not run to ensure that the vignette builds on any system, 
+but can be used as is on any system that has the `simdata` package installed.
 
-- We set up a local cluster using two CPU threads via the `parallel` and 
-`doParallel` packages
+- We set up a local cluster using 2 CPU threads via the `parallel` and
+  `doParallel` packages
+  - Alternative parallel implementations such as `future` can be used.
 - Note that the random seed is now set via the options of `doRNG` in the
-head of the `foreach` loop (and NOT within the call of `simulate_data`).
+  head of the `foreach` loop (and NOT within the call of `simulate_data`).
 - Note that the `simdata` package needs to be explicitly passed to the 
-`foreach` loop such that every thread has access to the library. This is 
-windows specific, on Unix-based systems this is not necessary as forking
-automatically makes the library available to all child processes.
+  `foreach` loop such that every thread has access to the library. This is 
+  Windows specific, on Unix-based systems this is not necessary as forking
+  automatically makes the library available to all child processes.
 - Note that the global variable `sim_design` is passed to the threads 
-automatically, but this can be forced via the `.export` argument in the 
-`foreach` loop
-- The results are stored in a list and we show the summary output results for 
-the first two runs
+  automatically, but this can be forced via the `.export` argument in the 
+  `foreach` loop
+- The results are stored in a list.
 
-```{r}
-sim_design = mvtnorm_simdesign(
-    relations = diag(1, nrow = 5),
-    transform = function_list(
-        "v1" = function(x) x[, 1],
-        "v2*2" = function(x) x[, 2] * 2, 
-        "v3^2" = function(x) x[, 3]^2,
-        "v4+v5" = function(x) x[, 4] + x[, 5], 
-        check.names = FALSE # pass columnnames exactly as specified here
-    ), 
-    prefix_final = NULL
+```{r eval=FALSE, include=TRUE}
+correlation_matrix = diag(1, nrow = 5)
+transformation = simdata::function_list(
+    "v1" = function(x) x[, 1],
+    "v2*2" = function(x) x[, 2] * 2, 
+    "v3^2" = function(x) x[, 3]^2,
+    "v4+v5" = function(x) x[, 4] + x[, 5], 
+    check.names = FALSE # pass columnnames exactly as specified here
+  )
+
+sim_design = simdata::mvtnorm_simdesign(
+  relations = correlation_matrix,
+  transform_initial = transformation, 
+  prefix_final = NULL
 )
 
-cl = parallel::makeCluster(2)
+# parallelisation
+cl = parallel::makeCluster(1)
 doParallel::registerDoParallel(cl)
 res = foreach(
-    i = 1:10, 
-    .packages = c("simdata"),
-    .options.RNG = 1 # note that the seed is passed here
+  i = 1:10, 
+  .packages = c("simdata"),
+  .options.RNG = 1 # note that the seed is passed here
 ) %dorng% {
-    simulate_data(sim_design, n_obs = 100)
-    
-    # do some task with the simulated data
+  simulate_data(sim_design, n_obs = 100)
+  
+  # do some task with the simulated data
 }
 parallel::stopCluster(cl)
 
 knitr::kable(purrr::map(res[1:2], summary))
 ```
-
 
 # R session information {#rsession}
 ```{r echo=FALSE}
