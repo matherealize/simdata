@@ -9,7 +9,7 @@
 simulate_data(generator, ...)
 
 \method{simulate_data}{default}(
-  generator,
+  generator = function(n) matrix(rnorm(n)),
   n_obs = 1,
   transform_initial = base::identity,
   names_final = NULL,
@@ -21,7 +21,7 @@ simulate_data(generator, ...)
 
 \method{simulate_data}{simdesign}(
   generator,
-  n_obs,
+  n_obs = 1,
   seed = NULL,
   apply_transformation = TRUE,
   apply_processing = TRUE,
@@ -33,7 +33,8 @@ simulate_data(generator, ...)
 assumed it takes the number of simulated observations \code{n_obs} as first
 argument, as all random generation functions in the \pkg{stats} and
 \pkg{extraDistr} do. Furthermore, it is expected to return a two-dimensional
-array as output (matrix or data.frame). See details.}
+array as output (matrix or data.frame). Alternatively an R object derived
+from the \code{simdata::simdesign} class. See details.}
 
 \item{...}{Further arguments passed to \code{generator} function.}
 
@@ -99,7 +100,8 @@ simulation tasks.
 }
 \section{Generators}{
 
-The \code{generator} function is assumend to provide the same interface
+The \code{generator} function which is either passed directly, or via a
+\code{simdata::simdesign} object, is assumed to provide the same interface
 as the random generation functions in the R \pkg{stats} and \pkg{extraDistr}
 packages. Specifically, that means it takes the number of observations as
 first argument. All further arguments can be set via passing them as
