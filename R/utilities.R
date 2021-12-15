@@ -157,11 +157,11 @@ cor_to_cov <- function(m, sds = NULL) {
         sds <- rep(1, nrow(m))
 
     if (any(sds < 0))
-        stop("All entries in 'sds' must be positive.")
+        warning("All entries in 'sds' must be positive.")
 
     m <- as.matrix(m)
     if (!is_cor_matrix(m))
-        stop("'m' is not a proper correlation matrix.")
+        warning("'m' is not a proper correlation matrix.")
 
     diag(sds) %*% m %*% diag(sds)
 }
