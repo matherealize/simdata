@@ -4,7 +4,7 @@
 \alias{is_cor_matrix}
 \title{Check if matrix is a correlation matrix}
 \usage{
-is_cor_matrix(m)
+is_cor_matrix(m, tol = 1e-09)
 }
 \arguments{
 \item{m}{Matrix.}

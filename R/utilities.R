@@ -180,7 +180,7 @@ cor_to_cov <- function(m, sds = NULL) {
 #' TRUE if matrix is a correlation matrix, else FALSE.
 #'
 #' @export
-is_cor_matrix <- function(m) {
+is_cor_matrix <- function(m, tol=10e-10) {
     ok <- TRUE
     if (!is.numeric(m)) {
         warning("'m' must be numeric.")
@@ -190,7 +190,7 @@ is_cor_matrix <- function(m) {
         warning("'m' must be a symmetric matrix.")
         ok <- FALSE
     }
-    if (any(diag(m) != 1)) {
+    if (any(abs(diag(m) - 1) > tol)) {
         warning("The diagonal elements of 'm' must be equal to one.")
         ok <- FALSE
     }
