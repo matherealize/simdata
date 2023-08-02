@@ -263,7 +263,7 @@ Fruchterman-Reingold algorithm as implemented in the `igraph` package and
 therefore comprises random parts. Therefore, using a seed for the random number 
 generation is advised.
 ```{r}
-simdata::plot_cor_network(sim_design, seed = 3876)
+simdata::plot_cor_network(sim_design, seed = 1)
 ```
 
 ## Simulation and visualisation of final data {#simfinal}
@@ -354,6 +354,7 @@ for `plot_cor_network`):
 - Using edge weights (i.e. correlation between two variables) to influence the 
 graph layout via `use_edge_weights` - higher edge weight brings vertices 
 closer together
+
 ```{r message=FALSE, warning=FALSE}
 # draw full network
 simdata::plot_estimated_cor_network(sim_design, 
@@ -361,6 +362,7 @@ simdata::plot_estimated_cor_network(sim_design,
                                     edge_label_function = NULL,
                                     edge_width_function = function(x) x*25,
                                     use_edge_weights = TRUE, 
+                                    edge.color = "clipped-ramp",
                                     seed = 2321673)
 ```
 
@@ -377,7 +379,7 @@ The following graphs all use the default correlation cutoff of 0.1.
 ```{r message=FALSE, warning=FALSE}
 # simplify by using cor_cutoff
 simdata::plot_estimated_cor_network(sim_design, 
-                                    seed = 2321673)
+                                    seed = 2)
 
 # set correlation type
 simdata::plot_estimated_cor_network(sim_design, 
@@ -386,7 +388,7 @@ simdata::plot_estimated_cor_network(sim_design,
 
 # set various parameters
 simdata::plot_estimated_cor_network(sim_design, seed = 2321673, 
-                                    edge.color = "red", 
+                                    edge.color = "red-blue", 
                                     axes = TRUE, cor_type = "s", 
                                     edge_width_function = function(x) var(x)*200,
                                     show_categorical = FALSE, 
