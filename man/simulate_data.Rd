@@ -85,13 +85,13 @@ outliers).
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{default}: Function to be used if no \code{\link{simdesign}}
+\item \code{simulate_data(default)}: Function to be used if no \code{\link{simdesign}}
 S3 class is used.
 
-\item \code{simdesign}: Function to be used with \code{\link{simdesign}}
+\item \code{simulate_data(simdesign)}: Function to be used with \code{\link{simdesign}}
 S3 class.
-}}
 
+}}
 \note{
 This function is best used in conjunction with the \code{\link{simdesign}}
 S3 class or any template based upon it, which facilitates further data

@@ -15,12 +15,32 @@
 #' Threshold of absolute correlation below which nodes are not considered
 #' as connected. Useful to control complexity of drawn network.
 #' Set to NULL to disable.
+#' @param vertex.color
+#' Argument passed to \code{\link[igraph:plot.igraph]{igraph::plot}}. Usually a
+#' character vector with a hex color specification for vertex color. 
+#' Alternatively a function that takes as input a data.frame with a column "id" 
+#' that gives the column number of the simulated data, and outputs a valid color
+#' specification for the corresponding vertices (i.e. a single character hex
+#' color or a vector of such hex colors of appropriate length).
 #' @param vertex_labels
 #' Character vector of length `nrow(obj)` of labels for vertices. If not NULL,
 #' overrides the `vertex_label_prefix` argument. If set to NA omits all
 #' or some vertex labels.
 #' @param vertex_label_prefix
 #' String which is added as prefix to node labels.
+#' @param edge.color
+#' Argument passed to \code{\link[igraph:plot.igraph]{igraph::plot}}. This 
+#' package implements some special functionality: if `edge.color = "ramp"` then
+#' a colorramp from red (-1) via white (0) to blue (1) is mapped to the
+#' correlations and the edges colored accordingly.
+#' If `edge.color = "clipped-ramp"` then the ramp is restricted to the 
+#' correlation values observed, which may be useful if they are low to increase
+#' visibility. 
+#' If `edge.color = "red-blue"` then all edges with positive correlation values
+#' are colored uniformly red, and all edges with negative correlations are 
+#' colored uniformly blue. Alternatively, may be a function that takes as 
+#' input the edge correlation values and outputs valid color specifications 
+#' (i.e. a single hex color or a vector of hex colors of appropriate length).
 #' @param edge_width_function
 #' Function which takes one vector input (absolute correlation values) and
 #' outputs transformation of this vector (must be >= 0). Defines edge widths.
@@ -52,7 +72,7 @@
 #' number of lines of margin to be specified on the four sides of the plot.
 #' The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 #' as the `margin` argument for the `igraph::plot.igraph` function.
-#' @param vertex.size,margin,asp,vertex.color,vertex.frame.color,vertex.label.color,edge.color,edge.label.color
+#' @param vertex.size,margin,asp,vertex.frame.color,vertex.label.color,edge.label.color,edge.label.cex
 #' Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible
 #' defaults for this package's usage.
 #' @param ...
@@ -88,67 +108,96 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
                                      seed = NULL,
                                      return_network = FALSE,
                                      mar = c(0, 0, 0, 0),
-                                     vertex.size = 12, margin = 0, asp = 0,
-                                     vertex.color = "#fff7bc",
-                                     vertex.frame.color = "#d95f0e",
+                                     vertex.size = 12,
+                                     margin = 0, 
+                                     asp = 0,
+                                     vertex.color = "#ececec",
+                                     vertex.frame.color = "#979797",
                                      vertex.label.color = "black",
-                                     edge.color = "#fec44f",
+                                     edge.color = "ramp",
                                      edge.label.color = "black",
+                                     edge.label.cex = 0.8,
                                      ...) {
+    
     nodes <- data.frame(id = 1:ncol(obj))
     associations <- cor_to_upper(obj)
-
+    
     if (!is.null(cor_cutoff))
         associations <- associations[abs(associations[, 3]) > cor_cutoff, ,
-            drop = FALSE]
-
+                                     drop = FALSE]
+    
     edges <- data.frame(from = associations[, 1], to = associations[, 2])
-
+    connection_indices <- cbind(edges$from, edges$to)
+    edge_correlations <- obj[connection_indices]
+    
     net <- igraph::graph_from_data_frame(d = edges,
-        vertices = nodes,
-        directed = FALSE)
-
+                                         vertices = nodes,
+                                         directed = FALSE)
+    
     if (is.null(vertex_labels)) {
         igraph::V(net)$label <- paste0(vertex_label_prefix, nodes$id)
     } else igraph::V(net)$label <- vertex_labels
-
+    
     igraph::V(net)$shape <- "circle"
     if (!is.null(categorical_indices))
         igraph::V(net)$shape[categorical_indices] <- "rectangle"
-
-    connection_indices <- cbind(edges$from, edges$to)
-    igraph::E(net)$width <- edge_width_function(abs(obj[connection_indices]))
+    
+    igraph::E(net)$width <- edge_width_function(abs(edge_correlations))
     if (!is.null(edge_label_function)) {
-        igraph::E(net)$label <- edge_label_function(obj[connection_indices])
+        igraph::E(net)$label <- edge_label_function(edge_correlations)
     }
-
+    
     weights <- NULL
     if (use_edge_weights) {
-        weights <- edge_weight_function(abs(obj[connection_indices]))
+        weights <- edge_weight_function(abs(edge_correlations))
         igraph::E(net)$weight <- weights
     }
-
+    
+    if (is.function(edge.color)) {
+        edge.color <- edge.color(edge_correlations)
+    } else if (tolower(edge.color) == "ramp") {
+        segments <- seq(-1, 1, 2 / 21)
+        pal <- colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
+        pal_ind <- cut(edge_correlations, breaks = segments, 
+                       include.lowest = TRUE, 
+                       ordered_result = TRUE)
+        edge.color <- pal(length(segments) - 1)[as.integer(pal_ind)]
+    } else if (tolower(edge.color) == "clipped-ramp") {
+        pal <- colorRampPalette(colors = c("#d60000", "white", "#003ed6"))
+        edge.color <- pal(length(edge_correlations))[order(edge_correlations)]
+    } else if (tolower(edge.color) == "red-blue") {
+        edge.color <- ifelse(edge_correlations > 0, "#d60000", "#003ed6")
+    }
+    
+    if (is.function(vertex.color)) {
+        vertex.color <- vertex.color(nodes)
+    } 
+    
     if (return_network)
         return(net)
-
+    
     if (!is.null(seed))
         set.seed(seed)
-
+    
     layout <- igraph::layout_with_fr(net, start.temp = igraph::vcount(net))
-
+    
     op <- graphics::par(mar = mar)
     invisible(on.exit(graphics::par(op)))
     igraph::plot.igraph(
         net,
         vertex.size = vertex.size,
         margin = margin,
-        layout = layout, rescale = TRUE,
+        layout = layout, 
+        rescale = TRUE,
         asp = asp,
         vertex.color = vertex.color,
         vertex.frame.color = vertex.frame.color,
         vertex.label.color = vertex.label.color,
         edge.color = edge.color,
-        edge.label.color = edge.label.color, ...)
+        edge.label.color = edge.label.color, 
+        edge.label.cex = edge.label.cex,
+        ...
+    )
 }
 
 #' @describeIn plot_cor_network Function to be used with \code{\link{simdesign_mvtnorm}}

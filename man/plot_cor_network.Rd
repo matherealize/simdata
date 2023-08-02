@@ -25,11 +25,12 @@ plot_cor_network(obj, ...)
   vertex.size = 12,
   margin = 0,
   asp = 0,
-  vertex.color = "#fff7bc",
-  vertex.frame.color = "#d95f0e",
+  vertex.color = "#ececec",
+  vertex.frame.color = "#979797",
   vertex.label.color = "black",
-  edge.color = "#fec44f",
+  edge.color = "ramp",
   edge.label.color = "black",
+  edge.label.cex = 0.8,
   ...
 )
 
@@ -87,8 +88,28 @@ number of lines of margin to be specified on the four sides of the plot.
 The default is c(5, 4, 4, 2) + 0.1. Note that this is not the same argument
 as the \code{margin} argument for the \code{igraph::plot.igraph} function.}
 
-\item{vertex.size, margin, asp, vertex.color, vertex.frame.color, vertex.label.color, edge.color, edge.label.color}{Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible
+\item{vertex.size, margin, asp, vertex.frame.color, vertex.label.color, edge.label.color, edge.label.cex}{Arguments to \code{\link[igraph:plot.igraph]{igraph::plot}}, with sensible
 defaults for this package's usage.}
+
+\item{vertex.color}{Argument passed to \code{\link[igraph:plot.igraph]{igraph::plot}}. Usually a
+character vector with a hex color specification for vertex color.
+Alternatively a function that takes as input a data.frame with a column "id"
+that gives the column number of the simulated data, and outputs a valid color
+specification for the corresponding vertices (i.e. a single character hex
+color or a vector of such hex colors of appropriate length).}
+
+\item{edge.color}{Argument passed to \code{\link[igraph:plot.igraph]{igraph::plot}}. This
+package implements some special functionality: if \code{edge.color = "ramp"} then
+a colorramp from red (-1) via white (0) to blue (1) is mapped to the
+correlations and the edges colored accordingly.
+If \code{edge.color = "clipped-ramp"} then the ramp is restricted to the
+correlation values observed, which may be useful if they are low to increase
+visibility.
+If \code{edge.color = "red-blue"} then all edges with positive correlation values
+are colored uniformly red, and all edges with negative correlations are
+colored uniformly blue. Alternatively, may be a function that takes as
+input the edge correlation values and outputs valid color specifications
+(i.e. a single hex color or a vector of hex colors of appropriate length).}
 }
 \description{
 Useful to visualize e.g. the associations of the initial multivariate
@@ -100,13 +121,13 @@ For an explanation of all parameters not listed here, please refer to
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{default}: Function to be used for correlation matrix.
+\item \code{plot_cor_network(default)}: Function to be used for correlation matrix.
 
-\item \code{simdesign_mvtnorm}: Function to be used with \code{\link{simdesign_mvtnorm}}
+\item \code{plot_cor_network(simdesign_mvtnorm)}: Function to be used with \code{\link{simdesign_mvtnorm}}
 S3 class object to visualize initial correlation network of the underlying
 multivariate normal distribution.
-}}
 
+}}
 \seealso{
 \code{\link{plot_cor_network.simdesign_mvtnorm}},
 \code{\link{plot_estimated_cor_network}}
