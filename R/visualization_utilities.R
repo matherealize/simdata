@@ -156,6 +156,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
     if (is.function(edge.color)) {
         edge.color <- edge.color(edge_correlations)
     } else if (tolower(edge.color) == "ramp") {
+        # palette with 21 segments, white in the middle
         segments <- seq(-1, 1, 2 / 21)
         pal <- colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
         pal_ind <- cut(edge_correlations, breaks = segments, 
@@ -163,8 +164,19 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
                        ordered_result = TRUE)
         edge.color <- pal(length(segments) - 1)[as.integer(pal_ind)]
     } else if (tolower(edge.color) == "clipped-ramp") {
-        pal <- colorRampPalette(colors = c("#d60000", "white", "#003ed6"))
-        edge.color <- pal(length(edge_correlations))[order(edge_correlations)]
+        # clip separately for positive and negative correlations
+        # else problems when data only has one of those
+        lower <- min(min(edge_correlations), -0.001)
+        upper <- max(max(edge_correlations), 0.001)
+        # scale segments
+        segments <- seq(-1, 1, 2 / 21)
+        segments[1:11] <- segments[1:11] * abs(lower)
+        segments[12:22] <- segments[12:22] * upper
+        pal <- colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
+        pal_ind <- cut(edge_correlations, breaks = segments, 
+                       include.lowest = TRUE, 
+                       ordered_result = TRUE)
+        edge.color <- pal(length(segments) - 1)[as.integer(pal_ind)]
     } else if (tolower(edge.color) == "red-blue") {
         edge.color <- ifelse(edge_correlations > 0, "#d60000", "#003ed6")
     }

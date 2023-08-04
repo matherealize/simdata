@@ -1,5 +1,5 @@
 # simdata v0.3.0.9002
-Updating defaults for correlation network visualisation.
+Updating defaults and functionality for correlation network visualisation.
 
 # simdata v0.3.0.9001
 Added tolerance to correlation matrix check.
@@ -51,7 +51,7 @@ Fixes:
 
 - Fixed cor_from_upper to work with single vectors
 
-# simulatoR v0.2.0 (build date 2019-11-26)
+# simdata v0.2.0 (build date 2019-11-26)
 Numerous fixes and enhancements. If you have worked with previous versions of 
 the package it is likely that you will have to adapt your code to the new
 interfaces implemented in this version. However, the necessary changes should be 
@@ -67,5 +67,5 @@ Additions:
 
 - Package Demo vignette to demonstrate functionality
 
-# simdata / simulatoR v0.1.0 (build date 2019-11-14)
-Initial release.
+# simdata v0.1.0 (build date 2019-11-14)
+Initial release (named simulatoR).

@@ -785,6 +785,9 @@ simdata::plot_cor_network(sim_design, seed = 2,
                           vertex_labels = NA,
                           edge_label_function = NULL,
                           edge_width_function = function(x) 0.01,
+                          edge_weight_function = function(x) 0.25 * x, 
+                          use_edge_weights = TRUE, 
+                          edge.color = "clipped-ramp", 
                           vertex.size = 3)
 ```
 
