@@ -4,3 +4,7 @@ Notes.txt
 man-roxygen
 ^doc$
 ^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
