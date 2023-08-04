@@ -1,4 +1,39 @@
 url: https://matherealize.github.io/simdata/
 template:
   bootstrap: 5
-
+reference: 
+- title: "Simulation designs"
+  desc: "Specifications of simulation designs."
+  contents: 
+  - starts_with("simdesign")
+- title: "Simulation"
+  desc: "Functions that generate data from the simulation designs."
+  contents: 
+  - starts_with("simulate")
+- title: "Visualization"
+  desc: "Plotting tools for correlation networks."
+  contents: 
+  - starts_with("plot")
+- title: "Helper for simulation designs"
+  desc: "Functions to help set up simulation designs."
+  contents: 
+  - starts_with("process")
+  - do_processing
+  - estimate_final_correlation
+  - function_list
+  - optimize_cor_for_pair
+  - optimize_cor_mat
+- title: "Helper for (correlation) matrices"
+  desc: "Functions to help set up and work with (correlation) matrices."
+  contents: 
+  - starts_with("cor")
+  - contains_constant
+  - is_collinear
+  - is_cor_matrix
+- title: "Miscellaneous"
+  contents: 
+  - apply_array
+  - as_function_list
+  - colapply_functions
+  - get_from_function_list
+  - get_names_from_function_list

@@ -1,3 +1,9 @@
+# simdata v0.3.0.9002
+Updating defaults for correlation network visualisation.
+
+# simdata v0.3.0.9001
+Added tolerance to correlation matrix check.
+
 # simdata v0.3.0.9000 (build date 2021-04-09)
 Added NORTA based simulation design and associated functionality. Added
 vignettes explaining the workflow, and the technical design of the package.
