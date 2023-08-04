@@ -423,7 +423,7 @@ optimize_cor_mat <- function(cor_target, dist,
 #'
 #' @export
 function_list <- function(...,
-                          stringsAsFactors = default.stringsAsFactors(),
+                          stringsAsFactors = FALSE,
                           check.names = TRUE) {
     fct_list <- list(...)
 
