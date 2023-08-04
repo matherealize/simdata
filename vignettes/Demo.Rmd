@@ -17,13 +17,11 @@ bibliography: "Demo_references.bib"
 ---
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
-library(forcats)
-library(dplyr)
-library(purrr)
-library(ggplot2)
-library(GGally)
-library(reshape2)
 library(simdata)
+library(ggplot2)
+library(reshape2)
+library(GGally)
+library(knitr)
 library(doParallel)
 library(doRNG)
 ```
@@ -216,7 +214,8 @@ transformation = simdata::function_list(
   v14 = function(z) floor(10 * z[,12] + 55),
   v15 = function(z) floor(10 * z[,13] + 55),
   v16 = function(z) z[,14] < 0,
-  v17 = function(z) z[,15] < 0)
+  v17 = function(z) z[,15] < 0
+)
 
 sim_design = simdata::simdesign_mvtnorm(
   relations = correlation_matrix,
@@ -231,18 +230,13 @@ using `ggplot2`. Or we can use the graph plotting tools from this package to
 display a basic correlation network. 
 
 ```{r echo=FALSE}
-p = ggplot(sim_design$cor_initial %>% 
-               melt() %>% 
-               mutate(
-                   Var1 = factor(Var1), 
-                   Var2 = factor(Var2)
-               ), 
-           aes(x = Var1, 
-               y = forcats::fct_rev(Var2), 
-               fill = value)) + 
+plotdf = melt(sim_design$cor_initial)
+
+ggplot(plotdf, aes(x = factor(Var1), y = factor(Var2), fill = value)) + 
     geom_tile() + 
     geom_text(aes(label = value)) + 
     scale_x_discrete(position = "top") +
+    scale_y_discrete(limits = rev) +
     xlab(expr(paste("Initial variable ", z[i]))) + 
     ylab(expr(paste("Initial variable ", z[i]))) +
     coord_equal() +
@@ -251,7 +245,6 @@ p = ggplot(sim_design$cor_initial %>%
         limits = c(-1, 1),
         low = "#377eb8", mid = "white", high = "#e41a1c") +
     theme_bw()
-print(p)
 ```
 
 Or we can use the simple graph visualisation provided by this package. To keep
@@ -262,6 +255,7 @@ Here we just point out that the layout of the network is based on the
 Fruchterman-Reingold algorithm as implemented in the `igraph` package and 
 therefore comprises random parts. Therefore, using a seed for the random number 
 generation is advised.
+
 ```{r}
 simdata::plot_cor_network(sim_design, seed = 1)
 ```
@@ -270,16 +264,16 @@ simdata::plot_cor_network(sim_design, seed = 1)
 
 We simulate from the design and visualise numeric variables via violinplots and
 discrete variables via barplots using `ggplot2`.
+
 ```{r}
 sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
-p = ggplot(sim_data %>% 
-               select(one_of(numeric_vars)) %>%
-               melt(measure.vars = colnames(.)), 
-           aes(x = "", y = value)) +
+plotdf = melt(sim_data[, numeric_vars], measure.vars = numeric_vars)
+
+p = ggplot(plotdf, aes(x = "", y = value)) +
     geom_violin() +
     geom_dotplot(binaxis = "y", stackdir = "center") + 
     facet_wrap(~ variable, scales = "free", nrow = 3) +
@@ -289,10 +283,9 @@ p = ggplot(sim_data %>%
 print(p)
 
 discrete_vars = names(sim_design$types_final)[sim_design$types_final != "numeric"]
-p = ggplot(sim_data %>% 
-               select(one_of(discrete_vars)) %>% 
-               melt(measure.vars = colnames(.)), 
-               aes(x = variable, fill = value, color = value)) +
+plotdf = melt(sim_data[, discrete_vars], measure.vars = discrete_vars)
+
+p = ggplot(plotdf, aes(x = variable, fill = value, color = value)) +
     geom_bar(alpha = 0.5, size = 1) +
     scale_fill_brewer(palette = "Set1") +
     scale_color_brewer(palette = "Set1") +
@@ -305,12 +298,12 @@ print(p)
 We can also plot the correlation structure of the single, final dataset via the
 correlation matrix and visualise it using `ggplot2` or as a network using the
 functions provided by this package.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-p = sim_data %>% 
-    cor(method = "s", use = "p") %>% 
-    melt() %>%
-    arrange(Var1, Var2) %>%
-    ggplot(aes(x = Var1, y = fct_rev(Var2), fill = value)) +
+plotdf = cor(sim_data, method = "s", use = "p")
+plotdf = melt(plotdf) 
+
+ggplot(plotdf, aes(x = Var1, y = Var2, fill = value)) +
     geom_tile() + 
     geom_text(aes(label = round(value, 2)), size = 2) +
     scale_fill_gradient2(
@@ -319,11 +312,11 @@ p = sim_data %>%
         low = "#377eb8", mid = "white", high = "#e41a1c") +
     coord_equal() +
     scale_x_discrete(position = "top") +
+        scale_y_discrete(limits = rev) +
     xlab(expr(paste("Final variable ", v[i]))) + 
     ylab(expr(paste("Final variable ", v[i]))) +
     theme_bw() + 
     theme(text = element_text(size = 10))
-print(p)
 ```
 
 ## Visualisation of estimated correlation network {#plotestcor}
@@ -404,6 +397,7 @@ this quite clearly shows the rich variety of correlation patterns
 within the simulated data.
 
 ## Post-processing
+
 Post-processing can be used to apply a number of functions to the 
 dataset before it is returned by `simulate_data`. This is useful to e.g. 
 standardize and truncate data, as shown below. 
@@ -433,12 +427,12 @@ sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 
 Compare the results with the [results before](#simfinal) and note the 
 truncation in the specified variables (`v6, v7, v8`).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
-p = ggplot(sim_data %>% 
-               select(one_of(numeric_vars)) %>%
-               melt(measure.vars = colnames(.)), 
-           aes(x = "", y = value)) +
+plotdf = melt(sim_data[, numeric_vars])
+
+p = ggplot(plotdf, aes(x = "", y = value)) +
     geom_violin() +
     geom_dotplot(binaxis = "y", stackdir = "center") + 
     facet_wrap(~ variable, scales = "free", nrow = 3) +
@@ -470,53 +464,55 @@ sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 
 Compare the results with the [results before](#simfinal) and note the 
 truncation in the specified variables (`v6, v7, v8`).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
-p = ggplot(sim_data %>% 
-               select(one_of(numeric_vars)) %>%
-               melt(measure.vars = colnames(.)), 
-           aes(x = "", y = value)) +
+plotdf = melt(sim_data[, numeric_vars])
+
+ggplot(plotdf, aes(x = "", y = value)) +
     geom_violin() +
     geom_dotplot(binaxis = "y", stackdir = "center") + 
     facet_wrap(~ variable, scales = "free", nrow = 3) +
     theme_bw() + 
     ylab("Value") +
     theme(axis.title.x = element_blank())
-print(p)
 ```
 
 ### Standardization
+
 Similarly, standardization can be applied using the standard `scale` function, 
 changing the scale on the y-axis of the following plots. 
 Note that the order of functions passed via `process_final` is important.
+Since `base::scale()` returns a `matrix`, we also want to transform the 
+result back to a `data.frame` in the end. 
 
 ```{r}
 sim_design$process_final = list(
     process_truncate_by_iqr = list(
         truncate_multipliers = c(v6 = 2, v7 = 2, v8 = 2)
     ), 
-    scale = list()
+    scale = list(), 
+    data.frame = list()
 )
+
 sim_data = simdata::simulate_data(sim_design, n_obs = 100, seed = 25897165)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 numeric_vars = names(sim_design$types_final)[sim_design$types_final == "numeric"]
-p = ggplot(sim_data %>% 
-               as.data.frame() %>% 
-               select(one_of(numeric_vars)) %>%
-               melt(measure.vars = colnames(.)), 
-           aes(x = "", y = value)) +
+plotdf = melt(sim_data[, numeric_vars])
+
+ggplot(plotdf, aes(x = "", y = value)) +
     geom_violin() +
     geom_dotplot(binaxis = "y", stackdir = "center") + 
     facet_wrap(~ variable, scales = "free", nrow = 3) +
     theme_bw() + 
     ylab("Value") +
     theme(axis.title.x = element_blank())
-print(p)
 ```
 
 # Advanced simulation setup
+
 In the following we briefly present some more advanced usage aspects of 
 the package.
 
@@ -544,6 +540,7 @@ make them collinear on purpose via a transformation.
 - After at most three runs with rejected datasets the function returns
 (`reject_max_iter`)
 - The number of tries is returned in a list (`return_tries`)
+
 ```{r}
 correlation_matrix = diag(1, nrow = 2)
 transformation = simdata::function_list("v1" = function(x) x[, 1],
@@ -567,7 +564,7 @@ sim_data = simdata::simulate_data_conditional(sim_design,
                                               reject_max_iter = 3,
                                               return_tries = TRUE)
 
-print(sim_data)
+sim_data
 ```
 
 Note that multiple conditions can be checked by passing a `function_list` as
@@ -575,6 +572,7 @@ rejection function. All of them must be fulfilled or the matrix is rejected.
 
 In our example below we randomly transform the columns to be collinear or 
 constant. However, in the end we obtain a result which passes both checks.
+
 ```{r}
 correlation_matrix = diag(1, nrow = 3)
 transformation = simdata::function_list(
@@ -612,6 +610,7 @@ knitr::kable(head(sim_data[[1]]))
 ## User defined `simdesign` classes
 
 ### Other initial distributions {#other}
+
 In this package, simulating initial data from a multivariate Normal distribution
 is already implemented in the `simdesign_mvtnorm` S3 class. However, it is easy
 to implement other distributions and extend the underlying interface of the
@@ -651,6 +650,7 @@ binomial_simdesign <- function(size = 1, prob = 0.5, ...) {
 ```
 
 Finally, we can use the newly created class as in the examples before.
+
 ```{r}
 sim_design = binomial_simdesign(size = 1, prob = 0.7)
 sim_data = simdata::simulate_data(sim_design, 100, seed = 1)
@@ -689,12 +689,14 @@ realdata_simdesign <- function(dataset, ...) {
   dsgn
 }
 ```
+
 Note that this works because the dataset is saved to the environment of 
 the generator function and therefore always accessible to the generator 
 function. It can be retrieved via
 `get("dataset", envir = environment(sim_design$generator))`.
 
 Finally, we can use the newly created class as in the examples before.
+
 ```{r}
 data(iris)
 sim_design = realdata_simdesign(iris, prefix_final = NULL)
@@ -702,8 +704,8 @@ sim_data = simdata::simulate_data(sim_design, 100, seed = 1)
 knitr::kable(head(sim_data))
 ```
 
-
 ## Aspects of high-dimensional setups
+
 In high-dimensional simulation studies the number of simulated variables is large.
 We briefly demonstrate how to simulate 100 variables from a multivariate 
 Normal distribution with block correlation matrix. This shows how to use 
@@ -723,6 +725,7 @@ of functions via `as_function_list`
     - Note that the final transformation is applied to a whole submatrix at once
     (this is possible as long as the resulting outputs have equal number of 
     rows)
+    
 ```{r}
 correlation_matrix = simdata::cor_from_upper(
   100,
@@ -754,18 +757,14 @@ sim_design = simdata::simdesign_mvtnorm(
 ```
 
 We can visualise the correlation matrix as before using `ggplot2`.
+
 ```{r echo=FALSE}
-p = ggplot(sim_design$cor_initial %>% 
-               melt() %>% 
-               mutate(
-                   Var1 = factor(Var1), 
-                   Var2 = factor(Var2)
-               ), 
-           aes(x = Var1, 
-               y = forcats::fct_rev(Var2), 
-               fill = value)) + 
+plotdf = melt(sim_design$cor_initial)
+
+ggplot(plotdf, aes(x = factor(Var1), y = factor(Var2), fill = value)) + 
     geom_tile() + 
     scale_x_discrete(position = "top") +
+    scale_y_discrete(limits = rev) + 
     xlab(expr(paste("Initial variable ", z[i]))) + 
     ylab(expr(paste("Initial variable ", z[i]))) +
     coord_equal() +
@@ -775,12 +774,12 @@ p = ggplot(sim_design$cor_initial %>%
         low = "#377eb8", mid = "white", high = "#e41a1c") +
     theme_bw() + 
     theme(axis.text = element_blank())
-print(p)
 ```
 
 A correlation network can often be used to clearly display such large correlation
 structures. To keep the network simple, we remove vertex and edge labels and 
 adjust vertex and edge sizes. 
+
 ```{r}
 simdata::plot_cor_network(sim_design, seed = 2,  
                           vertex_labels = NA,
@@ -793,21 +792,22 @@ The simulated data is subsequently obtained by applying the specified
 transformations to the initial multivariate Normal data. It is visualised
 below by means of density curves for each variable (for brevity the legend
 is not displayed and variables are indicated by different colors).
+
 ```{r}
 sim_data = simdata::simulate_data(sim_design, n_obs = 50, seed = 5)
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-p = ggplot(melt(sim_data), aes(x = value, color = variable)) + 
+ggplot(melt(sim_data), aes(x = value, color = variable)) + 
     geom_density() + 
     scale_color_viridis_d(option = "plasma") +
     guides(color = "none") +
     xlab("Value") + ylab("Density") +
     theme_bw()
-print(p)
 ```
 
 ## Parallelization {#parallel}
+
 This example briefly shows how to use the package together with parallelization
 via clusters to speed up simulations. On Unix-based systems, forking provides
 an alternative method to parallelize code, which results in even simpler code

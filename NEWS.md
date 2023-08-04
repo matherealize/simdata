@@ -67,5 +67,5 @@ Additions:
 
 - Package Demo vignette to demonstrate functionality
 
-# simulatoR v0.1.0 (build date 2019-11-14)
+# simdata / simulatoR v0.1.0 (build date 2019-11-14)
 Initial release.

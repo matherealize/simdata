@@ -21,13 +21,13 @@ bibliography: Demo_references.bib
 ---
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
+library(simdata)
 library(nhanesA)
 library(fitdistrplus)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
 library(ggcorrplot)
-library(simdata)
 ```
 
 # Introduction

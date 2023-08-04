@@ -6,7 +6,7 @@ reference:
   desc: "Specifications of simulation designs."
   contents: 
   - starts_with("simdesign")
-- title: "Simulation"
+- title: "Data simulation"
   desc: "Functions that generate data from the simulation designs."
   contents: 
   - starts_with("simulate")

@@ -5,7 +5,8 @@ Version: 0.3.0.9002
 Author: Michael Kammer [aut, cre]
 Authors@R: person("Michael", "Kammer", 
     email = "michael.kammer@meduniwien.ac.at", 
-    role = c("aut", "cre"))
+    role = c("aut", "cre"), 
+    comment = c(ORCID = "0000-0003-4821-9928"))
 Maintainer: Michael Kammer <michael.kammer@meduniwien.ac.at>
 Description: Generate simulated datasets from an initial underlying
     distribution and apply transformations to obtain realistic data. Implements
@@ -38,4 +39,5 @@ VignetteBuilder: knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-URL: https://matherealize.github.io/simdata/
+URL: https://matherealize.github.io/simdata/, https://github.com/matherealize/simdata
+BugReports: https://github.com/matherealize/simdata/issues
