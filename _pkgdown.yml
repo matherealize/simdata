@@ -37,3 +37,4 @@ reference:
   - colapply_functions
   - get_from_function_list
   - get_names_from_function_list
+  - partial

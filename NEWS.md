@@ -1,3 +1,6 @@
+# simdata v0.3.0.9003
+Implemented partial functions.
+
 # simdata v0.3.0.9002
 Updating defaults and functionality for correlation network visualisation.
 
