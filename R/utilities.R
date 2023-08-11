@@ -364,12 +364,14 @@ optimize_cor_mat <- function(cor_target, dist,
 }
 
 # Distribution utilities ############################################
+#' @export
 quantile_functions_from_data <- function(data, 
                                          method_continuous = "linear", 
                                          n_continuous = 200, 
                                          method_categorical = "constant", 
                                          probs_categorical = seq(0, 1, 0.01), 
-                                         n_small = 100, 
+                                         n_small = 10,
+                                         categorical = c(),
                                          ...) {
     dist <- list()
     
@@ -378,7 +380,7 @@ quantile_functions_from_data <- function(data,
         colnames <- names(data)
     
     for (col in 1:length(colnames)) {
-        if (length(unique(data[, col])) < n_small) {
+        if ((length(unique(data[, col])) < n_small) || (col %in% categorical)) {
             dist[[colnames[col]]] <- quantile_function_from_quantiles(
                 data[, col], 
                 method = method_categorical, 
@@ -397,7 +399,7 @@ quantile_functions_from_data <- function(data,
     dist
 }
 
-
+#' @export
 quantile_function_from_density <- function(x, 
                                            method = "linear", 
                                            n = 200, 
@@ -413,6 +415,7 @@ quantile_function_from_density <- function(x,
     )
 }
 
+#' @export
 quantile_function_from_quantiles <- function(x,
                                              method = "constant",
                                              probs = seq(0, 1, 0.01)) {
