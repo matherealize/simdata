@@ -363,6 +363,66 @@ optimize_cor_mat <- function(cor_target, dist,
     }
 }
 
+# Distribution utilities ############################################
+quantile_functions_from_data <- function(data, 
+                                         method_continuous = "linear", 
+                                         n_continuous = 200, 
+                                         method_categorical = "constant", 
+                                         probs_categorical = seq(0, 1, 0.01), 
+                                         n_small = 100, 
+                                         ...) {
+    dist <- list()
+    
+    colnames <- paste0("x", 1:ncol(data))
+    if (!is.null(names(data)))
+        colnames <- names(data)
+    
+    for (col in 1:length(colnames)) {
+        if (length(unique(data[, col])) < n_small) {
+            dist[[colnames[col]]] <- quantile_function_from_quantiles(
+                data[, col], 
+                method = method_categorical, 
+                probs = probs_categorical
+            )
+        } else {
+            dist[[colnames[col]]] <- quantile_function_from_density(
+                data[, col], 
+                method = method_continuous, 
+                n = n_continuous, 
+                ...
+            )
+        }
+    }
+    
+    dist
+}
+
+
+quantile_function_from_density <- function(x, 
+                                           method = "linear", 
+                                           n = 200, 
+                                           ...) {
+    dens <- density(x, cut = 1, n = n, ...)
+    int_dens <- cbind(data = dens$x, cdf = cumsum(dens$y))
+    int_dens[, "cdf"] <- int_dens[, "cdf"] / max(int_dens[, "cdf"])
+    approxfun(
+        int_dens[, "cdf"], int_dens[, "data"], 
+        yleft = min(int_dens[, "data"]), 
+        yright = max(int_dens[, "data"]), 
+        method = method
+    )
+}
+
+quantile_function_from_quantiles <- function(x,
+                                             method = "constant",
+                                             probs = seq(0, 1, 0.01)) {
+    approxfun(
+        probs, quantile(x, probs = probs), 
+        yleft = min(x), yright = max(x),     
+        method = method
+    )
+}
+
 # Function helper ###################################################
 #' @title Apply list of functions to input
 #'
