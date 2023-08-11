@@ -560,3 +560,11 @@ colapply_functions <- function(obj, flist) {
 
     res
 }
+
+partial <- function(f, ...) {
+    f_args <- list(...)
+    
+    function(...) {
+        do.call(f, c(f_args, list(...)))
+    }
+}
