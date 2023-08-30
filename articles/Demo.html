@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">simdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9003</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +77,7 @@
                         <h4 data-toc-skip class="author">Michael
 Kammer</h4>
             
-            <h4 data-toc-skip class="date">2023-08-04</h4>
+            <h4 data-toc-skip class="date">2023-08-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/matherealize/simdata/blob/HEAD/vignettes/Demo.Rmd" class="external-link"><code>vignettes/Demo.Rmd</code></a></small>
       <div class="d-none name"><code>Demo.Rmd</code></div>
@@ -1123,13 +1123,130 @@ the threads automatically, but this can be forced via the
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">res</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, <span class="va">summary</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="partial-functions">Partial functions<a class="anchor" aria-label="anchor" href="#partial-functions"></a>
+</h3>
+<p>The <code>simdata</code> packages makes heavy use of function objects
+to define simulation designs (e.g. also NORTA based simulation).
+Sometimes it may be necessary to fix parameters of such functions, or
+define them via code. In <a href="ex2">Example 2</a> we created a
+variable <code>v2*2</code> by multiplying the initial data times 2.</p>
+<p>What if we wanted to parametrize this? If we simply use a global
+variable this will have undesirable consequences, as R may change the
+value of the global value at any time (or remove the value, which leads
+to a failure of the sampling procedure).</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># parameter</span></span>
+<span><span class="va">mult</span> <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="va">transformation</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/function_list.html">function_list</a></span><span class="op">(</span></span>
+<span>  <span class="st">"v1"</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">mult</span> <span class="co"># dangerous, depends on global variable!</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sim_design</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simdesign_mvtnorm.html">simdesign_mvtnorm</a></span><span class="op">(</span></span>
+<span>        relations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, </span>
+<span>        transform_initial <span class="op">=</span> <span class="va">transformation</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sample1</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">sim_design</span>, n_obs <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">25897165</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># change value of global variable</span></span>
+<span><span class="va">mult</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span><span class="va">sample2</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">sim_design</span>, n_obs <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">25897165</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># note the different values in both columns</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">sample1</span>, <span class="va">sample2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">v1</th>
+<th align="right">v1</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">-0.8166563</td>
+<td align="right">-1.633312</td>
+</tr>
+<tr class="even">
+<td align="right">2.6989619</td>
+<td align="right">5.397924</td>
+</tr>
+<tr class="odd">
+<td align="right">1.2366453</td>
+<td align="right">2.473291</td>
+</tr>
+<tr class="even">
+<td align="right">-1.1770835</td>
+<td align="right">-2.354167</td>
+</tr>
+<tr class="odd">
+<td align="right">1.9821340</td>
+<td align="right">3.964268</td>
+</tr>
+</tbody>
+</table>
+<p>This can be avoided by the use of <code><a href="../reference/partial.html">simdata::partial</a></code>. This
+requires to specify the transformation as function in two parameters, of
+which one is fixed.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># parameter</span></span>
+<span><span class="va">mult</span> <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="va">transformation</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/function_list.html">function_list</a></span><span class="op">(</span></span>
+<span>    <span class="co"># specify function as partial </span></span>
+<span>    <span class="st">"v1"</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/partial.html">partial</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">mult</span><span class="op">)</span> <span class="va">x</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">*</span> <span class="va">mult</span>, mult <span class="op">=</span> <span class="va">mult</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sim_design</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simdesign_mvtnorm.html">simdesign_mvtnorm</a></span><span class="op">(</span></span>
+<span>        relations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>, </span>
+<span>        transform_initial <span class="op">=</span> <span class="va">transformation</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sample1</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">sim_design</span>, n_obs <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">25897165</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># change value of global variable</span></span>
+<span><span class="va">mult</span> <span class="op">=</span> <span class="fl">4</span></span>
+<span><span class="va">sample2</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">sim_design</span>, n_obs <span class="op">=</span> <span class="fl">5</span>, seed <span class="op">=</span> <span class="fl">25897165</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># note both columns are equal now, as expected</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">sample1</span>, <span class="va">sample2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">v1</th>
+<th align="right">v1</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">-0.8166563</td>
+<td align="right">-0.8166563</td>
+</tr>
+<tr class="even">
+<td align="right">2.6989619</td>
+<td align="right">2.6989619</td>
+</tr>
+<tr class="odd">
+<td align="right">1.2366453</td>
+<td align="right">1.2366453</td>
+</tr>
+<tr class="even">
+<td align="right">-1.1770835</td>
+<td align="right">-1.1770835</td>
+</tr>
+<tr class="odd">
+<td align="right">1.9821340</td>
+<td align="right">1.9821340</td>
+</tr>
+</tbody>
+</table>
+<p><code><a href="../reference/partial.html">simdata::partial</a></code> can be used to fix an arbitrary number
+of parameters, and may also help if a transformation is defined inside
+another function (as the parameter set inside a function may not be
+available outside).</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="rsession">R session information<a class="anchor" aria-label="anchor" href="#rsession"></a>
 </h2>
 <pre><code><span><span class="co">## R version 4.3.1 (2023-06-16)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">## Running under: Ubuntu 22.04.2 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 22.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -1151,23 +1268,23 @@ the threads automatically, but this can be forced via the
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] doRNG_1.8.6        rngtools_1.5.2     doParallel_1.0.17  iterators_1.0.14  </span></span>
 <span><span class="co">##  [5] foreach_1.5.2      knitr_1.43         GGally_2.1.2       reshape2_1.4.4    </span></span>
-<span><span class="co">##  [9] ggplot2_3.4.2      simdata_0.3.0.9002</span></span>
+<span><span class="co">##  [9] ggplot2_3.4.3      simdata_0.3.0.9003</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] sass_0.4.7         utf8_1.2.3         generics_0.1.3     stringi_1.7.12    </span></span>
 <span><span class="co">##  [5] digest_0.6.33      magrittr_2.0.3     evaluate_0.21      grid_4.3.1        </span></span>
-<span><span class="co">##  [9] RColorBrewer_1.1-3 mvtnorm_1.2-2      fastmap_1.1.1      rprojroot_2.0.3   </span></span>
-<span><span class="co">## [13] plyr_1.8.8         jsonlite_1.8.7     reshape_0.8.9      purrr_1.0.1       </span></span>
+<span><span class="co">##  [9] RColorBrewer_1.1-3 mvtnorm_1.2-3      fastmap_1.1.1      rprojroot_2.0.3   </span></span>
+<span><span class="co">## [13] plyr_1.8.8         jsonlite_1.8.7     reshape_0.8.9      purrr_1.0.2       </span></span>
 <span><span class="co">## [17] fansi_1.0.4        viridisLite_0.4.2  scales_1.2.1       codetools_0.2-19  </span></span>
 <span><span class="co">## [21] textshaping_0.3.6  jquerylib_0.1.4    cli_3.6.1          rlang_1.1.1       </span></span>
 <span><span class="co">## [25] munsell_0.5.0      withr_2.5.0        cachem_1.0.8       yaml_2.3.7        </span></span>
 <span><span class="co">## [29] tools_4.3.1        memoise_2.0.1      dplyr_1.1.2        colorspace_2.1-0  </span></span>
 <span><span class="co">## [33] vctrs_0.6.3        R6_2.5.1           lifecycle_1.0.3    stringr_1.5.0     </span></span>
 <span><span class="co">## [37] fs_1.6.3           ragg_1.2.5         pkgconfig_2.0.3    desc_1.4.2        </span></span>
-<span><span class="co">## [41] pkgdown_2.0.7      pillar_1.9.0       bslib_0.5.0        gtable_0.3.3      </span></span>
+<span><span class="co">## [41] pkgdown_2.0.7      pillar_1.9.0       bslib_0.5.1        gtable_0.3.4      </span></span>
 <span><span class="co">## [45] glue_1.6.2         Rcpp_1.0.11        systemfonts_1.0.4  highr_0.10        </span></span>
-<span><span class="co">## [49] xfun_0.39          tibble_3.2.1       tidyselect_1.2.0   farver_2.1.1      </span></span>
-<span><span class="co">## [53] igraph_1.5.0.1     htmltools_0.5.5    labeling_0.4.2     rmarkdown_2.23    </span></span>
+<span><span class="co">## [49] xfun_0.40          tibble_3.2.1       tidyselect_1.2.0   farver_2.1.1      </span></span>
+<span><span class="co">## [53] igraph_1.5.1       htmltools_0.5.6    labeling_0.4.2     rmarkdown_2.24    </span></span>
 <span><span class="co">## [57] compiler_4.3.1</span></span></code></pre>
 </div>
 <div class="section level2">
