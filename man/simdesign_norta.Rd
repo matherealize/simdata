@@ -108,8 +108,11 @@ must take a single input vector, and return a single numeric vector.
 Examples for acceptable entries include all standard quantile functions
 implemented in R (e.g. \code{qnorm}, \code{qbinom}, ...), user defined functions
 wrapping these (e.g. \verb{function(x) = qnorm(x, mean = 10, sd = 4)}), or
-empirical quantile functions. See example in the NORTA vignette of this
-package.
+empirical quantile functions. The helper function
+\code{}\link{quantile_functions_from_data} can be used to automatically
+estimate empirical quantile functions from a given data to reproduce it using
+the NORTA approach.See the example in the NORTA vignette of this package for
+workflow details.
 }
 
 \section{Target correlations}{
@@ -141,5 +144,6 @@ Transactions on Modeling and Computer Simulation.
 \seealso{
 \code{\link{simdesign}},
 \code{\link{simulate_data}},
-\code{\link{simulate_data_conditional}}
+\code{\link{simulate_data_conditional}},
+\code{\link{quantile_functions_from_data}}
 }

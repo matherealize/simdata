@@ -364,6 +364,60 @@ optimize_cor_mat <- function(cor_target, dist,
 }
 
 # Distribution utilities ############################################
+
+#' @title Helper to estimate quantile functions from data for NORTA
+#' 
+#' @param data 
+#' A matrix or data.frame for which quantile function should be estimated.
+#' @param method_density
+#' Interpolation method used for density based quantile functions, 
+#' passed to \code{\link{stats::approxfun}}. See Details.
+#' @param n_density
+#' Number of points at which the density is estimated for density bsed
+#' quantile, functions, passed to \code{\link{stats::density}}.
+#' @param method_quantile
+#' Interpolation method used for quantile based quantile functions, 
+#' passed to \code{\link{stats::approxfun}}. See Details.
+#' @param probs_quantile
+#' Specification of quantiles to be estimated from data for quantile based 
+#' quantile functions, passed to \code{\link{stats::quantile}}. See Details. 
+#' @param n_small
+#' An integer giving the number of distinct values below which quantile 
+#' functions are estimated using `quantile_function_from_quantiles()` (more 
+#' suited for categorical data), rather than `quantile_function_from_density()`.
+#' @param use_quantile
+#' A vector of names indicating columns for which the quantile function 
+#' should be estimated using `quantile_function_from_quantiles()`. Overrides
+#' `n_small`.
+#' @param ... 
+#' Passed to `quantile_function_from_density()`. 
+#' 
+#' @details 
+#' The NORTA approach requires the specification of the marginals by 
+#' quantile functions. This helper estimates those given a dataset automatically
+#' and non-parametrically.  
+#' There are two ways implemented to estimate quantile functions from data. 
+#' 
+#' \enumerate{
+#' \item Estimate the quantile function by interpolating the observed
+#' quantiles from the data. This is most useful for categorical data, when 
+#' the interpolation is using a step-function (default). Implemented in 
+#' `quantile_function_from_quantiles()`.
+#' \item Estimate the quantile function via the the empirical cumulative
+#' density function derived from the density of the data. Since the density
+#' is only estimated at specific points, any values in between are interpolated
+#' linearly (default, other options are possible). This is most useful for 
+#' continuous data. Implemented in `quantile_function_from_density()`.
+#' } 
+#' 
+#' @return 
+#' A named list of functions with length `ncol(data)` giving the quantile 
+#' functions of the input data. Each entry is a function returned from 
+#' \code{\link{stats::approxfun}}.
+#' 
+#' @seealso 
+#' \code{\link{simdesign_norta}} 
+#' 
 #' @export
 quantile_functions_from_data <- function(data, 
                                          method_density = "linear", 
@@ -399,6 +453,7 @@ quantile_functions_from_data <- function(data,
     dist
 }
 
+#' @describeIn quantile_functions_from_data Estimate quantile functions from density.
 #' @export
 quantile_function_from_density <- function(x, 
                                            method = "linear", 
@@ -415,6 +470,7 @@ quantile_function_from_density <- function(x,
     )
 }
 
+#' @describeIn quantile_functions_from_data Estimate quantile function from quantiles.
 #' @export
 quantile_function_from_quantiles <- function(x,
                                              method = "constant",

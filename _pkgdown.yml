@@ -23,6 +23,7 @@ reference:
   - function_list
   - optimize_cor_for_pair
   - optimize_cor_mat
+  - quantile_functions_from_data
 - title: "Helper for (correlation) matrices"
   desc: "Functions to help set up and work with (correlation) matrices."
   contents: 

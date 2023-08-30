@@ -275,8 +275,11 @@ simdesign <- function(generator,
 #' Examples for acceptable entries include all standard quantile functions
 #' implemented in R (e.g. `qnorm`, `qbinom`, ...), user defined functions
 #' wrapping these (e.g. `function(x) = qnorm(x, mean = 10, sd = 4)`), or
-#' empirical quantile functions. See example in the NORTA vignette of this
-#' package.
+#' empirical quantile functions. The helper function 
+#' \code{}\link{quantile_functions_from_data} can be used to automatically 
+#' estimate empirical quantile functions from a given data to reproduce it using
+#' the NORTA approach.See the example in the NORTA vignette of this package for
+#' workflow details.
 #'
 #' @section Target correlations:
 #' Not every valid correlation matrix (i.e. symmetric, positive-definite matrix
@@ -311,7 +314,8 @@ simdesign <- function(generator,
 #' @seealso
 #' \code{\link{simdesign}},
 #' \code{\link{simulate_data}},
-#' \code{\link{simulate_data_conditional}}
+#' \code{\link{simulate_data_conditional}}, 
+#' \code{\link{quantile_functions_from_data}}
 #'
 #' @references Cario, M. C. and Nelson, B. L. (1997) \emph{Modeling and
 #' generating random vectors with arbitrary marginal distributions and
