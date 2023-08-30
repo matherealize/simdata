@@ -12,7 +12,7 @@ procedure (Cario and Nelson 1997)."><!-- mathjax --><script src="https://cdnjs.c
     
     <a class="navbar-brand me-2" href="../index.html">simdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -204,8 +204,11 @@ must take a single input vector, and return a single numeric vector.
 Examples for acceptable entries include all standard quantile functions
 implemented in R (e.g. <code>qnorm</code>, <code>qbinom</code>, ...), user defined functions
 wrapping these (e.g. <code>function(x) = qnorm(x, mean = 10, sd = 4)</code>), or
-empirical quantile functions. See example in the NORTA vignette of this
-package.</p>
+empirical quantile functions. The helper function
+<code></code><a href="quantile_functions_from_data.html">quantile_functions_from_data</a> can be used to automatically
+estimate empirical quantile functions from a given data to reproduce it using
+the NORTA approach.See the example in the NORTA vignette of this package for
+workflow details.</p>
     </div>
     <div class="section level2">
     <h2 id="target-correlations">Target correlations<a class="anchor" aria-label="anchor" href="#target-correlations"></a></h2>
@@ -238,7 +241,8 @@ Transactions on Modeling and Computer Simulation.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="simdesign.html">simdesign</a></code>,
 <code><a href="simulate_data.html">simulate_data</a></code>,
-<code><a href="simulate_data_conditional.html">simulate_data_conditional</a></code></p></div>
+<code><a href="simulate_data_conditional.html">simulate_data_conditional</a></code>,
+<code><a href="quantile_functions_from_data.html">quantile_functions_from_data</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

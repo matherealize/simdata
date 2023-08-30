@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">simdata</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -151,8 +151,10 @@ this, the <code>simdata</code> package ensures positive definiteness by
 using the closest positive definite matrix instead. This may lead to
 discrepancies between the target correlation and the achieved
 correlation structure.</li>
-<li>NORTA cannot reproduce non-linear relationships between
-variables.</li>
+<li>NORTA cannot reproduce non-linear relationships between variables.
+This may lead to issues for continuous variables and categorical
+variables with more than two categories when the goal is to faithfully
+re-create a real dataset that features non-linear relations.</li>
 <li>The optimisation procedure to obtain <span class="math inline">\(\Sigma_Z\)</span> may take a while to compute when
 the number of variables increases. This is alleviated through the fact
 that this computation has to be done only a single time, during
@@ -203,10 +205,13 @@ matrix</li>
 <li>The <span class="math inline">\(k\)</span> marginal distributions
 for each variable, given as quantile functions</li>
 </ul>
-<p>These can be estimated from existing datasets of interest,
-circumventing some limitations of the NORTA approach. See the <a href="#example">example below</a> for the setup within this package.</p>
+<p>These can be estimated from existing datasets of interest.
+<code>simdata</code> offers a helper function to automate this process,
+but the user can also specify the required input manually. We
+demonstrate both use cases in the <a href="#example">example
+below</a>.</p>
 <div class="section level3">
-<h3 id="some-common-distributions">Some common distributions<a class="anchor" aria-label="anchor" href="#some-common-distributions"></a>
+<h3 id="quantile-functions-for-some-common-distributions">Quantile functions for some common distributions<a class="anchor" aria-label="anchor" href="#quantile-functions-for-some-common-distributions"></a>
 </h3>
 <p>The required marginal distributions are given as quantile functions.
 R provides implementations of many standard distributions which can be
@@ -276,7 +281,24 @@ representing the individual variables. Each entry of the list must be a
 function in one argument, defining the quantile function of the
 variable. The order of the entries must correspond to the order in the
 target correlation <code>cor_target</code>.</p>
-<p>We also use the <code><a href="https://rdrr.io/pkg/fitdistrplus/man/fitdist.html" class="external-link">fitdistrplus::fitdist</a></code> function to find
+<div class="section level4">
+<h4 id="automatically">Automatically<a class="anchor" aria-label="anchor" href="#automatically"></a>
+</h4>
+<p><code>simdata</code> offers the helper function
+<code><a href="../reference/quantile_functions_from_data.html">simdata::quantile_functions_from_data()</a></code> to automate
+estimation of quantile functions from the available data. It does so
+non-parametrically and implements two approaches, one more suited for
+categorical data, and the other more suited to continuous data. In
+practice the parameter <code>n_small</code> can be used to determine a
+number of unique values required to use the latter approach, rather than
+the former. See the documentation for more details.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dist_auto</span> <span class="op">=</span> <span class="fu"><a href="../reference/quantile_functions_from_data.html">quantile_functions_from_data</a></span><span class="op">(</span><span class="va">df</span>, n_small <span class="op">=</span> <span class="fl">15</span><span class="op">)</span> </span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="manually">Manually<a class="anchor" aria-label="anchor" href="#manually"></a>
+</h4>
+<p>We use the <code><a href="https://rdrr.io/pkg/fitdistrplus/man/fitdist.html" class="external-link">fitdistrplus::fitdist</a></code> function to find
 appropriate distribution candidates and fit their parameters. Decisions
 regarding the fit of a distribution can be made using e.g. the Akaike
 information criterion (AIC) or Bayesian information criterion (BIC)
@@ -317,10 +339,9 @@ estimated using <code><a href="https://rdrr.io/pkg/fitdistrplus/man/fitdist.html
 using <code><a href="https://rdrr.io/pkg/fitdistrplus/man/fitdist.html" class="external-link">fitdistrplus::fitdist</a></code> after removing zero values from
 the data</li>
 </ul>
-<p>The code to implement these marginal distributions is shown below.
-Helper functions to ease the workflow will be implemented in future
-versions of the package.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>The code to implement these marginal distributions is shown
+below.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dist</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># gender</span></span>
@@ -365,25 +386,48 @@ versions of the package.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="va">dist</span><span class="op">[[</span><span class="st">"BPdia"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm</a></span><span class="op">(</span><span class="va">x</span>, mean <span class="op">=</span> <span class="fl">72.42</span>, sd <span class="op">=</span> <span class="fl">11.95</span><span class="op">)</span></span></code></pre></div>
 </div>
+<div class="section level4">
+<h4 id="what-to-use">What to use?<a class="anchor" aria-label="anchor" href="#what-to-use"></a>
+</h4>
+<p>Both, the automatic and the manual way to specify marginals may be
+useful. The automatic way works non-parametrically which may be useful
+when a real dataset should be re-created, while the manual way allows to
+specify marginals parametrically which may be useful when the data is
+defined from purely theoretical specifications.</p>
+</div>
+</div>
 <div class="section level3">
 <h3 id="simulate-data">Simulate data<a class="anchor" aria-label="anchor" href="#simulate-data"></a>
 </h3>
-<p>Now we can use the <code><a href="../reference/simdesign_norta.html">simdata::simdesign_norta</a></code> to obtain a
-design using these specification. After that, we simulate a dataset of
-the same size as the original data set using
-<code><a href="../reference/simulate_data.html">simdata::simulate_data</a></code>, and compare the resulting summary
-statistics and correlation structures.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dsgn</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simdesign_norta.html">simdesign_norta</a></span><span class="op">(</span>cor_target_final <span class="op">=</span> <span class="va">cor_target</span>, dist <span class="op">=</span> <span class="va">dist</span>, </span>
+<p>Now we can use <code><a href="../reference/simdesign_norta.html">simdata::simdesign_norta</a></code> to obtain
+designs using both the manual and automated marginal specifications.
+After that, we simulate datasets of the same size as the original data
+set using <code><a href="../reference/simulate_data.html">simdata::simulate_data</a></code>, and compare the resulting
+summary statistics and correlation structures.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># use automated specification</span></span>
+<span><span class="va">dsgn_auto</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simdesign_norta.html">simdesign_norta</a></span><span class="op">(</span>cor_target_final <span class="op">=</span> <span class="va">cor_target</span>, </span>
+<span>                                     dist <span class="op">=</span> <span class="va">dist_auto</span>, </span>
+<span>                                     transform_initial <span class="op">=</span> <span class="va">data.frame</span>,</span>
+<span>                                     names_final <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span>, </span>
+<span>                                     seed_initial <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">simdf_auto</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">dsgn_auto</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># use manual specification</span></span>
+<span><span class="va">dsgn</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simdesign_norta.html">simdesign_norta</a></span><span class="op">(</span>cor_target_final <span class="op">=</span> <span class="va">cor_target</span>, </span>
+<span>                                dist <span class="op">=</span> <span class="va">dist</span>, </span>
 <span>                                transform_initial <span class="op">=</span> <span class="va">data.frame</span>,</span>
-<span>                                names_final <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span>, seed_initial <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span>                                names_final <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span>, </span>
+<span>                                seed_initial <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">simdf</span> <span class="op">=</span> <span class="fu">simdata</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">dsgn</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
 </h3>
 <p>Summary statistics of the original and simulated datasets.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      Gender           Age             Race           Weight      </span></span>
 <span><span class="co">##  Min.   :1.000   Min.   :19.00   Min.   :1.000   Min.   : 36.20  </span></span>
@@ -399,7 +443,23 @@ statistics and correlation structures.</p>
 <span><span class="co">##  Mean   :29.69   Mean   :126.2   Mean   : 71.85  </span></span>
 <span><span class="co">##  3rd Qu.:33.50   3rd Qu.:136.0   3rd Qu.: 80.00  </span></span>
 <span><span class="co">##  Max.   :84.40   Max.   :224.0   Max.   :124.00</span></span></code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">simdf_auto</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##      Gender          Age             Race           Weight      </span></span>
+<span><span class="co">##  Min.   :1.00   Min.   :15.99   Min.   :1.000   Min.   : 33.23  </span></span>
+<span><span class="co">##  1st Qu.:1.00   1st Qu.:33.91   1st Qu.:3.000   1st Qu.: 65.68  </span></span>
+<span><span class="co">##  Median :2.00   Median :50.65   Median :3.000   Median : 77.92  </span></span>
+<span><span class="co">##  Mean   :1.52   Mean   :49.82   Mean   :3.248   Mean   : 81.96  </span></span>
+<span><span class="co">##  3rd Qu.:2.00   3rd Qu.:64.57   3rd Qu.:4.000   3rd Qu.: 94.31  </span></span>
+<span><span class="co">##  Max.   :2.00   Max.   :82.89   Max.   :5.000   Max.   :221.28  </span></span>
+<span><span class="co">##       BMI            BPsys            BPdia       </span></span>
+<span><span class="co">##  Min.   :13.78   Min.   : 69.03   Min.   : -1.98  </span></span>
+<span><span class="co">##  1st Qu.:24.29   1st Qu.:112.23   1st Qu.: 64.11  </span></span>
+<span><span class="co">##  Median :28.12   Median :123.04   Median : 71.94  </span></span>
+<span><span class="co">##  Mean   :29.45   Mean   :126.21   Mean   : 71.65  </span></span>
+<span><span class="co">##  3rd Qu.:33.31   3rd Qu.:136.82   3rd Qu.: 79.66  </span></span>
+<span><span class="co">##  Max.   :76.55   Max.   :215.53   Max.   :124.68</span></span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">simdf</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      Gender            Age             Race           Weight      </span></span>
 <span><span class="co">##  Min.   :0.0000   Min.   :16.00   Min.   :1.000   Min.   : 26.18  </span></span>
@@ -416,14 +476,16 @@ statistics and correlation structures.</p>
 <span><span class="co">##  3rd Qu.:33.61   3rd Qu.:138.92   3rd Qu.: 80.65  </span></span>
 <span><span class="co">##  Max.   :64.72   Max.   :204.22   Max.   :117.18</span></span></code></pre>
 <p>Correlation structures of the original and simulated datasets.</p>
-<p><img src="NORTA_demo_files/figure-html/unnamed-chunk-7-1.png" width="700"><img src="NORTA_demo_files/figure-html/unnamed-chunk-7-2.png" width="700"></p>
+<p><img src="NORTA_demo_files/figure-html/unnamed-chunk-8-1.png" width="700"><img src="NORTA_demo_files/figure-html/unnamed-chunk-8-2.png" width="700"><img src="NORTA_demo_files/figure-html/unnamed-chunk-8-3.png" width="700"></p>
 <p>We may also inspect the continuous variables regarding their
 univariate and bivariate distributions. The original data is shown in
-black, the simulated data is shown in red.</p>
-<p><img src="NORTA_demo_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+black, the simulated data is shown in red. (Note that we only use the
+first 1000 observations to speed up the plotting.)</p>
+<p><img src="NORTA_demo_files/figure-html/unnamed-chunk-9-1.png" width="700"><img src="NORTA_demo_files/figure-html/unnamed-chunk-9-2.png" width="700"></p>
 <p>From this we can observe, that the agreement between the original
-data and the simulated data is generally quite good. Note, however, that
-e.g. the slightly non-linear relationship between age and diastolic
+data and the simulated data is generally quite good. Both, automated and
+manual specification work equally well for this dataset. Note, however,
+that e.g. the slightly non-linear relationship between age and diastolic
 blood pressure cannot be fully captured by the approach, as expected.
 Furthermore, the original data shows some outliers, which are also not
 reproducible due to the parametric nature of the NORTA procedure.</p>
@@ -455,7 +517,7 @@ reproducible due to the parametric nature of the NORTA procedure.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">## [1] ggcorrplot_0.1.4    patchwork_1.1.3     ggplot2_3.4.3      </span></span>
 <span><span class="co">## [4] dplyr_1.1.2         fitdistrplus_1.1-11 survival_3.5-5     </span></span>
-<span><span class="co">## [7] MASS_7.3-60         nhanesA_0.7.4       simdata_0.3.0.9003 </span></span>
+<span><span class="co">## [7] MASS_7.3-60         nhanesA_0.7.4       simdata_0.3.0.9004 </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] sass_0.4.7        utf8_1.2.3        generics_0.1.3    xml2_1.3.5       </span></span>
