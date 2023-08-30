@@ -4,11 +4,7 @@
 \alias{function_list}
 \title{Apply list of functions to input}
 \usage{
-function_list(
-  ...,
-  stringsAsFactors = default.stringsAsFactors(),
-  check.names = TRUE
-)
+function_list(..., stringsAsFactors = FALSE, check.names = TRUE)
 }
 \arguments{
 \item{...}{Named or unnamed arguments, each of which is a function taking exactly
