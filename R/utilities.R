@@ -560,3 +560,36 @@ colapply_functions <- function(obj, flist) {
 
     res
 }
+
+#' @title Define partial function
+#' 
+#' @description 
+#' Partial functions are useful to define marginal distributions based on 
+#' additional parameters. 
+#' 
+#' @param f 
+#' Function in two or more parameters.
+#' @param ... 
+#' Parameters to be held fixed for function `f`.
+#' 
+#' @details 
+#' This helper function stores passed arguments in a list, and stores this 
+#' list in the environment of the returned function. Thus, it remembers the
+#' arguments that should be held fixed, such that the returned partial function
+#' now is a function with fewer arguments.
+#' 
+#' @return 
+#' Function object.
+#' 
+#' @examples
+#' marginal <- partial(function(x, meanx) qnorm(x, meanx), meanx = 2)
+#' marginal(0.5)
+#' 
+#' @export
+partial <- function(f, ...) {
+    f_args <- list(...)
+    
+    function(...) {
+        do.call(f, c(f_args, list(...)))
+    }
+}

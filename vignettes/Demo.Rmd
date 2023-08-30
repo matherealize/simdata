@@ -865,6 +865,70 @@ parallel::stopCluster(cl)
 knitr::kable(purrr::map(res[1:2], summary))
 ```
 
+## Partial functions
+
+The `simdata` packages makes heavy use of function objects to define simulation
+designs (e.g. also NORTA based simulation). Sometimes it may be necessary to 
+fix parameters of such functions, or define them via code. In [Example 2](ex2)
+we created a variable `v2*2` by multiplying the initial data times 2. 
+
+What if we wanted to parametrize this? If we simply use a global variable
+this will have undesirable consequences, as R may change the value of the 
+global value at any time (or remove the value, which leads to a failure of 
+the sampling procedure). 
+
+```{r}
+# parameter
+mult = 2
+transformation = simdata::function_list(
+  "v1" = function(x) x[, 1] * mult # dangerous, depends on global variable!
+)
+
+sim_design = simdata::simdesign_mvtnorm(
+        relations = diag(1), 
+        transform_initial = transformation
+)
+
+sample1 = simdata::simulate_data(sim_design, n_obs = 5, seed = 25897165)
+
+# change value of global variable
+mult = 4
+sample2 = simdata::simulate_data(sim_design, n_obs = 5, seed = 25897165)
+
+# note the different values in both columns
+knitr::kable(cbind(sample1, sample2))
+```
+
+This can be avoided by the use of `simdata::partial`. This requires to 
+specify the transformation as function in two parameters, of which one is fixed. 
+
+```{r}
+# parameter
+mult = 2
+transformation = simdata::function_list(
+    # specify function as partial 
+    "v1" = simdata::partial(function(x, mult) x[, 1] * mult, mult = mult)
+)
+
+sim_design = simdata::simdesign_mvtnorm(
+        relations = diag(1), 
+        transform_initial = transformation
+)
+
+sample1 = simdata::simulate_data(sim_design, n_obs = 5, seed = 25897165)
+
+# change value of global variable
+mult = 4
+sample2 = simdata::simulate_data(sim_design, n_obs = 5, seed = 25897165)
+
+# note both columns are equal now, as expected
+knitr::kable(cbind(sample1, sample2))
+```
+
+`simdata::partial` can be used to fix an arbitrary number of parameters, and
+may also help if a transformation is defined inside another function (as the
+parameter set inside a function may not be available outside).
+
 # R session information {#rsession}
 ```{r echo=FALSE}
 sessionInfo()
