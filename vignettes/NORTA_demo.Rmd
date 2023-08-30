@@ -87,7 +87,10 @@ variables), and therefore not a proper correlation matrix. To
 alleviate this, the `simdata` package ensures positive definiteness by using 
 the closest positive definite matrix instead. This may lead to discrepancies
 between the target correlation and the achieved correlation structure.
-- NORTA cannot reproduce non-linear relationships between variables.
+- NORTA cannot reproduce non-linear relationships between variables. This 
+may lead to issues for continuous variables and categorical variables with more
+than two categories when the goal is to faithfully re-create a real dataset that 
+features non-linear relations. 
 - The optimisation procedure to obtain $\Sigma_Z$ may take a while to compute
 when the number of variables increases. This is alleviated through the fact
 that this computation has to be done only a single time, during definition 
@@ -128,11 +131,12 @@ define a NORTA design on $k$ variables are
 - A $k \times k$ target correlation matrix
 - The $k$ marginal distributions for each variable, given as quantile functions
 
-These can be estimated from existing datasets of interest, circumventing some 
-limitations of the NORTA approach. See the [example below](#example) for the 
-setup within this package.
+These can be estimated from existing datasets of interest. `simdata` offers a
+helper function to automate this process, but the user can also specify
+the required input manually. We demonstrate both use cases in the 
+[example below](#example).
 
-## Some common distributions
+## Quantile functions for some common distributions
 
 The required marginal distributions are given as quantile functions. R provides
 implementations of many standard distributions which can be directly used, see
@@ -192,7 +196,23 @@ individual variables. Each entry of the list must be a function in one
 argument, defining the quantile function of the variable. The order of the
 entries must correspond to the order in the target correlation `cor_target`.
 
-We also use the `fitdistrplus::fitdist` function to find 
+### Automatically
+
+`simdata` offers the helper function `simdata::quantile_functions_from_data()` 
+to automate estimation of quantile functions from the available data. It does so 
+non-parametrically and implements two approaches, one more suited for 
+categorical data, and the other more suited to continuous data. In practice
+the parameter `n_small` can be used to determine a number of unique values 
+required to use the latter approach, rather than the former. See the 
+documentation for more details. 
+
+```{r echo=TRUE, results='hide', warning=FALSE}
+dist_auto = quantile_functions_from_data(df, n_small = 15) 
+```
+
+### Manually
+
+We use the `fitdistrplus::fitdist` function to find 
 appropriate distribution candidates and fit their parameters. Decisions
 regarding the fit of a distribution can be made using e.g. the 
 Akaike information criterion (AIC) or Bayesian information criterion (BIC) 
@@ -220,9 +240,7 @@ of a density estimate and use this to define the marginal quantile function.
 - Diastolic blood pressure: normal distribution parameters estimated using
   `fitdistrplus::fitdist` after removing zero values from the data
     
-The code to implement these marginal distributions is shown below. Helper 
-functions to ease the workflow will be implemented in future versions of the 
-package.
+The code to implement these marginal distributions is shown below. 
 
 ```{r echo=TRUE, results='hide', warning=FALSE}
 dist = list()
@@ -270,17 +288,39 @@ summary(fit)
 dist[["BPdia"]] = function(x) qnorm(x, mean = 72.42, sd = 11.95)
 ```
 
+### What to use?
+
+Both, the automatic and the manual way to specify marginals may be useful. 
+The automatic way works non-parametrically which may be useful when a real 
+dataset should be re-created, while the manual way allows to 
+specify marginals parametrically which may be useful when the data is defined
+from purely theoretical specifications. 
+
 ## Simulate data
 
-Now we can use the `simdata::simdesign_norta` to obtain a design using these
-specification. After that, we simulate a dataset of the same size as the 
+Now we can use `simdata::simdesign_norta` to obtain designs using both the 
+manual and automated marginal specifications. 
+After that, we simulate datasets of the same size as the 
 original data set using `simdata::simulate_data`, and compare the resulting 
 summary statistics and correlation structures.
 
 ```{r}
-dsgn = simdata::simdesign_norta(cor_target_final = cor_target, dist = dist, 
+# use automated specification
+dsgn_auto = simdata::simdesign_norta(cor_target_final = cor_target, 
+                                     dist = dist_auto, 
+                                     transform_initial = data.frame,
+                                     names_final = names(dist), 
+                                     seed_initial = 1)
+
+simdf_auto = simdata::simulate_data(dsgn_auto, nrow(df), seed = 2)
+
+# use manual specification
+dsgn = simdata::simdesign_norta(cor_target_final = cor_target, 
+                                dist = dist, 
                                 transform_initial = data.frame,
-                                names_final = names(dist), seed_initial = 1)
+                                names_final = names(dist), 
+                                seed_initial = 1)
+
 simdf = simdata::simulate_data(dsgn, nrow(df), seed = 2)
 ```
 
@@ -290,6 +330,7 @@ Summary statistics of the original and simulated datasets.
 
 ```{r message=FALSE, warning=FALSE}
 summary(df)
+summary(simdf_auto)
 summary(simdf)
 ```
 
@@ -297,12 +338,14 @@ Correlation structures of the original and simulated datasets.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggcorrplot::ggcorrplot(cor(df), title = "Original", lab = TRUE)
-ggcorrplot::ggcorrplot(cor(simdf), title = "Simulated", lab = TRUE)
+ggcorrplot::ggcorrplot(cor(simdf_auto), title = "Simulated (automated)", lab = TRUE)
+ggcorrplot::ggcorrplot(cor(simdf), title = "Simulated (manual)", lab = TRUE)
 ```
 
 We may also inspect the continuous variables regarding their univariate and
 bivariate distributions. The original data is shown in black, the simulated
-data is shown in red. 
+data is shown in red. (Note that we only use the first 1000 observations to 
+speed up the plotting.) 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 vars = c("Age", "Weight", "BMI", "BPsys", "BPdia")
@@ -323,23 +366,50 @@ for (i in seq_along(vars)) for (j in seq_along(vars)) {
             geom_density(data = simdf, color = "red") + 
             coord_cartesian(xlim = limits[[vari]])
     } else if (i < j) {
-        p = ggplot(df, aes_string(x = vari, y = varj)) + 
-            geom_point(alpha = 0.05) + 
+        p = ggplot(df[1:1000, ], aes_string(x = vari, y = varj)) + 
+            geom_point(alpha = 0.04) + 
             coord_cartesian(xlim = limits[[vari]], ylim = limits[[varj]])
     } else {
-        p = ggplot(simdf, aes_string(x = varj, y = vari)) + 
-            geom_point(color = "red", alpha = 0.05) + 
+        p = ggplot(simdf_auto[1:1000, ], aes_string(x = varj, y = vari)) + 
+            geom_point(color = "red", alpha = 0.04) + 
             coord_cartesian(xlim = limits[[varj]], ylim = limits[[vari]])
     }
     plist = append(plist, list(p + theme_bw(base_size = 7)))
 }
 
-p = patchwork::wrap_plots(plist)
+p = patchwork::wrap_plots(plist) + 
+    patchwork::plot_annotation(title = "Simulated (automated)")
+print(p)
+
+plist = list()
+for (i in seq_along(vars)) for (j in seq_along(vars)) {
+    vari = vars[i]
+    varj = vars[j]
+    if (i == j) {
+        p = ggplot(df, aes_string(x = vari)) + 
+            geom_density() + 
+            geom_density(data = simdf, color = "red") + 
+            coord_cartesian(xlim = limits[[vari]])
+    } else if (i < j) {
+        p = ggplot(df[1:1000, ], aes_string(x = vari, y = varj)) + 
+            geom_point(alpha = 0.04) + 
+            coord_cartesian(xlim = limits[[vari]], ylim = limits[[varj]])
+    } else {
+        p = ggplot(simdf[1:1000, ], aes_string(x = varj, y = vari)) + 
+            geom_point(color = "red", alpha = 0.04) + 
+            coord_cartesian(xlim = limits[[varj]], ylim = limits[[vari]])
+    }
+    plist = append(plist, list(p + theme_bw(base_size = 7)))
+}
+
+p = patchwork::wrap_plots(plist) +
+    patchwork::plot_annotation(title = "Simulated (manual)")
 print(p)
 ```
 
 From this we can observe, that the agreement between the original data and
-the simulated data is generally quite good. Note, however, that e.g. the 
+the simulated data is generally quite good. Both, automated and manual 
+specification work equally well for this dataset. Note, however, that e.g. the 
 slightly non-linear relationship between age and diastolic blood pressure
 cannot be fully captured by the approach, as expected. Furthermore, the 
 original data shows some outliers, which are also not reproducible due to the
