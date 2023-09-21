@@ -664,6 +664,8 @@ apply_array <- function(obj, dim, fun) {
 #'
 #' @return
 #' Matrix or data.frame (same type as `obj`) with names taken from `obj`.
+#' 
+#' @export
 colapply_functions <- function(obj, flist) {
     if (length(dim(obj)) != 2)
         stop("'obj' must be a 2-dimensional array.")
