@@ -2,6 +2,8 @@
 Adding automated quantile function estimation for NORTA via the 
 `quantile_functions_from_data()` utility.
 
+Fixed errors about missing `colapply_functions()` in specific situations.
+
 # simdata v0.3.0.9003
 Implemented partial functions.
 
