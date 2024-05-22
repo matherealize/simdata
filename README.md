@@ -13,6 +13,11 @@ devtools::install_github("matherealize/simdata")
 # devtools::install_github("matherealize/simdata", build_vignettes = TRUE)
 ```
 
+In case you encounter an http 401 error during installation, this is not due
+to the package itself, but due to rate limits set by Github. Please refer to 
+[these steps from the remotes Github repository](https://github.com/r-lib/remotes/issues/330#issuecomment-578474009) 
+to resolve the issue.
+
 ## Usage
 
 Please take a look at the package vignettes:
