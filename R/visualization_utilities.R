@@ -158,7 +158,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
     } else if (tolower(edge.color) == "ramp") {
         # palette with 21 segments, white in the middle
         segments <- seq(-1, 1, 2 / 21)
-        pal <- colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
+        pal <- grDevices::colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
         pal_ind <- cut(edge_correlations, breaks = segments, 
                        include.lowest = TRUE, 
                        ordered_result = TRUE)
@@ -172,7 +172,7 @@ plot_cor_network.default <- function(obj, categorical_indices = NULL,
         segments <- seq(-1, 1, 2 / 21)
         segments[1:11] <- segments[1:11] * abs(lower)
         segments[12:22] <- segments[12:22] * upper
-        pal <- colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
+        pal <- grDevices::colorRampPalette(colors = c("#003ed6", "white", "#d60000"))
         pal_ind <- cut(edge_correlations, breaks = segments, 
                        include.lowest = TRUE, 
                        ordered_result = TRUE)

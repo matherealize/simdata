@@ -1,3 +1,7 @@
+# simdata v0.4.0
+Release for CRAN with updates in vignettes to reflect recent changes to nhanesA
+package.
+
 # simdata v0.3.0.9004
 Adding automated quantile function estimation for NORTA via the 
 `quantile_functions_from_data()` utility.

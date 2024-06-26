@@ -8,9 +8,11 @@ is_cor_matrix(m, tol = 1e-09)
 }
 \arguments{
 \item{m}{Matrix.}
+
+\item{tol}{Tolerance for checking diagonal elements.}
 }
 \value{
-TRUE if matrix is a correlation matrix, else FALSE.
+\code{TRUE} if matrix is a correlation matrix, else \code{FALSE}.
 }
 \description{
 Checks if matrix is numeric, symmetric, has diagonal elements of one,

@@ -173,14 +173,14 @@ cor_to_cov <- function(m, sds = NULL) {
 #' has only entries in `[-1, 1]`, and is positive definite. Prints a warning
 #' if a problem was found.
 #'
-#' @param m
-#' Matrix.
+#' @param m Matrix.
+#' @param tol Tolerance for checking diagonal elements.
 #'
 #' @return
-#' TRUE if matrix is a correlation matrix, else FALSE.
+#' `TRUE` if matrix is a correlation matrix, else `FALSE`.
 #'
 #' @export
-is_cor_matrix <- function(m, tol=10e-10) {
+is_cor_matrix <- function(m, tol = 10e-10) {
     ok <- TRUE
     if (!is.numeric(m)) {
         warning("'m' must be numeric.")
@@ -371,16 +371,17 @@ optimize_cor_mat <- function(cor_target, dist,
 #' A matrix or data.frame for which quantile function should be estimated.
 #' @param method_density
 #' Interpolation method used for density based quantile functions, 
-#' passed to \code{\link{stats::approxfun}}. See Details.
+#' passed to \code{\link[stats:approxfun]{stats::approxfun}}. See Details.
 #' @param n_density
 #' Number of points at which the density is estimated for density bsed
-#' quantile, functions, passed to \code{\link{stats::density}}.
+#' quantile, functions, passed to \code{\link[stats:density]{stats::density}}.
 #' @param method_quantile
 #' Interpolation method used for quantile based quantile functions, 
-#' passed to \code{\link{stats::approxfun}}. See Details.
+#' passed to \code{\link[stats:approxfun]{stats::approxfun}}. See Details.
 #' @param probs_quantile
 #' Specification of quantiles to be estimated from data for quantile based 
-#' quantile functions, passed to \code{\link{stats::quantile}}. See Details. 
+#' quantile functions, passed to \code{\link[stats:quantile]{stats::quantile}}. 
+#' See Details. 
 #' @param n_small
 #' An integer giving the number of distinct values below which quantile 
 #' functions are estimated using `quantile_function_from_quantiles()` (more 
@@ -389,6 +390,9 @@ optimize_cor_mat <- function(cor_target, dist,
 #' A vector of names indicating columns for which the quantile function 
 #' should be estimated using `quantile_function_from_quantiles()`. Overrides
 #' `n_small`.
+#' @param x 
+#' Single vector representing variable input to `quantile_function_from_density()`
+#' or `quantile_function_from_quantiles()`. 
 #' @param ... 
 #' Passed to `quantile_function_from_density()`. 
 #' 
@@ -413,7 +417,7 @@ optimize_cor_mat <- function(cor_target, dist,
 #' @return 
 #' A named list of functions with length `ncol(data)` giving the quantile 
 #' functions of the input data. Each entry is a function returned from 
-#' \code{\link{stats::approxfun}}.
+#' \code{\link[stats:approxfun]{stats::approxfun}}.
 #' 
 #' @seealso 
 #' \code{\link{simdesign_norta}} 
@@ -437,14 +441,14 @@ quantile_functions_from_data <- function(data,
         if ((length(unique(data[, col])) < n_small) || (col %in% use_quantile)) {
             dist[[colnames[col]]] <- quantile_function_from_quantiles(
                 data[, col], 
-                method = method_quantile, 
-                probs = probs_quantile
+                method_quantile = method_quantile, 
+                probs_quantile = probs_quantile
             )
         } else {
             dist[[colnames[col]]] <- quantile_function_from_density(
                 data[, col], 
-                method = method_density, 
-                n = n_density, 
+                method_density = method_density, 
+                n_density = n_density, 
                 ...
             )
         }
@@ -453,32 +457,32 @@ quantile_functions_from_data <- function(data,
     dist
 }
 
-#' @describeIn quantile_functions_from_data Estimate quantile functions from density.
+#' @rdname quantile_functions_from_data
 #' @export
 quantile_function_from_density <- function(x, 
-                                           method = "linear", 
-                                           n = 200, 
+                                           method_density = "linear", 
+                                           n_density = 200, 
                                            ...) {
-    dens <- density(x, cut = 1, n = n, ...)
+    dens <- stats::density(x, cut = 1, n = n_density, ...)
     int_dens <- cbind(data = dens$x, cdf = cumsum(dens$y))
     int_dens[, "cdf"] <- int_dens[, "cdf"] / max(int_dens[, "cdf"])
-    approxfun(
+    stats::approxfun(
         int_dens[, "cdf"], int_dens[, "data"], 
         yleft = min(int_dens[, "data"]), 
         yright = max(int_dens[, "data"]), 
-        method = method
+        method = method_density
     )
 }
 
-#' @describeIn quantile_functions_from_data Estimate quantile function from quantiles.
+#' @rdname quantile_functions_from_data
 #' @export
 quantile_function_from_quantiles <- function(x,
-                                             method = "constant",
-                                             probs = seq(0, 1, 0.01)) {
-    approxfun(
-        probs, quantile(x, probs = probs), 
+                                             method_quantile = "constant",
+                                             probs_quantile = seq(0, 1, 0.01)) {
+    stats::approxfun(
+        probs_quantile, stats::quantile(x, probs = probs_quantile), 
         yleft = min(x), yright = max(x),     
-        method = method
+        method = method_quantile
     )
 }
 

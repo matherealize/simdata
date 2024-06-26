@@ -160,7 +160,8 @@ bmi ('BMI'), systolic ('BPsys') and diastolic blood pressure ('BPdia').
 These variabes demonstrate several different kinds of distributions. 
 For a detailed description of the data, please see the documentation at 
 https://www.cdc.gov/nchs/nhanes.htm. Here we are not concerned with the exact
-codings of the variables, so we will not add labels to factor variables. 
+codings of the variables, so we will remove labels to factor variables and work
+with numeric codes. 
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 df = nhanesA::nhanes("DEMO_J") %>% 
@@ -174,7 +175,9 @@ df = nhanesA::nhanes("DEMO_J") %>%
                 BPsys = BPXSY1, 
                 BPdia = BPXDI1) %>% 
   filter(complete.cases(.)) %>% 
-  filter(Age > 18) 
+  filter(Age > 18) %>% 
+  mutate(Gender = as.numeric(Gender), 
+         Race = as.numeric(Race))
 
 print(head(df))
 ```
@@ -249,14 +252,14 @@ dist = list()
 dist[["Gender"]] = function(x) qbinom(x, size = 1, prob = 0.5)
 
 # age
-dens = density(df$Age, cut = 1) # cut defines how to deal with boundaries
+dens = stats::density(df$Age, cut = 1) # cut defines how to deal with boundaries
 # integrate
 int_dens = cbind(Age = dens$x, cdf = cumsum(dens$y))
 # normalize to obtain cumulative distribution function
 int_dens[, "cdf"] = int_dens[, "cdf"] / max(int_dens[, "cdf"])
 # derive quantile function
 # outside the defined domain retun minimum and maximum age, respectively
-dist[["Age"]] = approxfun(int_dens[, "cdf"], int_dens[, "Age"], 
+dist[["Age"]] = stats::approxfun(int_dens[, "cdf"], int_dens[, "Age"], 
                           yleft = min(int_dens[, "Age"]), 
                           yright = max(int_dens[, "Age"]))
 

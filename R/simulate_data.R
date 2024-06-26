@@ -364,7 +364,7 @@ estimate_final_correlation <- function(obj,
 
     if (is.character(cor_type)) {
         f_cor <- function(x, ...) stats::cor(x, method = cor_type, ...)
-    } else if (class(cor_type) == "function") {
+    } else if (inherits(cor_type, "function")) {
         f_cor <- cor_type
     } else f_cor <- function(x, ...) stats::cor(x, method = "pearson", ...)
 

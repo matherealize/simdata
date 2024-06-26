@@ -17,28 +17,34 @@ quantile_functions_from_data(
   ...
 )
 
-quantile_function_from_density(x, method = "linear", n = 200, ...)
+quantile_function_from_density(
+  x,
+  method_density = "linear",
+  n_density = 200,
+  ...
+)
 
 quantile_function_from_quantiles(
   x,
-  method = "constant",
-  probs = seq(0, 1, 0.01)
+  method_quantile = "constant",
+  probs_quantile = seq(0, 1, 0.01)
 )
 }
 \arguments{
 \item{data}{A matrix or data.frame for which quantile function should be estimated.}
 
 \item{method_density}{Interpolation method used for density based quantile functions,
-passed to \code{\link{stats::approxfun}}. See Details.}
+passed to \code{\link[stats:approxfun]{stats::approxfun}}. See Details.}
 
 \item{n_density}{Number of points at which the density is estimated for density bsed
-quantile, functions, passed to \code{\link{stats::density}}.}
+quantile, functions, passed to \code{\link[stats:density]{stats::density}}.}
 
 \item{method_quantile}{Interpolation method used for quantile based quantile functions,
-passed to \code{\link{stats::approxfun}}. See Details.}
+passed to \code{\link[stats:approxfun]{stats::approxfun}}. See Details.}
 
 \item{probs_quantile}{Specification of quantiles to be estimated from data for quantile based
-quantile functions, passed to \code{\link{stats::quantile}}. See Details.}
+quantile functions, passed to \code{\link[stats:quantile]{stats::quantile}}.
+See Details.}
 
 \item{n_small}{An integer giving the number of distinct values below which quantile
 functions are estimated using \code{quantile_function_from_quantiles()} (more
@@ -49,11 +55,14 @@ should be estimated using \code{quantile_function_from_quantiles()}. Overrides
 \code{n_small}.}
 
 \item{...}{Passed to \code{quantile_function_from_density()}.}
+
+\item{x}{Single vector representing variable input to \code{quantile_function_from_density()}
+or \code{quantile_function_from_quantiles()}.}
 }
 \value{
 A named list of functions with length \code{ncol(data)} giving the quantile
 functions of the input data. Each entry is a function returned from
-\code{\link{stats::approxfun}}.
+\code{\link[stats:approxfun]{stats::approxfun}}.
 }
 \description{
 Helper to estimate quantile functions from data for NORTA
@@ -76,13 +85,6 @@ linearly (default, other options are possible). This is most useful for
 continuous data. Implemented in \code{quantile_function_from_density()}.
 }
 }
-\section{Functions}{
-\itemize{
-\item \code{quantile_function_from_density()}: Estimate quantile functions from density.
-
-\item \code{quantile_function_from_quantiles()}: Estimate quantile function from quantiles.
-
-}}
 \seealso{
 \code{\link{simdesign_norta}}
 }
