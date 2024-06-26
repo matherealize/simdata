@@ -103,7 +103,7 @@ detailed information. In this vignette we will prefix all relevant
 function calls by `::` to show the package which implements the function - this
 is not necessary but only done for demonstration purposes.
 
-# Example 1: Independent data, no transformation
+# Example 1: Independent data, no transformation {#ex1}
 We demonstrate a very basic example here: 
 
 - Setup a design to sample from 5 independent normal variables
@@ -134,8 +134,9 @@ print(p)
 ```
 
 # Example 2: Independent data, with transformation {#ex2}
+
 In this example we transform the initial data to obtain a more 
-interesting dataset. The basic principle follows [Example 1](ex1).
+interesting dataset. The basic principle follows [Example 1](#ex1).
 
 - Create a transformation function `transformation` using `simdata::function_list`
     - Pass functions that transform the columns of the simulated, initial
@@ -869,7 +870,7 @@ knitr::kable(purrr::map(res[1:2], summary))
 
 The `simdata` packages makes heavy use of function objects to define simulation
 designs (e.g. also NORTA based simulation). Sometimes it may be necessary to 
-fix parameters of such functions, or define them via code. In [Example 2](ex2)
+fix parameters of such functions, or define them via code. In [Example 2](#ex2)
 we created a variable `v2*2` by multiplying the initial data times 2. 
 
 What if we wanted to parametrize this? If we simply use a global variable

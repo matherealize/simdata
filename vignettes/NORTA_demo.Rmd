@@ -143,7 +143,7 @@ implementations of many standard distributions which can be directly used, see
 the help on `distributions`. The quantile functions use the prefix "q", as in 
 e.g. `qnorm` or `qbinom`. Further implementations can be found in the 
 packages `extraDistr`, `actuar` and many others (see
-https://cran.r-project.org/web/views/Distributions.html). 
+https://CRAN.R-project.org/view=Distributions). 
 
 # Example {#example}
 

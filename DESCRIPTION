@@ -2,7 +2,6 @@ Package: simdata
 Type: Package
 Title: Generate Simulated Datasets
 Version: 0.4.0
-Author: Michael Kammer [aut, cre]
 Authors@R: person("Michael", "Kammer", 
     email = "michael.kammer@meduniwien.ac.at", 
     role = c("aut", "cre"), 
@@ -10,7 +9,7 @@ Authors@R: person("Michael", "Kammer",
 Maintainer: Michael Kammer <michael.kammer@meduniwien.ac.at>
 Description: Generate simulated datasets from an initial underlying
     distribution and apply transformations to obtain realistic data. Implements
-    the NORTA (Normal-to-anything) approach and other data generating
+    the 'NORTA' (Normal-to-anything) approach and other data generating
     mechanisms. Simple network visualization tools are provided to facilitate 
     communicating the simulation setup.
 License: GPL-3
