@@ -77,12 +77,15 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"simdata"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Alternatively, install the development version from GitHub:</span></span>
+<span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"matherealize/simdata"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># to also build vignettes locally use</span></span>
 <span><span class="co"># devtools::install_github("matherealize/simdata", build_vignettes = TRUE)</span></span></code></pre></div>
-<p>In case you encounter an http 401 error during installation, this is not due to the package itself, but due to rate limits set by Github. Please refer to <a href="https://github.com/r-lib/remotes/issues/330#issuecomment-578474009" class="external-link">these steps from the remotes Github repository</a> to resolve the issue.</p>
+<p>In case you encounter an http 401 error during installation from GitHub, this is not due to the package itself, but due to rate limits set by GitHub. Please refer to <a href="https://github.com/r-lib/remotes/issues/330#issuecomment-578474009" class="external-link">these steps from the remotes Github repository</a> to resolve the issue.</p>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
