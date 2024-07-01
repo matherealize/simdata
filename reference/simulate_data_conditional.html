@@ -100,7 +100,7 @@ condition IS met and matrix can be accepted. Intended to be used with
 
 
 <dt>reject_max_iter</dt>
-<dd><p>Intger &gt; 0. In case of rejection, how many times should a new datamatrix be
+<dd><p>Integer &gt; 0. In case of rejection, how many times should a new datamatrix be
 simulated until the conditions in <code>reject</code> are met?</p></dd>
 
 
@@ -194,11 +194,21 @@ See the example below.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">dsgn</span> <span class="op">&lt;-</span> <span class="fu"><a href="simdesign_mvtnorm.html">simdesign_mvtnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">simulate_data_conditional</span><span class="op">(</span><span class="va">dsgn</span>, <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>    reject <span class="op">=</span> <span class="fu"><a href="function_list.html">function_list</a></span><span class="op">(</span><span class="va">is_collinear</span>, <span class="va">contains_constant</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dsgn</span> <span class="op">&lt;-</span> <span class="fu"><a href="simdesign_mvtnorm.html">simdesign_mvtnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">simulate_data_conditional</span><span class="op">(</span><span class="va">dsgn</span>, <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>    reject <span class="op">=</span> <span class="fu"><a href="function_list.html">function_list</a></span><span class="op">(</span><span class="va">is_collinear</span>, <span class="va">contains_constant</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    seed <span class="op">=</span> <span class="fl">18</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               v1         v2         v3          v4         v5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]  0.9264592  1.8228212 -1.6105669 -0.28510975 -0.3420730</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]  0.3661761 -1.3270408  2.4125922  0.06381535  1.5455148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -1.8847271  0.9114273 -1.3054559  0.04207365 -0.7853306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]  1.2116326 -0.9245488 -0.6780290  1.33215937  0.4625876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] -1.3022219  1.1084913 -0.7721368 -0.67717026  0.4643073</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1.9503188 -1.0555950 -0.1178095 -0.25952112 -1.7482390</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -0.9088646  0.2069206  0.3134738  1.16177107 -1.6939916</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]  1.0352176  0.6658341 -1.2718919  0.60963927  0.8209692</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  0.6948703  2.5308357  0.4522430  0.98874442 -0.1265098</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]  0.5149085  0.8279297 -1.3236720 -0.32455266 -0.5578677</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

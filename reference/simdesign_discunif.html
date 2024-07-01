@@ -102,6 +102,31 @@ building up clustering exercises.</p>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p>List object with class attribute "simdesign_discunif" (S3 class), inheriting
+from "simdesign". It contains the same entries as a <code><a href="simdesign.html">simdesign</a></code></p>
+
+
+<p>object but in addition the following entries:</p>
+
+
+<dl><dt><code>r_min</code></dt>
+<dd></dd>
+
+<dt><code>r_max</code></dt>
+<dd></dd>
+
+<dt><code>angle_min</code></dt>
+<dd></dd>
+
+<dt><code>angle_max</code></dt>
+<dd></dd>
+
+
+</dl></div>
+    <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The distribution of points on a disk depends on the radius - the farther out,
 the more area the points need to cover. Thus, simply sampling two uniform
@@ -114,16 +139,17 @@ values for radius and angle will not work. See references.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">disc_sampler</span> <span class="op">&lt;-</span> <span class="fu">simdesign_discunif</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">disc_sampler</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">disc_sampler</span> <span class="op">&lt;-</span> <span class="fu">simdesign_discunif</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">disc_sampler</span>, <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">19</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="simdesign_discunif-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ring_segment_sampler</span> <span class="op">&lt;-</span> <span class="fu">simdesign_discunif</span><span class="op">(</span>r_min <span class="op">=</span> <span class="fl">0.5</span>, angle_min <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">pi</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">ring_segment_sampler</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">ring_segment_sampler</span>, <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">19</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="simdesign_discunif-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">circle_sampler</span> <span class="op">&lt;-</span> <span class="fu">simdesign_discunif</span><span class="op">(</span>r_min <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">circle_sampler</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">circle_sampler</span>, <span class="fl">1000</span>, seed <span class="op">=</span> <span class="fl">19</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="simdesign_discunif-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

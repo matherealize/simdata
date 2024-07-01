@@ -219,11 +219,20 @@ pass it to this function along with the other arguments. See
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">generator</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="fu">mvtnorm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html" class="external-link">rmvnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">generator</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="fu">mvtnorm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/mvtnorm/man/Mvnorm.html" class="external-link">rmvnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sim_design</span> <span class="op">&lt;-</span> <span class="fu">simdesign</span><span class="op">(</span><span class="va">generator</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">sim_design</span>, <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="simulate_data.html">simulate_data</a></span><span class="op">(</span><span class="va">sim_design</span>, <span class="fl">10</span>, seed <span class="op">=</span> <span class="fl">19</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               v1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -1.1894537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]  0.3885812</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -0.3443333</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -0.5478961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]  0.9806622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -0.2366460</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]  0.8097397</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -0.7447795</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -0.2597870</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -0.1830838</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
