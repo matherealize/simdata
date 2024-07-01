@@ -26,6 +26,18 @@ simdesign_discunif(
 
 \item{...}{Further arguments are passed to the \code{\link{simdesign}} constructor.}
 }
+\value{
+List object with class attribute "simdesign_discunif" (S3 class), inheriting
+from "simdesign". It contains the same entries as a \code{\link{simdesign}}
+object but in addition the following entries:
+
+\describe{
+\item{\code{r_min}}{}
+\item{\code{r_max}}{}
+\item{\code{angle_min}}{}
+\item{\code{angle_max}}{}
+}
+}
 \description{
 Provides 2-dimensional points, spread uniformly over disc, or partial
 disc segment (i.e. a circle, or ring, or ring segment). Useful for e.g.
@@ -37,16 +49,14 @@ the more area the points need to cover. Thus, simply sampling two uniform
 values for radius and angle will not work. See references.
 }
 \examples{
-\dontrun{
 disc_sampler <- simdesign_discunif()
-plot(simulate_data(disc_sampler, 1000))
+plot(simulate_data(disc_sampler, 1000, seed = 19))
 
 ring_segment_sampler <- simdesign_discunif(r_min = 0.5, angle_min = 0.5 * pi)
-plot(simulate_data(ring_segment_sampler, 1000))
+plot(simulate_data(ring_segment_sampler, 1000, seed = 19))
 
 circle_sampler <- simdesign_discunif(r_min = 1)
-plot(simulate_data(circle_sampler, 1000))
-}
+plot(simulate_data(circle_sampler, 1000, seed = 19))
 
 }
 \references{

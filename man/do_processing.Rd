@@ -45,9 +45,7 @@ to take care of everything themselves! Furthermore, output of the
 functions is not checked either.
 }
 \examples{
-\dontrun{
-do_processing(diag(5),
+do_processing(diag(5), 
     functions = list(scale = list(center = TRUE, scale = FALSE)))
-}
 
 }

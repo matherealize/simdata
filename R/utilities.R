@@ -68,9 +68,7 @@ is_collinear <- function(x) {
 #' \code{\link{cor_to_upper}}
 #'
 #' @examples
-#' \dontrun{
 #' cor_from_upper(2, rbind(c(1, 2, 0.8)))
-#' }
 #'
 #' @export
 cor_from_upper <- function(n_var, entries = NULL) {
@@ -518,7 +516,6 @@ quantile_function_from_quantiles <- function(x,
 #' it is recommended to only pass named function arguments.
 #'
 #' @examples
-#' \dontrun{
 #' f <- function_list(
 #'     v1 = function(x) x[, 1] * 2,
 #'     v2 = function(x) x[, 2] + 10)
@@ -533,7 +530,6 @@ quantile_function_from_quantiles <- function(x,
 #'     X1_X2 = function(x) x[, 2] + 10) # add new column
 #'
 #' f(diag(2))
-#' }
 #'
 #' @return
 #' Function with a single input which outputs a data.frame. Has special

@@ -65,11 +65,9 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
 #' generator <- function(n) mvtnorm::rmvnorm(n, mean = 0)
 #' sim_design <- simdesign(generator)
-#' simulate_data(sim_design, 10)
-#' }
+#' simulate_data(sim_design, 10, seed = 19)
 #'
 #' @seealso
 #' \code{\link{simdesign_mvtnorm}},
@@ -115,9 +113,9 @@ simdesign <- function(generator,
     )
 
     if (inherits(res, "condition")) {
-        print(res)
         warning(
-            "Unable to simulate from design. ",
+            "Unable to simulate from design, returning error: ",
+            sprintf("%s", res),
             "Please double check arguments. ",
             "Returning the potentially faulty design object."
         )
@@ -532,21 +530,31 @@ simdesign_mvtnorm <- function(relations_initial,
 #' The distribution of points on a disk depends on the radius - the farther out,
 #' the more area the points need to cover. Thus, simply sampling two uniform
 #' values for radius and angle will not work. See references.
+#' 
+#' @return
+#' List object with class attribute "simdesign_discunif" (S3 class), inheriting
+#' from "simdesign". It contains the same entries as a \code{\link{simdesign}}
+#' object but in addition the following entries:
+#'
+#' \describe{
+#' \item{`r_min`}{}
+#' \item{`r_max`}{}
+#' \item{`angle_min`}{}
+#' \item{`angle_max`}{}
+#' }
 #'
 #' @references
 #' \url{https://mathworld.wolfram.com/DiskPointPicking.html}
 #'
 #' @examples
-#' \dontrun{
 #' disc_sampler <- simdesign_discunif()
-#' plot(simulate_data(disc_sampler, 1000))
+#' plot(simulate_data(disc_sampler, 1000, seed = 19))
 #'
 #' ring_segment_sampler <- simdesign_discunif(r_min = 0.5, angle_min = 0.5 * pi)
-#' plot(simulate_data(ring_segment_sampler, 1000))
+#' plot(simulate_data(ring_segment_sampler, 1000, seed = 19))
 #'
 #' circle_sampler <- simdesign_discunif(r_min = 1)
-#' plot(simulate_data(circle_sampler, 1000))
-#' }
+#' plot(simulate_data(circle_sampler, 1000, seed = 19))
 #'
 #' @importFrom stats runif
 #'

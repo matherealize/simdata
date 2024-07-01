@@ -82,6 +82,12 @@
 #' @details
 #' For an explanation of all parameters not listed here, please refer to
 #' \code{\link[igraph:plot.igraph]{igraph::plot}}.
+#' 
+#' @return 
+#' If `return_network` is `TRUE`, then an `igraph` network object is returned
+#' that can be plotted by the user using e.g. the interactive
+#' \code{\link[igraph:tkplot]{igraph::tkplot}} function. Otherwise, the network 
+#' object is plotted directly and no output is returned.
 #'
 #' @seealso
 #' \code{\link{plot_cor_network.simdesign_mvtnorm}},
@@ -233,6 +239,10 @@ plot_cor_network.simdesign_mvtnorm <- function(obj, ...) {
 #' @param show_categorical
 #' If TRUE, marks categorical variables differently from numeric ones.
 #' Determined by the `types_final` slot of the `obj` argument.
+#' @param return_network
+#' If TRUE, the `igraph` network object is returned and can be plotted by
+#' the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}}
+#' function.
 #' @param ...
 #' Passed to \code{\link{plot_cor_network}}.
 #'
@@ -240,6 +250,12 @@ plot_cor_network.simdesign_mvtnorm <- function(obj, ...) {
 #' This function is useful to estimate the correlation network of a simulation
 #' setup after the initial underlying distribution `Z` has been transformed to
 #' the final dataset `X`.
+#' 
+#' @return 
+#' If `return_network` is `TRUE`, then an `igraph` network object is returned
+#' that can be plotted by the user using e.g. the interactive
+#' \code{\link[igraph:tkplot]{igraph::tkplot}} function. Otherwise, the network 
+#' object is plotted directly and no output is returned.
 #'
 #' @seealso
 #' \code{\link{plot_cor_network}},
@@ -250,6 +266,7 @@ plot_estimated_cor_network <- function(obj, n_obs = 100000,
                                        cor_type = "pearson",
                                        seed = NULL,
                                        show_categorical = TRUE,
+                                       return_network = FALSE,
                                        ...) {
 
     if (show_categorical) {
@@ -265,5 +282,7 @@ plot_estimated_cor_network <- function(obj, n_obs = 100000,
     plot_cor_network(relations,
         seed = seed,
         categorical_indices = categorical_indices,
-        vertex_labels = obj$names_final, ...)
+        vertex_labels = obj$names_final,
+        return_network = return_network, 
+        ...)
 }

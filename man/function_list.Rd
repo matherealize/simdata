@@ -42,7 +42,6 @@ resulting data.frames have empty column names if that is the case. Thus,
 it is recommended to only pass named function arguments.
 }
 \examples{
-\dontrun{
 f <- function_list(
     v1 = function(x) x[, 1] * 2,
     v2 = function(x) x[, 2] + 10)
@@ -57,7 +56,6 @@ f <- function_list(
     X1_X2 = function(x) x[, 2] + 10) # add new column
 
 f(diag(2))
-}
 
 }
 \seealso{

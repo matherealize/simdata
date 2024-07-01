@@ -10,6 +10,7 @@ plot_estimated_cor_network(
   cor_type = "pearson",
   seed = NULL,
   show_categorical = TRUE,
+  return_network = FALSE,
   ...
 )
 }
@@ -29,7 +30,17 @@ arguments which can be set via \code{...}) and output a single matrix.}
 \item{show_categorical}{If TRUE, marks categorical variables differently from numeric ones.
 Determined by the \code{types_final} slot of the \code{obj} argument.}
 
+\item{return_network}{If TRUE, the \code{igraph} network object is returned and can be plotted by
+the user using e.g. the interactive \code{\link[igraph:tkplot]{igraph::tkplot}}
+function.}
+
 \item{...}{Passed to \code{\link{plot_cor_network}}.}
+}
+\value{
+If \code{return_network} is \code{TRUE}, then an \code{igraph} network object is returned
+that can be plotted by the user using e.g. the interactive
+\code{\link[igraph:tkplot]{igraph::tkplot}} function. Otherwise, the network
+object is plotted directly and no output is returned.
 }
 \description{
 Based on approximation via simulation specified by given simulation design.

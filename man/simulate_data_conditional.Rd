@@ -30,7 +30,7 @@ be rejected. Functions must output TRUE if condition IS NOT met / FALSE if
 condition IS met and matrix can be accepted. Intended to be used with
 \code{\link{function_list}}. See details.}
 
-\item{reject_max_iter}{Intger > 0. In case of rejection, how many times should a new datamatrix be
+\item{reject_max_iter}{Integer > 0. In case of rejection, how many times should a new datamatrix be
 simulated until the conditions in \code{reject} are met?}
 
 \item{on_reject}{If "stop", an error is returned if after \code{reject_max_iter} times no
@@ -102,11 +102,10 @@ See the example below.
 }
 
 \examples{
-\dontrun{
 dsgn <- simdesign_mvtnorm(diag(5))
-simulate_data_conditional(dsgn, 100,
-    reject = function_list(is_collinear, contains_constant))
-}
+simulate_data_conditional(dsgn, 10,
+    reject = function_list(is_collinear, contains_constant), 
+    seed = 18)
 
 }
 \seealso{

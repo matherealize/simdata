@@ -29,6 +29,10 @@ arguments which can be set via \code{...}) and output a single matrix.}
 matrix (either \code{\link[stats:cor]{stats::cor}} or the user provided
 function).}
 }
+\value{
+A numeric matrix given by the pairwise correlation coefficients for each
+pair of variables defined by \code{obj} and computed according to \code{cor_type}.
+}
 \description{
 Used to obtain an estimate of the correlation matrix after transforming
 the initial data.

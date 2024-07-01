@@ -62,10 +62,8 @@
 #' Data.frame or matrix with `n_obs` rows for simulated dataset `X`.
 #'
 #' @examples
-#' \dontrun{
 #' generator <- function(n) mvtnorm::rmvnorm(n, mean = 0)
-#' simulate_data(generator, 10)
-#' }
+#' simulate_data(generator, 10, seed = 24)
 #'
 #' @seealso
 #' \code{\link{simdesign}},
@@ -189,7 +187,7 @@ simulate_data.simdesign <- function(generator,
 #' condition IS met and matrix can be accepted. Intended to be used with
 #' \code{\link{function_list}}. See details.
 #' @param reject_max_iter
-#' Intger > 0. In case of rejection, how many times should a new datamatrix be
+#' Integer > 0. In case of rejection, how many times should a new datamatrix be
 #' simulated until the conditions in `reject` are met?
 #' @param on_reject
 #' If "stop", an error is returned if after `reject_max_iter` times no
@@ -259,11 +257,10 @@ simulate_data.simdesign <- function(generator,
 #' \code{\link{contains_constant}}
 #'
 #' @examples
-#' \dontrun{
 #' dsgn <- simdesign_mvtnorm(diag(5))
-#' simulate_data_conditional(dsgn, 100,
-#'     reject = function_list(is_collinear, contains_constant))
-#' }
+#' simulate_data_conditional(dsgn, 10,
+#'     reject = function_list(is_collinear, contains_constant), 
+#'     seed = 18)
 #'
 #' @export
 simulate_data_conditional <- function(generator,
@@ -346,6 +343,10 @@ simulate_data_conditional <- function(generator,
 #' transformation of the initial data. To provide a robust estimate it is
 #' advised to use a very large number of observations to compute the correlation
 #' matrix.
+#' 
+#' @return 
+#' A numeric matrix given by the pairwise correlation coefficients for each
+#' pair of variables defined by `obj` and computed according to `cor_type`.
 #'
 #' @seealso
 #' \code{\link{simulate_data}},

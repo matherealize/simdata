@@ -111,6 +111,12 @@ colored uniformly blue. Alternatively, may be a function that takes as
 input the edge correlation values and outputs valid color specifications
 (i.e. a single hex color or a vector of hex colors of appropriate length).}
 }
+\value{
+If \code{return_network} is \code{TRUE}, then an \code{igraph} network object is returned
+that can be plotted by the user using e.g. the interactive
+\code{\link[igraph:tkplot]{igraph::tkplot}} function. Otherwise, the network
+object is plotted directly and no output is returned.
+}
 \description{
 Useful to visualize e.g. the associations of the initial multivariate
 gaussian distribution used by \code{\link{simdesign_mvtnorm}}.

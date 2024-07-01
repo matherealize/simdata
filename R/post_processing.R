@@ -40,10 +40,8 @@
 #' Matrix or data.frame with post-processing applied.
 #'
 #' @examples
-#' \dontrun{
-#' do_processing(diag(5),
+#' do_processing(diag(5), 
 #'     functions = list(scale = list(center = TRUE, scale = FALSE)))
-#' }
 #'
 #' @export
 do_processing <- function(x, functions = list()) {
