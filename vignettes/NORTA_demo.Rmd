@@ -22,12 +22,16 @@ bibliography: Demo_references.bib
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 library(simdata)
-library(NHANES)
 library(fitdistrplus)
 library(dplyr)
 library(ggplot2)
 library(patchwork)
 library(ggcorrplot)
+
+knitr::opts_chunk$set(
+  error = TRUE,
+  eval = requireNamespace("NHANES", quietly = TRUE)
+)
 ```
 
 # Introduction
@@ -165,8 +169,7 @@ remove labels to factor variables and work with numeric codes. Further, we will
 only use data from a single survey round to keep the dataset small.
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-data(NHANES)
-df = NHANES %>% 
+df = NHANES::NHANES %>% 
     filter(SurveyYr == "2011_12") %>%
     select(Gender, Age, Race = Race1, Weight, 
            BMI, BPsys = BPSys1, BPdia = BPDia1) %>% 

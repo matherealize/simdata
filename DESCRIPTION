@@ -16,7 +16,6 @@ License: GPL-3
 Imports:
     Matrix,
     mvtnorm,
-    NHANES, 
     igraph (>= 1.2.1)
 Suggests: 
     doParallel,
@@ -32,6 +31,7 @@ Suggests:
     purrr,
     reshape2,
     rmarkdown,
+    NHANES, 
     testthat (>= 2.1.0)
 VignetteBuilder: knitr
 Encoding: UTF-8
