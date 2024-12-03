@@ -261,8 +261,7 @@ the exact codings of the variables, so we will remove labels to factor
 variables and work with numeric codes. Further, we will only use data
 from a single survey round to keep the dataset small.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">NHANES</span><span class="op">)</span></span>
-<span><span class="va">df</span> <span class="op">=</span> <span class="va">NHANES</span> <span class="op">%&gt;%</span> </span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">=</span> <span class="fu">NHANES</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/NHANES/man/NHANES.html" class="external-link">NHANES</a></span> <span class="op">%&gt;%</span> </span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">SurveyYr</span> <span class="op">==</span> <span class="st">"2011_12"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="fu">select</span><span class="op">(</span><span class="va">Gender</span>, <span class="va">Age</span>, Race <span class="op">=</span> <span class="va">Race1</span>, <span class="va">Weight</span>, </span>
 <span>           <span class="va">BMI</span>, BPsys <span class="op">=</span> <span class="va">BPSys1</span>, BPdia <span class="op">=</span> <span class="va">BPDia1</span><span class="op">)</span> <span class="op">%&gt;%</span> </span>
@@ -538,23 +537,23 @@ reproducible due to the parametric nature of the NORTA procedure.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">## [1] ggcorrplot_0.1.4.1 patchwork_1.3.0    ggplot2_3.5.1      dplyr_1.1.4       </span></span>
-<span><span class="co">## [5] fitdistrplus_1.2-1 survival_3.7-0     MASS_7.3-61        NHANES_2.1.0      </span></span>
-<span><span class="co">## [9] simdata_0.4.1     </span></span>
+<span><span class="co">## [5] fitdistrplus_1.2-1 survival_3.7-0     MASS_7.3-61        simdata_0.4.1     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##  [1] sass_0.4.9        utf8_1.2.4        generics_0.1.3    stringi_1.8.4    </span></span>
-<span><span class="co">##  [5] lattice_0.22-6    digest_0.6.37     magrittr_2.0.3    evaluate_1.0.1   </span></span>
-<span><span class="co">##  [9] grid_4.4.2        mvtnorm_1.3-2     fastmap_1.2.0     plyr_1.8.9       </span></span>
-<span><span class="co">## [13] jsonlite_1.8.9    Matrix_1.7-1      fansi_1.0.6       scales_1.3.0     </span></span>
-<span><span class="co">## [17] textshaping_0.4.0 jquerylib_0.1.4   cli_3.6.3         rlang_1.1.4      </span></span>
-<span><span class="co">## [21] munsell_0.5.1     splines_4.4.2     withr_3.0.2       cachem_1.1.0     </span></span>
-<span><span class="co">## [25] yaml_2.3.10       tools_4.4.2       reshape2_1.4.4    colorspace_2.1-1 </span></span>
-<span><span class="co">## [29] vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4   stringr_1.5.1    </span></span>
-<span><span class="co">## [33] fs_1.6.5          ragg_1.3.3        pkgconfig_2.0.3   desc_1.4.3       </span></span>
-<span><span class="co">## [37] pkgdown_2.1.1     pillar_1.9.0      bslib_0.8.0       gtable_0.3.6     </span></span>
-<span><span class="co">## [41] glue_1.8.0        Rcpp_1.0.13-1     systemfonts_1.1.0 xfun_0.49        </span></span>
-<span><span class="co">## [45] tibble_3.2.1      tidyselect_1.2.1  knitr_1.49        farver_2.1.2     </span></span>
-<span><span class="co">## [49] htmltools_0.5.8.1 labeling_0.4.3    rmarkdown_2.29    compiler_4.4.2</span></span></code></pre>
+<span><span class="co">##  [1] sass_0.4.9        utf8_1.2.4        generics_0.1.3    NHANES_2.1.0     </span></span>
+<span><span class="co">##  [5] stringi_1.8.4     lattice_0.22-6    digest_0.6.37     magrittr_2.0.3   </span></span>
+<span><span class="co">##  [9] evaluate_1.0.1    grid_4.4.2        mvtnorm_1.3-2     fastmap_1.2.0    </span></span>
+<span><span class="co">## [13] plyr_1.8.9        jsonlite_1.8.9    Matrix_1.7-1      fansi_1.0.6      </span></span>
+<span><span class="co">## [17] scales_1.3.0      textshaping_0.4.0 jquerylib_0.1.4   cli_3.6.3        </span></span>
+<span><span class="co">## [21] rlang_1.1.4       munsell_0.5.1     splines_4.4.2     withr_3.0.2      </span></span>
+<span><span class="co">## [25] cachem_1.1.0      yaml_2.3.10       tools_4.4.2       reshape2_1.4.4   </span></span>
+<span><span class="co">## [29] colorspace_2.1-1  vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4  </span></span>
+<span><span class="co">## [33] stringr_1.5.1     fs_1.6.5          ragg_1.3.3        pkgconfig_2.0.3  </span></span>
+<span><span class="co">## [37] desc_1.4.3        pkgdown_2.1.1     pillar_1.9.0      bslib_0.8.0      </span></span>
+<span><span class="co">## [41] gtable_0.3.6      glue_1.8.0        Rcpp_1.0.13-1     systemfonts_1.1.0</span></span>
+<span><span class="co">## [45] xfun_0.49         tibble_3.2.1      tidyselect_1.2.1  knitr_1.49       </span></span>
+<span><span class="co">## [49] farver_2.1.2      htmltools_0.5.8.1 labeling_0.4.3    rmarkdown_2.29   </span></span>
+<span><span class="co">## [53] compiler_4.4.2</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
