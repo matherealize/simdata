@@ -438,13 +438,13 @@ quantile_functions_from_data <- function(data,
     for (col in 1:length(colnames)) {
         if ((length(unique(data[, col])) < n_small) || (col %in% use_quantile)) {
             dist[[colnames[col]]] <- quantile_function_from_quantiles(
-                data[, col], 
+                data[[col]], 
                 method_quantile = method_quantile, 
                 probs_quantile = probs_quantile
             )
         } else {
             dist[[colnames[col]]] <- quantile_function_from_density(
-                data[, col], 
+                data[[col]], 
                 method_density = method_density, 
                 n_density = n_density, 
                 ...
