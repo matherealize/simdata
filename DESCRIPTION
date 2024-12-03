@@ -1,7 +1,7 @@
 Package: simdata
 Type: Package
 Title: Generate Simulated Datasets
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: person("Michael", "Kammer", 
     email = "michael.kammer@meduniwien.ac.at", 
     role = c("aut", "cre"), 
@@ -16,6 +16,7 @@ License: GPL-3
 Imports:
     Matrix,
     mvtnorm,
+    NHANES, 
     igraph (>= 1.2.1)
 Suggests: 
     doParallel,
@@ -27,7 +28,6 @@ Suggests:
     GGally,
     ggcorrplot,
     knitr,
-    nhanesA,
     patchwork,
     purrr,
     reshape2,

@@ -1,3 +1,7 @@
+# simdata v0.4.1
+Updates Norta demo vignette to remove `nhanesA` package and add `NHANES` 
+as dependency. 
+
 # simdata v0.4.0
 Release for CRAN with updates in vignettes to reflect recent changes to nhanesA
 package.
