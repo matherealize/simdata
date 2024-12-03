@@ -1,114 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://matherealize.github.io/simdata/404.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/articles/Demo.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/articles/NORTA_demo.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/articles/Technical_documentation.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/apply_array.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/as_function_list.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/colapply_functions.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/contains_constant.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/cor_from_upper.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/cor_to_cov.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/cor_to_upper.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/do_processing.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/estimate_final_correlation.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/function_list.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/get_from_function_list.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/get_names_from_function_list.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/is_collinear.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/is_cor_matrix.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/optimize_cor_for_pair.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/optimize_cor_mat.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/partial.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/plot_cor_network.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/plot_estimated_cor_network.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/process_truncate_by_iqr.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/process_truncate_by_threshold.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/quantile_functions_from_data.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/simdesign.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/simdesign_discunif.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/simdesign_mvtnorm.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/simdesign_norta.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/simulate_data.html</loc>
-  </url>
-  <url>
-    <loc>https://matherealize.github.io/simdata/reference/simulate_data_conditional.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://matherealize.github.io/simdata/404.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/articles/Demo.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/articles/NORTA_demo.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/articles/Technical_documentation.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/articles/index.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/authors.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/index.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/news/index.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/apply_array.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/as_function_list.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/colapply_functions.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/contains_constant.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/cor_from_upper.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/cor_to_cov.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/cor_to_upper.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/do_processing.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/estimate_final_correlation.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/function_list.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/get_from_function_list.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/get_names_from_function_list.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/index.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/is_collinear.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/is_cor_matrix.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/optimize_cor_for_pair.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/optimize_cor_mat.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/partial.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/plot_cor_network.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/plot_estimated_cor_network.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/process_truncate_by_iqr.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/process_truncate_by_threshold.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/quantile_functions_from_data.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/simdesign.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/simdesign_discunif.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/simdesign_mvtnorm.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/simdesign_norta.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/simulate_data.html</loc></url>
+<url><loc>https://matherealize.github.io/simdata/reference/simulate_data_conditional.html</loc></url>
 </urlset>
+
